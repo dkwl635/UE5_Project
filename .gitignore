@@ -72,3 +72,6 @@ UPortfolio_RPG/Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 UPortfolio_RPG/DerivedDataCache/*
+
+# StartContent
+UPortfolio_RPG/Content/StarterContent
