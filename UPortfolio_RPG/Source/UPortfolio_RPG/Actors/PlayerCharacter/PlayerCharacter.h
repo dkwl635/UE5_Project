@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -30,8 +28,8 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-	USpringArmComponent* SpringArmComponent;
+	class USpringArmComponent* SpringArmComponent;
 	UPROPERTY(EditAnywhere)
-	UCameraComponent* CameraComponent;
+	class UCameraComponent* CameraComponent;
 	
 };

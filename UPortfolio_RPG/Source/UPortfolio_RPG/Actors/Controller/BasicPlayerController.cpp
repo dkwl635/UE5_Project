@@ -75,7 +75,6 @@ void ABasicPlayerController::OnSetDestinationReleased()
 void ABasicPlayerController::OnDefaultAttack()
 {
 	StopMovement();
-	UE_LOG(LogTemp, Warning, TEXT("Attack!"));
 }
 
 void ABasicPlayerController::OnSkill()
