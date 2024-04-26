@@ -23,4 +23,10 @@ UInputDataConfig::UInputDataConfig()
 		check(Asset.Succeeded());
 		DefaultAttack = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill.IA_Skill'") };
+		check(Asset.Succeeded());
+		Skill = Asset.Object;
+	}
 }

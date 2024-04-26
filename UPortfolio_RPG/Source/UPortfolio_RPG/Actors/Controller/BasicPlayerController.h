@@ -6,8 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "BasicPlayerController.generated.h"
 
-struct FInputActionValue;
-
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
 {
@@ -23,7 +21,8 @@ protected:
 protected:
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased(); 
-	void OnDefaultAttack(const FInputActionValue& InputActionValue);
+	void OnDefaultAttack();
+	void OnSkill();
 
 private:
 	float FollowTime;

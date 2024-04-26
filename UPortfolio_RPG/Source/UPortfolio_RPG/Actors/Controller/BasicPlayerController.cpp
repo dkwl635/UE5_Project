@@ -38,6 +38,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Completed, this, &ABasicPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Canceled, this, &ABasicPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Started, this, &ABasicPlayerController::OnDefaultAttack);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill);
 	}
 
 }
@@ -71,8 +72,13 @@ void ABasicPlayerController::OnSetDestinationReleased()
 
 }
 
-void ABasicPlayerController::OnDefaultAttack(const FInputActionValue& InputActionValue)
+void ABasicPlayerController::OnDefaultAttack()
 {
 	StopMovement();
 	UE_LOG(LogTemp, Warning, TEXT("Attack!"));
+}
+
+void ABasicPlayerController::OnSkill()
+{
+
 }

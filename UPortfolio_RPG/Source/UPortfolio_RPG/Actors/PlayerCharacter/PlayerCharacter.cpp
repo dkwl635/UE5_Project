@@ -2,6 +2,7 @@
 
 
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -11,6 +12,22 @@ APlayerCharacter::APlayerCharacter()
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	
+	SpringArmComponent->SetupAttachment(GetRootComponent());
+	SpringArmComponent->TargetArmLength = 1000.f;
+	SpringArmComponent->bInheritPitch = false;
+	SpringArmComponent->bInheritRoll = false;
+	SpringArmComponent->bInheritYaw = false;
+	SpringArmComponent->SetRelativeRotation(FRotator(-45., -45., 0.));
+	SpringArmComponent->bUsePawnControlRotation = true;
+	SpringArmComponent->bDoCollisionTest = false;
+	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	bUseControllerRotationYaw = false;
+
+	GetCharacterMovement()->RotationRate = FRotator(0., 1440., 0.);
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
 }
 
 // Called when the game starts or when spawned
