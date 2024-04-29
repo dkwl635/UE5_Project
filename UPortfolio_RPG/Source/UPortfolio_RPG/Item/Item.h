@@ -5,19 +5,35 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ItemData.h"
+#include "DataSubsystem/DataSubsystem.h"
 #include "Item.generated.h"
-
 
 UCLASS()
 class UPORTFOLIO_RPG_API UItem : public UObject
 {
 	GENERATED_BODY()
-	
+
 public:
-	virtual void UseItem(FItemData* ItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TEST"));
-	}
+	friend class UDataSubsystem;
+private:
+
+	static UDataSubsystem* DataSubsystem;
+	static TMap<FName, FPotionData*> PotionDatas;
+
+private:
+
+	FPotionData* GetPotionData(FName Name);
+
+
+public:
+	
+	bool UseItem(AActor* Target , FItemData* ItemData);
+
+private:
+
+	bool UsePotion(FPotionData* PotionData);
+
+	
 
 };
 

@@ -17,7 +17,7 @@ struct UPORTFOLIO_RPG_API FItemData : public FTableRowBase
 
 public:
 	UPROPERTY()
-	uint32 CurrentBundleCount = 0;
+	int8 CurrentBundleCount = 0;
 
 	UPROPERTY(EditAnywhere)
 	FName ItemName;
@@ -26,7 +26,7 @@ public:
 	EITEMTYPE ItemType;
 
 	UPROPERTY(EditAnywhere)
-	uint32 MaxBundleCount ;
+	int8 MaxBundleCount ;
 
 	UPROPERTY(EditAnywhere)
 	UTexture2D* ItemImage;
@@ -47,7 +47,7 @@ struct UPORTFOLIO_RPG_API FPotionData : public FTableRowBase
 public:
 
 	UPROPERTY(EditAnywhere)
-	uint32 PotionValue = 0;
+	int16 PotionValue = 0;
 
 	UPROPERTY(EditAnyWhere, meta = (Bitmask, BitmaskEnum = EPOTIONTYPE))
 	uint8 EPotionType;
@@ -61,7 +61,7 @@ struct UPORTFOLIO_RPG_API FGearData : public FTableRowBase
 public:
 	
 	UPROPERTY(EditAnywhere)
-	uint32 GearValue = 0;
+	int16 GearValue = 0;
 
 	UPROPERTY(EditAnyWhere)
 	EGEARTYPE EGearType;
@@ -75,9 +75,9 @@ struct UPORTFOLIO_RPG_API FBatlleItemData : public FTableRowBase
 public:
 	
 	UPROPERTY(EditAnywhere)
-	uint32 FBatlleItemValue = 0;
+	int16 FBatlleItemValue = 0;
 
 	UPROPERTY(EditAnywhere)
-	uint32 FBatlleItemType = 0;
+	int8 FBatlleItemType = 0;
 
 };

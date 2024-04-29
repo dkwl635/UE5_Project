@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Item/ItemData.h"
 #include "DataSubsystem.generated.h"
 
 /**
@@ -18,12 +19,19 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
-
+public:
+	
+	FItemData* FindItem(const FName& InKey);
+	FPotionData* FindPotionData(const FName& InKey);
 protected:
 
 	bool bInit = false;
 
+//ITEM
 	UPROPERTY()
-	UDataTable* DataSubsystem;
-	
+	UDataTable* DT_Item;
+
+	UPROPERTY()
+	UDataTable* DT_Potion;
+
 };

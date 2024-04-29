@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "UPortfolio_RPG/DataSubsystem/DataSubsystem.h"
+#include "DataSubsystem/DataSubsystem.h"
 #include "Item.h"
 #include "PlayerInventorySubsystem.generated.h"
 
@@ -18,10 +18,19 @@ class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsyst
 
 
 public : 
-	UFUNCTION()
+
 	bool Init();
 	
+	bool AddItem(const FName& InKey, int8 Count);
+	bool IsAddable(FItemData* ItemData, int8 Count);
+	int8 FindItemInInventory(const FName& InKey, int8 StartIndex);
+	int8 FindEmptyInventory(int8 StartIndex);
+	bool MoveItemToInventory(FItemData* ItemData, int8 Count);
 
+
+private:
+	const int8 MaxInvenSize = 60;
+	TArray<TSharedPtr<FItemData>> Inventory;
 	
 public:
 
@@ -35,6 +44,6 @@ public:
 	
 public:
 
-	const UDataSubsystem* DataSubsystem;
+	UDataSubsystem* DataSubsystem;
 	UItem* ItemClass;
 };
