@@ -89,6 +89,5 @@ void ABasicPlayerController::OnSpace()
 	GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, true, Hit);
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	ensure(PlayerCharacter);
-	StopMovement();
 	PlayerCharacter->OnSpace(Hit.Location);
 }

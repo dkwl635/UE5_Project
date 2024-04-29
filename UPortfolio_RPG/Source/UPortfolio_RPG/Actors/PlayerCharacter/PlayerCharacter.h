@@ -42,12 +42,12 @@ protected:
 	UStatusComponent* StatusComponent;
 
 	FTimerHandle SpaceCoolTimer;
-	FTimerHandle SpaceDelayTimer;
 
 private:
 	UPROPERTY(EditAnywhere)
+	float SpaceCoolTime = 3.f;
+	UPROPERTY(EditAnywhere)
 	float SpaceDistance = 700.f;
 
-	bool bSpace = false;
 	float CachedWalkSpeed = 0.f;
 };
