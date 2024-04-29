@@ -5,6 +5,8 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "InputActionValue.h"
 #include "Data/InputDataConfig.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -63,13 +65,11 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 
 void ABasicPlayerController::OnSetDestinationReleased()
 {
-
-	//{
-	//	// We move there and spawn some particles
-	//	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-	//	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-	//}
-
+	{
+		// We move there and spawn some particles
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+	}
 }
 
 void ABasicPlayerController::OnDefaultAttack()

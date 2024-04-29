@@ -10,7 +10,7 @@ public class UPortfolio_RPG : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { 
             "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"
-            ,"AIModule"
+            ,"AIModule" , "Niagara"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

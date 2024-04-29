@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "BasicPlayerController.generated.h"
 
+class UNiagaraSystem;
+
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
 {
@@ -13,6 +15,9 @@ class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
 	
 public:
 	ABasicPlayerController();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UNiagaraSystem* FXCursor;
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,6 +30,5 @@ protected:
 	void OnSkill();
 
 private:
-	float FollowTime;
 	FVector CachedDestination;
 };
