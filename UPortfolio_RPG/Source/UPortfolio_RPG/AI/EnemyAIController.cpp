@@ -6,6 +6,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 
+const FName AEnemyAIController::TargetKey(TEXT("Target"));
+
 AEnemyAIController::AEnemyAIController()
 {
 	//	RepeatInterval = 2.f;       //타이머 시간 2초마다

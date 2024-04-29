@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemyAIController : public AAIController
 {
@@ -17,6 +19,9 @@ public:
 	AEnemyAIController();
 	virtual void OnPossess(APawn* InPawn) override;  //컨트롤러 빙의
 	virtual void OnUnPossess() override;			 //빙의 해제
+
+public:
+	static const FName TargetKey;
 
 private:
 	void OnRepeatTimer();
