@@ -17,6 +17,7 @@ APlayerCharacter::APlayerCharacter()
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 	
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	SpringArmComponent->TargetArmLength = 1000.f;
@@ -33,20 +34,29 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0., 1440., 0.);
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	CachedWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (bSpace)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 6200.f;
+		if (!(GetWorld()->GetTimerManager().IsTimerActive(SpaceDelayTimer)))
+			bSpace = false;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = CachedWalkSpeed;
+	}
 }
 
 // Called to bind functionality to input
@@ -63,14 +73,20 @@ void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
+	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
+	if (bIsSpaceCool) { return; }
+	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, 5.f, false);	// 회피 5초쿨
+	
+	CachedWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	bSpace = true;
+
 	FVector ActorLocation = GetActorLocation();
 	FVector Direction;
-	float CachedWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
 	Direction = UKismetMathLibrary::GetDirectionUnitVector(ActorLocation, HitPoint);
 	
 	FVector Destination = ActorLocation + (Direction * SpaceDistance);
 
+	GetWorld()->GetTimerManager().SetTimer(SpaceDelayTimer, 1.f, false);
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), Destination);
-	
 }

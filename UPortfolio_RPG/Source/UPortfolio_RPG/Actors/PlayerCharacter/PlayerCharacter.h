@@ -21,7 +21,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -41,7 +41,13 @@ protected:
 	UPROPERTY(Transient)
 	UStatusComponent* StatusComponent;
 
+	FTimerHandle SpaceCoolTimer;
+	FTimerHandle SpaceDelayTimer;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float SpaceDistance = 700.f;
+
+	bool bSpace = false;
+	float CachedWalkSpeed = 0.f;
 };
