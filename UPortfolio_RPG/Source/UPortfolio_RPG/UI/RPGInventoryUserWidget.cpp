@@ -7,6 +7,7 @@ void URPGInventoryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	//return;
 	int8 Col = 6;
 	int8 Row = 42 / Col;
 
