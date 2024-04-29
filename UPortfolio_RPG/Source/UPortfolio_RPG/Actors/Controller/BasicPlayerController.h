@@ -7,6 +7,7 @@
 #include "BasicPlayerController.generated.h"
 
 class UNiagaraSystem;
+struct FInputActionValue;
 
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
@@ -27,7 +28,8 @@ protected:
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased(); 
 	void OnDefaultAttack();
-	void OnSkill();
+	void OnSkill(const FInputActionValue& InputValue);
+	void OnSpace();
 
 private:
 	FVector CachedDestination;

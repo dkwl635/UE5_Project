@@ -5,6 +5,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Components/StatusComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -53,3 +56,21 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
+{
+
+}
+
+void APlayerCharacter::OnSpace(const FVector& HitPoint)
+{
+	FVector ActorLocation = GetActorLocation();
+	FVector Direction;
+	float CachedWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+
+	Direction = UKismetMathLibrary::GetDirectionUnitVector(ActorLocation, HitPoint);
+	
+	FVector Destination = ActorLocation + (Direction * SpaceDistance);
+
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), Destination);
+	
+}

@@ -29,4 +29,10 @@ UInputDataConfig::UInputDataConfig()
 		check(Asset.Succeeded());
 		Skill = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Space.IA_Space'") };
+		check(Asset.Succeeded());
+		Space = Asset.Object;
+	}
 }

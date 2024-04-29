@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+struct FInputActionValue;
+class UStatusComponent;
+
 UCLASS()
 class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
 {
@@ -26,10 +29,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	void OnSkill(const FInputActionValue& InputActionValue);
+	void OnSpace(const FVector& HitPoint);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* SpringArmComponent;
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
-	
+	UPROPERTY(Transient)
+	UStatusComponent* StatusComponent;
+
+private:
+	UPROPERTY(EditAnywhere)
+	float SpaceDistance = 700.f;
 };

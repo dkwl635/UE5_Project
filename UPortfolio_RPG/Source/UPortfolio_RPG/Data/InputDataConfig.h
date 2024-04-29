@@ -23,4 +23,5 @@ public:
 	UInputAction* Move = nullptr;
 	UInputAction* DefaultAttack = nullptr;
 	UInputAction* Skill = nullptr;
+	UInputAction* Space = nullptr;
 };

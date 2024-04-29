@@ -9,7 +9,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "InputActionValue.h"
 #include "Data/InputDataConfig.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
 {
@@ -41,6 +41,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Canceled, this, &ABasicPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Started, this, &ABasicPlayerController::OnDefaultAttack);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 	}
 
 }
@@ -77,7 +78,17 @@ void ABasicPlayerController::OnDefaultAttack()
 	StopMovement();
 }
 
-void ABasicPlayerController::OnSkill()
+void ABasicPlayerController::OnSkill(const FInputActionValue& InputActionValue)
 {
+	
+}
 
+void ABasicPlayerController::OnSpace()
+{
+	FHitResult Hit;
+	GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, true, Hit);
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	ensure(PlayerCharacter);
+	StopMovement();
+	PlayerCharacter->OnSpace(Hit.Location);
 }
