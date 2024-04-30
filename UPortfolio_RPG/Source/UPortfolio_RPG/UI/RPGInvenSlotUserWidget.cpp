@@ -69,3 +69,19 @@ void URPGInvenSlotUserWidget::DragEnd(URPGInvenSlotUserWidget* info)
 	OnDragSlot = nullptr;
 }
 
+bool URPGInvenSlotUserWidget::IsInData()
+{
+	if(!Inventory || ItemIndex < 0)
+	{
+		return false;
+	}
+
+	FItemData* data = (*Inventory)[ItemIndex].Get();
+	if (data)
+	{
+		return true;
+	}
+	
+	return false;
+}
+

@@ -50,5 +50,6 @@ public:
 	void DragStart(URPGInvenSlotUserWidget* info);
 	UFUNCTION(BlueprintCallable)
 	void DragEnd(URPGInvenSlotUserWidget* info);
-	
+	UFUNCTION(BlueprintCallable)
+	bool IsInData();
 };
