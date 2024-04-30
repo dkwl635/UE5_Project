@@ -3,12 +3,13 @@
 #include "AI/BTService_Detect.h"
 #include "EnemyAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 
 UBTService_Detect::UBTService_Detect()
 {
 	NodeName = TEXT("Detect");
-	Interval = 1.f;
+	Interval = 1.f; //서비스가 작동하는 주기
 }
 
 void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -20,49 +21,32 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.f;
+	float DetectRadius = 600.f;           //플레이어 탐지 범위
 
 	if (nullptr == World) return;
-	TArray<FOverlapResult> OverlapResults;
+
+	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
-	bool bResult = World->OverlapMultiByChannel(
-		OverlapResults,
+	bool bResult = UKismetSystemLibrary::SphereTraceSingle(
+		GetWorld(),
 		Center,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
-		FCollisionShape::MakeSphere(DetectRadius),
-		CollisionQueryParam
+		Center + FVector(0.f, 0.f, 1.f), // 끝점을 시작점에서 약간 높은 지점으로 설정하여 땅과의 충돌을 방지합니다.
+		DetectRadius,
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //충돌채널
+		false, //bTraceComplex
+		TArray<AActor*>(), //무시할 액터들
+		EDrawDebugTrace::None, //디버그 트레이스
+		HitResult,
+		true
 	);
 
-	//플레이어 따라오게 인지하는 코드인데 오류나서 잠깐 주석처리 해놓겠습니다.
-	//if (bResult)
-	//{
-	//	for (auto const& OverlapResult : OverlapResults)
-	//	{
-	//		APawn* DefaultPawn = Cast<APawn>(OverlapResult.GetActor());
-	//		if (DefaultPawn)
-	//		{
-	//			AController* DefaultPawnController = DefaultPawn->GetController();
-	//			if (DefaultPawnController && DefaultPawnController->IsPlayerController())
-	//			{
-	//				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetKey, DefaultPawn);
-	//				FVector cCenter = DefaultPawn->GetActorLocation();
-	//				UWorld* wWorld = DefaultPawn->GetWorld();
-	//				if (wWorld)
-	//				{
-	//					// 원형 영역 디버그 그리기
-	//					DrawDebugSphere(wWorld, cCenter, DetectRadius, 16, FColor::Green, false, 0.2f);
-	//					// 몬스터 위치 디버그 그리기
-	//					DrawDebugPoint(wWorld, ControllingPawn->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
-	//					// 몬스터와 플레이어 사이에 라인 디버그 그리기
-	//					DrawDebugLine(wWorld, ControllingPawn->GetActorLocation(), cCenter, FColor::Blue, false, 0.2f);
-	//				}
-	//				return;
-	//			}
-	//		}
-	//	}
+	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<AActor>()) //Actor는 플레이어
+	{
+		// 플레이어가 감지되었을 때의 플레이어를 따라가는 동작 수행
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetKey, HitResult.GetActor()); //HitResult.Player
 
-	//}
+	}
+	
 		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 	
 }

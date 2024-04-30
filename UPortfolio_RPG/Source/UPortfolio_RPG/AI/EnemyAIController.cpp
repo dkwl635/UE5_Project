@@ -42,7 +42,7 @@ void AEnemyAIController::OnRepeatTimer()
 	auto CurrentPawn = GetPawn();
 	ensure(CurrentPawn);
 
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld()); //월드에 배치해 둔 네비메쉬 읽어오기
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld()); //월드에 배치해 둔 네비메시 읽어오기
 	if (NavSystem == nullptr) return;
 
 	FNavLocation NextLocation;         //AI폰이 이동할 다음 위치 저장

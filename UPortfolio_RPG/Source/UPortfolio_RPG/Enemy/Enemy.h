@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
+//#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
@@ -27,8 +28,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Collision)
-	UBoxComponent* BoxComponent;
+	UPROPERTY(EditAnywhere, Category = Collision)
+	UCapsuleComponent* CapsuleComponent;
+
+	//UPROPERTY(EditAnywhere, Category = Collision)
+	//UBoxComponent* BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = Visual)
 	USkeletalMeshComponent* Mesh;

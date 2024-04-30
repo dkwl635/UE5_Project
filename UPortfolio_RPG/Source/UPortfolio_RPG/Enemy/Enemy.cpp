@@ -9,15 +9,16 @@ AEnemy::AEnemy()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+    CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+    //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
     Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-    Movement->MaxSpeed = 500.0f;
+    Movement->MaxSpeed = 300.0f;                  ///몬스터 속도 조절
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
-    BoxComponent->SetupAttachment(RootComponent);
-    Mesh->SetupAttachment(BoxComponent);
+    SetRootComponent(CapsuleComponent);
+    Mesh->SetupAttachment(GetRootComponent());
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> NormalMonster(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonMinions/Characters/Minions/Prime_Helix/Meshes/Prime_Helix.Prime_Helix'"));
     if (NormalMonster.Succeeded())
