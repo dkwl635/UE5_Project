@@ -30,6 +30,7 @@ protected:
 	void OnDefaultAttack();
 	void OnSkill(const FInputActionValue& InputValue);
 	void OnSpace();
+	void OnOpenSkillUI();
 
 private:
 	FVector CachedDestination;

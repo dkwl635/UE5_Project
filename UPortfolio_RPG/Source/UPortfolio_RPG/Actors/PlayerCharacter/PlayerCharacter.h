@@ -8,7 +8,7 @@
 
 struct FInputActionValue;
 class UStatusComponent;
-
+class USkillComponent;
 
 UCLASS()
 class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
@@ -40,6 +40,12 @@ protected:
 	class UCameraComponent* CameraComponent;
 	UPROPERTY(EditAnywhere)
 	UStatusComponent* StatusComponent;
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	USkillComponent* SkillComponent;
+
+protected:
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* SpaceMontage;
 
 	FTimerHandle SpaceCoolTimer;
 
@@ -47,8 +53,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SpaceCoolTime = 5.f;
 	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 7000.f;
-	float CachedWalkSpeed = 0.f;
+	float SpaceDistance = 10000.f;
 
+public:
 	bool bIsSpace = false;
 };

@@ -24,4 +24,5 @@ public:
 	UInputAction* DefaultAttack = nullptr;
 	UInputAction* Skill = nullptr;
 	UInputAction* Space = nullptr;
+	UInputAction* OpenSkillUI = nullptr;
 };

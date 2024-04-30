@@ -35,4 +35,10 @@ UInputDataConfig::UInputDataConfig()
 		check(Asset.Succeeded());
 		Space = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_OpenSkillUI.IA_OpenSkillUI'") };
+		check(Asset.Succeeded());
+		OpenSkillUI = Asset.Object;
+	}
 }

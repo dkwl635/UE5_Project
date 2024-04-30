@@ -8,6 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
+#include "Components/SkillComponent.h"
 
 
 // Sets default values
@@ -19,6 +20,20 @@ APlayerCharacter::APlayerCharacter()
 		SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
+		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
+		ensure(Asset.Object);
+		GetMesh()->SetSkeletalMesh(Asset.Object);
+		GetMesh()->SetRelativeLocation(FVector(0., 0., -88.));
+		GetMesh()->SetRelativeRotation(FRotator(0., -90., 0.));
+		GetMesh()->SetupAttachment(GetRootComponent());
+	}
+	{
+		static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
+		ensure(Anim.Class);
+		GetMesh()->SetAnimInstanceClass(Anim.Class);
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
@@ -37,7 +52,6 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->RotationRate = FRotator(0., 1440., 0.);
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
-		CachedWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	}
 }
 
@@ -51,6 +65,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 // Called to bind functionality to input
@@ -71,13 +86,14 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
 	if (bIsSpaceCool) { return; }
 	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);	// 회피 5초쿨
-
+	
 	const FVector ActorLocation = GetActorLocation();
 	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
 	const FVector Destination = ActorLocation + Direction * SpaceDistance;
 	GetController()->StopMovement();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	SetActorRotation(NewRotation);
-
 	LaunchCharacter(Direction * SpaceDistance, true, true);
+
+	GetMesh()->PlayAnimation(SpaceMontage, false);
 }

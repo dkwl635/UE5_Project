@@ -42,6 +42,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Started, this, &ABasicPlayerController::OnDefaultAttack);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
 	}
 
 }
@@ -88,4 +89,9 @@ void ABasicPlayerController::OnSpace()
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	ensure(PlayerCharacter);
 	PlayerCharacter->OnSpace(Hit.Location);
+}
+
+void ABasicPlayerController::OnOpenSkillUI()
+{
+
 }
