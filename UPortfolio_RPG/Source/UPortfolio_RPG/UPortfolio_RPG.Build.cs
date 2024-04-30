@@ -8,7 +8,13 @@ public class UPortfolio_RPG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+            "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"
+            ,"AIModule" , "Niagara","NavigationSystem", "GameplayTasks"
+        });
+
+        //모듈 추가시 다른곳에 메모해 주세요.
+        //병합할때 참고하겠습니다.
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
         PublicIncludePaths.Add("UPortfolio_RPG");
