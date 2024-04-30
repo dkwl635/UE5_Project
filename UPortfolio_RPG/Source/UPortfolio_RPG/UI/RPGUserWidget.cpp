@@ -3,3 +3,6 @@
 
 #include "UI/RPGUserWidget.h"
 
+void URPGUserWidget::RefreshUI()
+{
+}

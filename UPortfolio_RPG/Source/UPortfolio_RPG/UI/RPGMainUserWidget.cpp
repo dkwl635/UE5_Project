@@ -3,20 +3,70 @@
 
 #include "UI/RPGMainUserWidget.h"
 
-void URPGMainUserWidget::OpenInventoryUI()
+
+
+void URPGMainUserWidget::NativeConstruct()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OpenInventoryUI"));
-	
-    if (!InventoryUI)
+    Super::NativeConstruct();
+
+    for (int i = 0; i < UICreatList.Num(); i++)
     {
-        return;
+        UUserWidget* NewUserWidget = CreateWidget(GetWorld(), UICreatList[i].UIClass);
+
+        if (RPGUIMap.Contains(UICreatList[i].UIType))
+        {
+            ensure(false);
+            continue;
+        }
+
+        RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
+
     }
 
-    UUserWidget* WidgetInstance = CreateWidget<UUserWidget>(GetWorld(), InventoryUI);
+}
 
-    if (WidgetInstance)
+void URPGMainUserWidget::ShowUI(UUserWidget* UserWidget)
+{
+    if (!UserWidget) { return; }
+    if (!UserWidget->IsInViewport())
     {
         // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
-        WidgetInstance->AddToViewport();
+        UserWidget->AddToViewport();
+    }
+   
+
+}
+
+void URPGMainUserWidget::HideUI(UUserWidget* UserWidget)
+{
+    if (!UserWidget) { return; }
+    if (UserWidget->IsInViewport())
+    {
+        UserWidget->RemoveFromParent();
+    }
+ 
+}
+
+void URPGMainUserWidget::ToggleUI(UUserWidget* UserWidget)
+{
+    if (!UserWidget) { return; }
+
+    if (!UserWidget->IsInViewport())
+    {
+        // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+        ShowUI(UserWidget);
+    }
+    else
+    {
+        HideUI(UserWidget);
     }
 }
+
+UUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI UI_Type)
+{
+    if (RPGUIMap.Contains(UI_Type))
+        return RPGUIMap[UI_Type];
+
+    return nullptr;
+}
+

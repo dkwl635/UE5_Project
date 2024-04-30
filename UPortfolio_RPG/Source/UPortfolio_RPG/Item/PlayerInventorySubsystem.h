@@ -11,6 +11,7 @@
 /**
  * 
  */
+typedef  TArray<TSharedPtr<FItemData>>* Inventory;
 UCLASS()
 class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsystem
 {
@@ -22,15 +23,22 @@ public :
 	bool Init();
 	
 	bool AddItem(const FName& InKey, int8 Count);
-	bool IsAddable(FItemData* ItemData, int8 Count);
-	int8 FindItemInInventory(const FName& InKey, int8 StartIndex);
-	int8 FindEmptyInventory(int8 StartIndex);
-	bool MoveItemToInventory(FItemData* ItemData, int8 Count);
+	bool IsAddable(Inventory Inventory, FItemData* ItemData, int8 Count);
+	int8 FindItemInInventory(Inventory Inventory ,const FName& InKey, int8 StartIndex);
+	int8 FindEmptyInventory(Inventory Inventory ,int8 StartIndex);
+	bool MoveItemToInventory(Inventory Inventory , FItemData* ItemData, int8 Count);
+
+	void ClearTempData();
 
 
+	//아이템 타입에 맞는 가방 리턴
+	Inventory GetInventory(EITEMTYPE ItemType);
 private:
+
+
 	const int8 MaxInvenSize = 60;
-	TArray<TSharedPtr<FItemData>> Inventory;
+	TArray<TSharedPtr<FItemData>> GearInventory;
+	TArray<TSharedPtr<FItemData>> NormalInventory;
 	
 public:
 

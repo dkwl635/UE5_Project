@@ -13,5 +13,9 @@ UCLASS()
 class UPORTFOLIO_RPG_API URPGUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+
+public:
+	UFUNCTION(BlueprintCallable)
+	virtual void RefreshUI();
 };

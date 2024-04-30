@@ -8,7 +8,8 @@
 
 bool UPlayerInventorySubsystem::Init()
 {	
-	Inventory.SetNum(MaxInvenSize, false);
+	NormalInventory.SetNum(MaxInvenSize, false);
+	GearInventory.SetNum(MaxInvenSize, false);
 
 	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	//UItem::DataSubsystem = DataSubsystem;
@@ -23,7 +24,7 @@ bool UPlayerInventorySubsystem::Init()
 	ItemClass->UseItem(nullptr , nullptr);
 
 	AddItem( TEXT("HP100"), 10);
-	ItemClass->UseItem(nullptr, Inventory[0].Get());
+	//ItemClass->UseItem(nullptr, NormalInventory[0].Get());
 	return true;
 
 	
@@ -38,28 +39,28 @@ bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
 		return false;
 	}
 
-
+	Inventory Inventory = GetInventory(Data->ItemType);
 
 	//가방에 들어가는 체크
-	if (!IsAddable(Data, Count))
+	if (!IsAddable(Inventory ,Data, Count))
 	{
 		return false;
 	}
 
-	return	MoveItemToInventory(Data, Count);
+	return	MoveItemToInventory(Inventory ,Data, Count);
 
 }
 
-bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
+bool UPlayerInventorySubsystem::IsAddable(Inventory Inventory,FItemData* ItemData, int8 Count)
 {
 	//아이템 이름으로 키값지정
 	FName ItemName = ItemData->ItemName;
 	//남은 아이템 갯수
 	int8 RemainingCount = Count;
 	//인벤토리 크기
-	int8 InvenSize = Inventory.Num();
+	int8 InvenSize = Inventory->Num();
 	//가방에 같은 아이템이 있는 가방인덱스
-	int8 CheckInvenIndex = FindItemInInventory(ItemName, 0);
+	int8 CheckInvenIndex = FindItemInInventory(Inventory,ItemName, 0);
 	//가방 전체를 돌때까지
 	while (CheckInvenIndex < InvenSize)
 	{
@@ -68,7 +69,7 @@ bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
 		if (CheckInvenIndex >= InvenSize)
 			break;
 		//남은 공간 계산
-		int EmptySize = Inventory[CheckInvenIndex]->MaxBundleCount - Inventory[CheckInvenIndex]->CurrentBundleCount;
+		int EmptySize = (*Inventory)[CheckInvenIndex]->MaxBundleCount - (*Inventory)[CheckInvenIndex]->CurrentBundleCount;
 		//공간이 부족한지 체크
 		RemainingCount -= EmptySize;
 		//전부다 들어가면 성공
@@ -78,7 +79,7 @@ bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
 		}
 
 		//같은 아이템이있는 위치 찾기
-		CheckInvenIndex = FindItemInInventory(ItemName, CheckInvenIndex + 1);
+		CheckInvenIndex = FindItemInInventory(Inventory,ItemName, CheckInvenIndex + 1);
 	}
 	
 	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
@@ -87,10 +88,9 @@ bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
 		return  true;
 	}
 	
-	//이제 아예 빈공간을 찾고 남은 재고 확인
-	int8 EmptyIndex = FindEmptyInventory(0);
-	//UE_LOG(LogTemp, Warning, TEXT("CheckInvenIndex: %d : %d : %d"), EmptyIndex , RemainingCount, ItemData->MaxBundleCount);
-	//return  true;
+	
+	int8 EmptyIndex = FindEmptyInventory(Inventory,0);
+
 	while (EmptyIndex < InvenSize)
 	{
 
@@ -100,7 +100,7 @@ bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
 		{
 			return  true;
 		}
-		EmptyIndex = FindEmptyInventory(EmptyIndex);
+		EmptyIndex = FindEmptyInventory(Inventory,EmptyIndex);
 	}
 
 	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
@@ -112,12 +112,12 @@ bool UPlayerInventorySubsystem::IsAddable(FItemData* ItemData, int8 Count)
 	return false;
 }
 //같은 아이템이 가방에 있는지 그리고 최대치가 남아있다면
-int8 UPlayerInventorySubsystem::FindItemInInventory(const FName& ItemName, int8 StartIndex = 0)
+int8 UPlayerInventorySubsystem::FindItemInInventory(Inventory Inventory, const FName& ItemName, int8 StartIndex = 0)
 {
-	int8 Size = Inventory.Num();
+	int8 Size = Inventory->Num();
 	for (int8 i = StartIndex; i < Size; i++)
 	{
-		TSharedPtr<FItemData> ItemData = Inventory[i];
+		TSharedPtr<FItemData> ItemData = (*Inventory)[i];
 		if (ItemData == nullptr) { continue; }
 		if (ItemData->ItemName == ItemName) 
 		{
@@ -133,12 +133,12 @@ int8 UPlayerInventorySubsystem::FindItemInInventory(const FName& ItemName, int8 
 
 }
 
-int8 UPlayerInventorySubsystem::FindEmptyInventory(int8 StartIndex = 0)
+int8 UPlayerInventorySubsystem::FindEmptyInventory(Inventory Inventory , int8 StartIndex = 0)
 {
-	int8 Size = Inventory.Num();
+	int8 Size = Inventory->Num();
 	for (int8 i = StartIndex; i < Size; i++)
 	{
-		if (Inventory[i] == nullptr)
+		if ( (*Inventory)[i]  == nullptr)
 		{
 			return i;
 		}
@@ -147,16 +147,16 @@ int8 UPlayerInventorySubsystem::FindEmptyInventory(int8 StartIndex = 0)
 	return Size;
 }
 
-bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Count)
+bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemData* ItemData, int8 Count)
 {
 	//아이템 이름으로 키값지정
 	FName ItemName = ItemData->ItemName;
 	//남은 아이템 갯수
 	int8 RemainingCount = Count;
 	//인벤토리 크기
-	int8 InvenSize = Inventory.Num();
+	int8 InvenSize = Inventory->Num();
 	//가방에 같은 아이템이 있는 가방인덱스
-	int8 CheckInvenIndex = FindItemInInventory(ItemName);
+	int8 CheckInvenIndex = FindItemInInventory(Inventory,ItemName);
 	//가방 전체를 돌때까지
 	while (CheckInvenIndex < InvenSize)
 	{
@@ -164,7 +164,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Co
 		if (CheckInvenIndex >= InvenSize)
 			break;
 		//남은 공간 계산
-		int8 EmptySize = Inventory[CheckInvenIndex]->MaxBundleCount - Inventory[CheckInvenIndex]->CurrentBundleCount;
+		int8 EmptySize = (*Inventory)[CheckInvenIndex]->MaxBundleCount - (*Inventory)[CheckInvenIndex]->CurrentBundleCount;
 		//남은 공간이 있다면
 		if (EmptySize > 0)
 		{
@@ -180,7 +180,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Co
 				AddCount = EmptySize;
 				RemainingCount -= AddCount;
 			}
-			Inventory[CheckInvenIndex]->CurrentBundleCount += AddCount;
+			(*Inventory)[CheckInvenIndex]->CurrentBundleCount += AddCount;
 		}
 		else
 		{
@@ -201,7 +201,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Co
 	}
 
 	//이제 아예 빈공간을 찾고 남은 재고 확인
-	int8 EmptyIndex = FindEmptyInventory();
+	int8 EmptyIndex = FindEmptyInventory(Inventory);
 	while (EmptyIndex < InvenSize)
 	{
 		//얼마나 넣을꺼진
@@ -219,13 +219,13 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Co
 	
 		TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*ItemData);
 		NewItemData->CurrentBundleCount = AddCount;
-		Inventory[EmptyIndex] = NewItemData;
+		(*Inventory)[EmptyIndex] = NewItemData;
 
 		if (RemainingCount <= 0)
 		{
 			return  true;
 		}
-		EmptyIndex = FindEmptyInventory();
+		EmptyIndex = FindEmptyInventory(Inventory);
 	}
 
 	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
@@ -239,3 +239,21 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(FItemData* ItemData, int8 Co
 	ensure(false);
 	return false;
 }
+
+void UPlayerInventorySubsystem::ClearTempData()
+{
+}
+
+TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)
+{
+	if (ItemType == EITEMTYPE::GEAR)
+	{
+		return &GearInventory;
+	}
+	else
+	{
+		return &NormalInventory;
+	}
+
+}
+

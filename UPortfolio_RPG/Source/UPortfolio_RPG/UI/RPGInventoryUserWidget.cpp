@@ -1,39 +1,90 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/RPGInventoryUserWidget.h"
+#include "Item/PlayerInventorySubsystem.h"
 
 void URPGInventoryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	//return;
-	int8 Col = 6;
-	int8 Row = 42 / Col;
+	int32 Col = InvenSlotSizeX;
+	int32 Row = InvenSlotSizeY;
 
-	for (int8 i = 0; i < Row; i++)
+	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	if (!Inven)
 	{
-		for (int8 k = 0; k < Col; ++k)
+		return;
+	}
+	Inventory GearInvetory = Inven->GetInventory(EITEMTYPE::GEAR);
+	Inventory NormalInvetory = Inven->GetInventory(EITEMTYPE::POTION);
+	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), Row, Col);
+	
+	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
+	int32 test = 0;
+	for (int32 i = 0; i < Row; i++)
+	{
+		for (int32 k = 0; k < Col; k++)
 		{
 			URPGInvenSlotUserWidget* Widget = Cast<URPGInvenSlotUserWidget>(CreateWidget(this, SlotBP));
 			ensure(Widget);
 
-			//Widget->ItemIndex = k + i * Col;
-			//
-			//Widget->ItemBtnHovered.BindLambda(
-			//	[this](UInventoryItemUserWidget* ItemWidget)
-			//	{
-			//		const uint32 Index = ItemWidget->ItemIndex;
-			//		LastHoveredIndex = Index;
-			//		SetItemDesc(Index);
-			//	}
-			//);
+		
+			Widget->ItemIndex = k + i * Col;
+			Widget->Inventory = GearInvetory;
+			GearSlots.Add(Widget);
+			GearBox->AddChildToUniformGrid(Widget, i, k);
+			Widget->SlotClear();
 
-			//Widget->ItemBtnClicked.BindUFunction(this, TEXT("OnItemBtnClicked"));
-
-			//Items.Add(Widget);
-			NormalBox->AddChildToUniformGrid(Widget, i, k);
-		}
+			test++;
+		}	
+		
 	}
 
+	for (int32 i = 0; i < Row; i++)
+	{
+		for (int32 k = 0; k < Col; k++)
+		{
+			URPGInvenSlotUserWidget* Widget = Cast<URPGInvenSlotUserWidget>(CreateWidget(this, SlotBP));
+			ensure(Widget);
+
+		
+			Widget->ItemIndex = k + i * Col;
+			Widget->Inventory = NormalInvetory;
+			NormalSlots.Add(Widget);
+			NormalBox->AddChildToUniformGrid(Widget, i, k);
+			Widget->SlotClear();
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
+}
+
+void URPGInventoryUserWidget::RefreshUI()
+{
+	int bagIndex = BagWidgetSwitcher->GetActiveWidgetIndex();
+	if (bagIndex == 0)
+	{
+		GearInventoryRefresh();
+	}
+	else if (bagIndex == 1)
+	{
+		NormalInventoryRefresh();
+	}
+}
+
+void URPGInventoryUserWidget::GearInventoryRefresh()
+{
+	int32 Size = GearSlots.Num();
+	for (int32 i = 0; i < Size; i++)
+	{
+		GearSlots[i]->RefreshUI();
+	}
+}
+
+void URPGInventoryUserWidget::NormalInventoryRefresh()
+{
+	int32 Size = NormalSlots.Num();
+	for (int32 i = 0; i < Size; i++)
+	{
+		NormalSlots[i]->RefreshUI();
+	}
 }

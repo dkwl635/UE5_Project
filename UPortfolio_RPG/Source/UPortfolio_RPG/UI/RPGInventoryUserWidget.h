@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UI/RPGUserWidget.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/WidgetSwitcher.h"
 #include "RPGInvenSlotUserWidget.h"
 #include "RPGInventoryUserWidget.generated.h"
 
@@ -18,12 +19,38 @@ class UPORTFOLIO_RPG_API URPGInventoryUserWidget : public URPGUserWidget
 
 protected:
 	virtual void NativeConstruct() override;
+	
+public:
+	virtual void RefreshUI() override;
+	void GearInventoryRefresh();
+	void NormalInventoryRefresh();
 
 public:
 	UPROPERTY(meta = (BindWidget))
+	UButton* GearButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* NormalButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UUniformGridPanel* GearBox;
+
+	UPROPERTY(meta = (BindWidget))
 	UUniformGridPanel* NormalBox;
+	UPROPERTY(EditAnywhere , BlueprintReadWrite, meta = (BindWidget))
+	UWidgetSwitcher* BagWidgetSwitcher;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<URPGInvenSlotUserWidget> SlotBP;
+
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	int32 InvenSlotSizeX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 InvenSlotSizeY;
+
+	TArray<URPGInvenSlotUserWidget*> NormalSlots;
+	TArray<URPGInvenSlotUserWidget*> GearSlots;
+		
 
 };
