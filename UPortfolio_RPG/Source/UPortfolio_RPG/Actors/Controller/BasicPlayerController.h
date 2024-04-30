@@ -33,4 +33,5 @@ protected:
 
 private:
 	FVector CachedDestination;
+	
 };

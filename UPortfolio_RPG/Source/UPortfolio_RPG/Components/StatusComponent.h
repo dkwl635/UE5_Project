@@ -27,6 +27,8 @@ public:
 protected:
 	UPROPERTY()
 	float HP = 100.f;
+	UPROPERTY()
+	float MP = 100.f;
 
 		
 };

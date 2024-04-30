@@ -14,7 +14,7 @@
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	{
 		SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -47,7 +47,6 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-// Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -69,10 +68,16 @@ void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
 	// 쿨타임 타이머
-	{
-		bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
-		if (bIsSpaceCool) { return; }
-		GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);	// 회피 5초쿨
-	}
-	
+	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
+	if (bIsSpaceCool) { return; }
+	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);	// 회피 5초쿨
+
+	const FVector ActorLocation = GetActorLocation();
+	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
+	const FVector Destination = ActorLocation + Direction * SpaceDistance;
+	GetController()->StopMovement();
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	SetActorRotation(NewRotation);
+
+	LaunchCharacter(Direction * SpaceDistance, true, true);
 }

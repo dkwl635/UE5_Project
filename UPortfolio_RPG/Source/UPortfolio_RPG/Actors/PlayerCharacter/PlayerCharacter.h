@@ -9,6 +9,7 @@
 struct FInputActionValue;
 class UStatusComponent;
 
+
 UCLASS()
 class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
 {
@@ -18,14 +19,13 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -38,16 +38,17 @@ protected:
 	class USpringArmComponent* SpringArmComponent;
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 	UStatusComponent* StatusComponent;
 
 	FTimerHandle SpaceCoolTimer;
 
 private:
 	UPROPERTY(EditAnywhere)
-	float SpaceCoolTime = 3.f;
+	float SpaceCoolTime = 5.f;
 	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 700.f;
-
+	float SpaceDistance = 7000.f;
 	float CachedWalkSpeed = 0.f;
+
+	bool bIsSpace = false;
 };

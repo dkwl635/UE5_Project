@@ -7,7 +7,7 @@ UInputDataConfig::UInputDataConfig()
 {
 	{
 		static ConstructorHelpers::FObjectFinder<UInputMappingContext> Asset
-		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/KSH/Character/Input/IA_Player.IA_Player'") };
+		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/KSH/Character/Input/IMC_Player.IMC_Player'") };
 		check(Asset.Succeeded());
 		InputMappingContext = Asset.Object;
 	}
