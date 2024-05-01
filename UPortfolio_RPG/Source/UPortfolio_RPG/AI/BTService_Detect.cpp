@@ -4,7 +4,6 @@
 #include "EnemyAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "DrawDebugHelpers.h"
 
 UBTService_Detect::UBTService_Detect()
 {
@@ -21,10 +20,11 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.f;           //플레이어 탐지 범위
+	float DetectRadius = 600.f;           //플레이어 탐지 범위 변수로 빼거나, 테이블에 넣어두겠습니다.
 
 	if (nullptr == World) return;
 
+	//타겟 벡터로케이션
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
 	bool bResult = UKismetSystemLibrary::SphereTraceSingle(
@@ -35,18 +35,24 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //충돌채널
 		false, //bTraceComplex
 		TArray<AActor*>(), //무시할 액터들
-		EDrawDebugTrace::None, //디버그 트레이스
+		EDrawDebugTrace::ForDuration, //디버그 트레이스
 		HitResult,
 		true
 	);
 
-	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<AActor>()) //Actor는 플레이어
+	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawn은 플레이어(ACharacter)로 바꾸기
 	{
 		// 플레이어가 감지되었을 때의 플레이어를 따라가는 동작 수행
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetKey, HitResult.GetActor()); //HitResult.Player
-
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector(AEnemyAIController::TargetKey, HitResult.GetActor()->GetActorLocation()); //HitResult.Player(캐릭터로 바꾸기)
+		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
 	}
-	
-		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	else
+	{
+		// 플레이어를 감지하지 못했을 때의 동작 수행
+		OwnerComp.GetBlackboardComponent()->ClearValue(AEnemyAIController::TargetKey);
+		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
+	}
+
+
 	
 }
