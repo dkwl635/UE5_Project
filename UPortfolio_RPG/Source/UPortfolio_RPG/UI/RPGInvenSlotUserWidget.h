@@ -23,22 +23,11 @@ public:
 	void SetSlot();
 	void SetSlot(FItemData* data);
 	void SlotClear();
-	virtual	void RefreshUI() override;
-
-	// URPGSlotUserWidget을(를) 통해 상속됨
-	void SlotRefresh() override;
-
-
+	void RefreshUI();
 public:
+	//Slot Data
 	Inventory Inventory;
-
-	//slot btn
-	UPROPERTY(meta = (BindWidget))
-	UButton* SlotBtn;
-
-	UPROPERTY(meta = (BindWidget))
-	UImage* SlotImg;
-
+	
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)	
 	int ItemIndex = -1;
 

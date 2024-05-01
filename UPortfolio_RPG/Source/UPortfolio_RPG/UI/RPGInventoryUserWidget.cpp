@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "UI/RPGInventoryUserWidget.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "Slot/SlotData.h"
+#include "Slot/InventorySlotData.h"
 
 void URPGInventoryUserWidget::NativeConstruct()
 {
@@ -20,39 +22,54 @@ void URPGInventoryUserWidget::NativeConstruct()
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), Row, Col);
 	
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
-	int32 test = 0;
+
 	for (int32 i = 0; i < Row; i++)
 	{
 		for (int32 k = 0; k < Col; k++)
 		{
-			URPGInvenSlotUserWidget* Widget = Cast<URPGInvenSlotUserWidget>(CreateWidget(this, SlotBP));
+			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
 			ensure(Widget);
-
-		
-			Widget->ItemIndex = k + i * Col;
-			Widget->Inventory = GearInvetory;
-			GearSlots.Add(Widget);
-			GearBox->AddChildToUniformGrid(Widget, i, k);
-			Widget->SlotClear();
-
-			test++;
-		}	
-		
+			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
+			Widget->InitSlot();
+			GearBox->AddChildToUniformGrid(Widget, i, k);	
+			auto slotData = Widget->GetSlotData();
+			if (!slotData)
+			{
+				UE_LOG(LogTemp, Display, TEXT("slotData null"));
+			}
+			else
+			{
+				FInventorySlotData* InvenSlotData = (FInventorySlotData*)slotData;
+				InvenSlotData->ItemIndex = k + i * Col;
+				InvenSlotData->Inventory = GearInvetory;
+				GearSlots.Add(Widget);
+				Widget->SetSlot();
+			}
+		}		
 	}
 
 	for (int32 i = 0; i < Row; i++)
 	{
 		for (int32 k = 0; k < Col; k++)
 		{
-			URPGInvenSlotUserWidget* Widget = Cast<URPGInvenSlotUserWidget>(CreateWidget(this, SlotBP));
+			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
 			ensure(Widget);
-
-		
-			Widget->ItemIndex = k + i * Col;
-			Widget->Inventory = NormalInvetory;
-			NormalSlots.Add(Widget);
+			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
+			Widget->InitSlot();
 			NormalBox->AddChildToUniformGrid(Widget, i, k);
-			Widget->SlotClear();
+			auto slotData = Widget->GetSlotData();
+			if (!slotData)
+			{
+				UE_LOG(LogTemp, Display, TEXT("slotData null"));
+			}
+			else
+			{
+				FInventorySlotData* InvenSlotData = (FInventorySlotData*)slotData;
+				InvenSlotData->ItemIndex = k + i * Col;
+				InvenSlotData->Inventory = NormalInvetory;
+				NormalSlots.Add(Widget);
+				Widget->SetSlot();
+			}	
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());

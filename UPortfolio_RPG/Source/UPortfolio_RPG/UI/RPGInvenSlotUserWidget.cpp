@@ -32,12 +32,6 @@ void URPGInvenSlotUserWidget::SlotClear()
 
 void URPGInvenSlotUserWidget::RefreshUI()
 {
-	SlotRefresh();
-}
-
-
-void URPGInvenSlotUserWidget::SlotRefresh()
-{
 	if (!Inventory)
 		return;
 
@@ -54,11 +48,13 @@ void URPGInvenSlotUserWidget::SlotRefresh()
 	}
 }
 
+
+
 void URPGInvenSlotUserWidget::UseItem()
 {
 
 	GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>()->UseItem(Inventory, ItemIndex, 1);
-	SlotRefresh();
+	//SlotRefresh();
 
 }
 

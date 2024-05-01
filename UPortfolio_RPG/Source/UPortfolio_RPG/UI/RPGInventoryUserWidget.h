@@ -6,7 +6,8 @@
 #include "UI/RPGUserWidget.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/WidgetSwitcher.h"
-#include "RPGInvenSlotUserWidget.h"
+#include "Components/Button.h"
+#include "RPGSlotUserWidget.h"
 #include "RPGInventoryUserWidget.generated.h"
 
 /**
@@ -42,15 +43,15 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<URPGInvenSlotUserWidget> SlotBP;
+	TSubclassOf<URPGSlotUserWidget> SlotBP;
 
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)
 	int32 InvenSlotSizeX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 InvenSlotSizeY;
 
-	TArray<URPGInvenSlotUserWidget*> NormalSlots;
-	TArray<URPGInvenSlotUserWidget*> GearSlots;
+	TArray<URPGSlotUserWidget*> NormalSlots;
+	TArray<URPGSlotUserWidget*> GearSlots;
 		
 
 };

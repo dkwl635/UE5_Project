@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "DataSubsystem/DataSubsystem.h"
-
+#include "UI/Slot/SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
 
 UDataSubsystem::UDataSubsystem()
@@ -37,12 +37,15 @@ void UDataSubsystem::Init()
 	}
 	UItem::DataSubsystem = this;
 
+	//인벤은 게임모드에 넣을지 고민해야 함
 	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	if (Inven->Init())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
 	}
 
+	FSlotData::World = GetWorld();
+	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
 		bInit = true;
 }
 

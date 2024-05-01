@@ -22,6 +22,7 @@ void URPGMainUserWidget::NativeConstruct()
         RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
 
     }
+    
 
 }
 

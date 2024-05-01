@@ -6,6 +6,7 @@
 #include "Item/Item.h"
 
 
+
 bool UPlayerInventorySubsystem::Init()
 {	
 	NormalInventory.SetNum(MaxInvenSize, false);
@@ -24,6 +25,7 @@ bool UPlayerInventorySubsystem::Init()
 	ItemClass->UseItem(nullptr , nullptr);
 
 	AddItem( TEXT("HP100"), 3);
+	AddItem( TEXT("HP200"), 3);
 	//ItemClass->UseItem(nullptr, NormalInventory[0].Get());
 	return true;
 
