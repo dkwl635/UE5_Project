@@ -37,6 +37,11 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetAnimInstanceClass(Anim.Class);
 	}
 	{
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Animations/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
+		ensure(Anim.Object);
+		AttackMontage = Anim.Object;
+	}
+	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
 		SpringArmComponent->TargetArmLength = 1000.f;
 		SpringArmComponent->bInheritPitch = false;
@@ -102,4 +107,18 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	}
 	auto SpaceDelegate = [this]() {bIsSpace = false; };
 	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.5f, false);
+}
+
+void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
+{
+	const FVector ActorLocation = GetActorLocation();
+	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
+	const FVector Destination = ActorLocation + Direction * SpaceDistance;
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	SetActorRotation(NewRotation);
+
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if(AttackMontage)
+		Animation->Montage_Play(AttackMontage,1.2f);
 }

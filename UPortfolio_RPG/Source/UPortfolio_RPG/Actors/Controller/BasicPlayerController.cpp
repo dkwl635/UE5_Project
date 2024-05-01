@@ -75,6 +75,11 @@ void ABasicPlayerController::OnSetDestinationReleased()
 void ABasicPlayerController::OnDefaultAttack()
 {
 	StopMovement();
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	ensure(PlayerCharacter);
+	PlayerCharacter->OnDefaultAttack(Hit.Location);
 }
 
 void ABasicPlayerController::OnSkill(const FInputActionValue& InputActionValue)

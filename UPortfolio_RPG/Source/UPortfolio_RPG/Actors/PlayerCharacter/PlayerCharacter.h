@@ -19,7 +19,6 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,6 +31,7 @@ public:
 public:
 	void OnSkill(const FInputActionValue& InputActionValue);
 	void OnSpace(const FVector& HitPoint);
+	void OnDefaultAttack(const FVector& HitPoint);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -44,11 +44,13 @@ protected:
 	USkillComponent* SkillComponent;
 
 protected:
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* AttackMontage;
+
+protected:
 	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
-
-private:
 	UPROPERTY(EditAnywhere)
 	float SpaceCoolTime = 5.f;
 	UPROPERTY(EditAnywhere)

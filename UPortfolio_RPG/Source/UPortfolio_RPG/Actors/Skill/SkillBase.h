@@ -11,17 +11,21 @@ class UPORTFOLIO_RPG_API USkillBase : public UObject
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void UseSkill() {}
+
 public:
 	UPROPERTY(EditAnywhere)
-	FName SkillName;
+	FName Sk_Name;
 	UPROPERTY(EditAnywhere)
-	float CoolTime;
+	FText Sk_Desc;
 	UPROPERTY(EditAnywhere)
-	float Damage;
+	float Sk_CoolTime;
 	UPROPERTY(EditAnywhere)
-	float ManaUsage;
+	float Sk_Damage;
 	UPROPERTY(EditAnywhere)
-	UTexture2D* SkillImage;
+	float Sk_ManaUsage;
 	UPROPERTY(EditAnywhere)
-	FText SkillDesc;
+	UTexture2D* Sk_Image;
+	
 };
