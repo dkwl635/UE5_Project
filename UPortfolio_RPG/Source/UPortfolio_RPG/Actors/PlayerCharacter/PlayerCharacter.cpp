@@ -9,6 +9,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
+#include "Actors/Animation/PlayerAnimInstance.h"
 
 
 // Sets default values
@@ -87,13 +88,18 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	if (bIsSpaceCool) { return; }
 	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);	// 회피 5초쿨
 	
-	const FVector ActorLocation = GetActorLocation();
-	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
-	const FVector Destination = ActorLocation + Direction * SpaceDistance;
-	GetController()->StopMovement();
-	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	SetActorRotation(NewRotation);
-	LaunchCharacter(Direction * SpaceDistance, true, true);
-
-	GetMesh()->PlayAnimation(SpaceMontage, false);
+	if (!bIsSpace)
+	{
+		bIsSpace = true;
+		const FVector ActorLocation = GetActorLocation();
+		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
+		const FVector Destination = ActorLocation + Direction * SpaceDistance;
+		GetController()->StopMovement();
+		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		SetActorRotation(NewRotation);
+		
+		LaunchCharacter(Direction * SpaceDistance, true, true);
+	}
+	auto SpaceDelegate = [this]() {bIsSpace = false; };
+	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.5f, false);
 }

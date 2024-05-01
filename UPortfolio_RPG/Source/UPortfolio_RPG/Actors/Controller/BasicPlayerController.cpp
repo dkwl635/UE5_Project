@@ -85,7 +85,7 @@ void ABasicPlayerController::OnSkill(const FInputActionValue& InputActionValue)
 void ABasicPlayerController::OnSpace()
 {
 	FHitResult Hit;
-	GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, true, Hit);
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	ensure(PlayerCharacter);
 	PlayerCharacter->OnSpace(Hit.Location);

@@ -44,10 +44,9 @@ protected:
 	USkillComponent* SkillComponent;
 
 protected:
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* SpaceMontage;
-
 	FTimerHandle SpaceCoolTimer;
+	FTimerHandle SpaceTimer;
+
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -56,5 +55,6 @@ private:
 	float SpaceDistance = 10000.f;
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = "Space")
 	bool bIsSpace = false;
 };

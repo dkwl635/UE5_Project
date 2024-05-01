@@ -5,13 +5,29 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
+UPlayerAnimInstance::UPlayerAnimInstance()
+{
+	Speed = 0.;
+	bIsSpace = false;
+}
+
+void UPlayerAnimInstance::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+	APawn* Pawn = TryGetPawnOwner();
+	if (::IsValid(Pawn))
+	{
+		Character = Cast<ACharacter>(Pawn);
+	}
+}
+
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	Pawn = TryGetPawnOwner();
-	if (IsValid(Pawn))
-	{
-		Speed = UKismetMathLibrary::VSize(Pawn->GetVelocity());
-	}
+	if (!Character)
+		return;
+	APlayerCharacter* Player = Cast<APlayerCharacter>(Character);
+	Speed = Player->GetVelocity().Length();
+	bIsSpace = Player->bIsSpace;
 }
