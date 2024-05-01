@@ -23,7 +23,7 @@ bool UPlayerInventorySubsystem::Init()
 	ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>();
 	ItemClass->UseItem(nullptr , nullptr);
 
-	AddItem( TEXT("HP100"), 10);
+	AddItem( TEXT("HP100"), 3);
 	//ItemClass->UseItem(nullptr, NormalInventory[0].Get());
 	return true;
 
@@ -242,6 +242,36 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 
 void UPlayerInventorySubsystem::ClearTempData()
 {
+}
+
+void UPlayerInventorySubsystem::UseItem(Inventory Inventory, int8 InventoryIndex , int8 count = 1)
+{
+	if (!Inventory || count <= 0)
+	{
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("UseItem : %d : %d") , InventoryIndex , count);
+	FItemData* data = (*Inventory)[InventoryIndex].Get();
+	if(!data)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UseItem__ : %s : %d"), *data->ItemName.ToString(), data->CurrentBundleCount);
+	int NewCount = (data->CurrentBundleCount - count);
+	if (NewCount <= 0)
+	{
+		(*Inventory)[InventoryIndex] = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("UseItem 00"));
+		GEngine->ForceGarbageCollection(true);
+	}
+	else
+	{
+		data->CurrentBundleCount = NewCount;
+	}
+
+
+	
 }
 
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)

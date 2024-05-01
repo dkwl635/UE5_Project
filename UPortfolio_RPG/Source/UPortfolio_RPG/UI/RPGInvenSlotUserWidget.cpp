@@ -2,11 +2,9 @@
 
 
 #include "UI/RPGInvenSlotUserWidget.h"
+#include "Item/PlayerInventorySubsystem.h"
 
-bool URPGInvenSlotUserWidget::bDragSlot = false;
-URPGInvenSlotUserWidget* URPGInvenSlotUserWidget::OnDragSlot = nullptr;
-int32 URPGInvenSlotUserWidget::DragStartIndex = -1;
-int32 URPGInvenSlotUserWidget::DragEndIndex = -1;
+
 
 void URPGInvenSlotUserWidget::SetSlot()
 {
@@ -34,6 +32,12 @@ void URPGInvenSlotUserWidget::SlotClear()
 
 void URPGInvenSlotUserWidget::RefreshUI()
 {
+	SlotRefresh();
+}
+
+
+void URPGInvenSlotUserWidget::SlotRefresh()
+{
 	if (!Inventory)
 		return;
 
@@ -48,40 +52,17 @@ void URPGInvenSlotUserWidget::RefreshUI()
 	{
 		SetSlot();
 	}
-
 }
 
-void URPGInvenSlotUserWidget::DragStart(URPGInvenSlotUserWidget* info)
-{
-	OnDragSlot = info;
-	bDragSlot = true;
-}
-
-bool URPGInvenSlotUserWidget::IsDrag()
-{
-	return bDragSlot;
-}
-
-void URPGInvenSlotUserWidget::DragEnd(URPGInvenSlotUserWidget* info)
+void URPGInvenSlotUserWidget::UseItem()
 {
 
-	bDragSlot = false;
-	OnDragSlot = nullptr;
+	GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>()->UseItem(Inventory, ItemIndex, 1);
+	SlotRefresh();
+
 }
 
-bool URPGInvenSlotUserWidget::IsInData()
-{
-	if(!Inventory || ItemIndex < 0)
-	{
-		return false;
-	}
 
-	FItemData* data = (*Inventory)[ItemIndex].Get();
-	if (data)
-	{
-		return true;
-	}
-	
-	return false;
-}
+
+
 

@@ -30,6 +30,7 @@ public :
 
 	void ClearTempData();
 
+	void UseItem(Inventory Inventory , int8 InventoryIndex, int8 Count);
 
 	//아이템 타입에 맞는 가방 리턴
 	Inventory GetInventory(EITEMTYPE ItemType);

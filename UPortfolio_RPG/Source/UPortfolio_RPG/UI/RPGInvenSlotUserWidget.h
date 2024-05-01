@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGUserWidget.h"
+#include "RPGSlotUserWidget.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Item/ItemData.h"
@@ -15,7 +15,7 @@
  */
 
 UCLASS()
-class UPORTFOLIO_RPG_API URPGInvenSlotUserWidget : public URPGUserWidget
+class UPORTFOLIO_RPG_API URPGInvenSlotUserWidget : public URPGSlotUserWidget
 {
 	GENERATED_BODY()
 
@@ -24,6 +24,9 @@ public:
 	void SetSlot(FItemData* data);
 	void SlotClear();
 	virtual	void RefreshUI() override;
+
+	// URPGSlotUserWidget을(를) 통해 상속됨
+	void SlotRefresh() override;
 
 
 public:
@@ -38,18 +41,11 @@ public:
 
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)	
 	int ItemIndex = -1;
-public:
 
-	static bool bDragSlot;	
-	static URPGInvenSlotUserWidget* OnDragSlot;
-	static int32 DragStartIndex;
-	static int32 DragEndIndex;
+public:
 	UFUNCTION(BlueprintCallable)
-	bool IsDrag();
-	UFUNCTION(BlueprintCallable)
-	void DragStart(URPGInvenSlotUserWidget* info);
-	UFUNCTION(BlueprintCallable)
-	void DragEnd(URPGInvenSlotUserWidget* info);
-	UFUNCTION(BlueprintCallable)
-	bool IsInData();
+	void UseItem();
+
+	
+
 };
