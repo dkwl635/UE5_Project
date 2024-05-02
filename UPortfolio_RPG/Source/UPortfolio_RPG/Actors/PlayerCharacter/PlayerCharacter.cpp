@@ -34,17 +34,17 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetupAttachment(GetRootComponent());
 	}
 	{
-		ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
+		static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
 		ensure(Anim.Class);
 		GetMesh()->SetAnimInstanceClass(Anim.Class);
 	}
 	{
-		ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Animations/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
 		ensure(Anim.Object);
 		AttackMontage = Anim.Object;
 	}
 	{
-		ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/Frank_Slash_Pack/Frank_RPG_Warrior/Animations/Frank_Warrior_IP/Warrior_Evade_F_IP_Montage.Warrior_Evade_F_IP_Montage'"));
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/AnimMontage_Evade.AnimMontage_Evade'"));
 		ensure(Anim.Object);
 		SpaceMontage = Anim.Object;
 	}
@@ -70,6 +70,8 @@ APlayerCharacter::APlayerCharacter()
 	SwordCollider->SetRelativeLocation(FVector(0., 0., 60.));
 	SwordCollider->SetRelativeScale3D(FVector(0.37, 0.37, 1.662500));
 	SwordCollider->bHiddenInGame = false;
+	SwordCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SwordCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 }
 
 // Called when the game starts or when spawned
@@ -99,11 +101,11 @@ void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
-	// 쿨타임 타이머
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
+	// 쿨타임 타이머
 	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
 	if (bIsSpaceCool) { return; }
 	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);// 회피 5초쿨
@@ -117,10 +119,12 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
 		const FVector Destination = ActorLocation + Direction * SpaceDistance;
 		GetController()->StopMovement();
+		FRotator CurrentRotation = GetActorRotation();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		NewRotation.Pitch = CurrentRotation.Pitch;
+		NewRotation.Roll = CurrentRotation.Roll;
 		SetActorRotation(NewRotation);
 		Animation->Montage_Play(SpaceMontage, 1.2f);
-		LaunchCharacter(Direction * SpaceDistance, true, true);
 	}
 	auto SpaceDelegate = [this]() { bIsSpace = false; };
 	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
