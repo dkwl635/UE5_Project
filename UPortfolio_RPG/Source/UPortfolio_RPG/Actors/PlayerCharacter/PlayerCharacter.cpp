@@ -9,6 +9,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
 
 
@@ -22,6 +23,7 @@ APlayerCharacter::APlayerCharacter()
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+		SwordCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollider"));
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
@@ -48,7 +50,7 @@ APlayerCharacter::APlayerCharacter()
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
-		SpringArmComponent->TargetArmLength = 1000.f;
+		SpringArmComponent->TargetArmLength = 800.f;
 		SpringArmComponent->bInheritPitch = false;
 		SpringArmComponent->bInheritRoll = false;
 		SpringArmComponent->bInheritYaw = false;
@@ -64,6 +66,10 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
+	SwordCollider->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
+	SwordCollider->SetRelativeLocation(FVector(0., 0., 60.));
+	SwordCollider->SetRelativeScale3D(FVector(0.37, 0.37, 1.662500));
+	SwordCollider->bHiddenInGame = false;
 }
 
 // Called when the game starts or when spawned
@@ -94,10 +100,16 @@ void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
 	// 쿨타임 타이머
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+
 	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
 	if (bIsSpaceCool) { return; }
-	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);	// 회피 5초쿨
-	
+	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);// 회피 5초쿨
+
+	GetController()->StopMovement();
+
 	if (!bIsSpace)
 	{
 		bIsSpace = true;
@@ -107,7 +119,7 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 		GetController()->StopMovement();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 		SetActorRotation(NewRotation);
-
+		Animation->Montage_Play(SpaceMontage, 1.2f);
 		LaunchCharacter(Direction * SpaceDistance, true, true);
 	}
 	auto SpaceDelegate = [this]() { bIsSpace = false; };
@@ -124,7 +136,10 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 		const FVector ActorLocation = GetActorLocation();
 		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
 		const FVector Destination = ActorLocation + Direction * SpaceDistance;
+		FRotator CurrentRotation = GetActorRotation();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		NewRotation.Pitch = CurrentRotation.Pitch;
+		NewRotation.Roll = CurrentRotation.Roll;
 		SetActorRotation(NewRotation);
 		Animation->Montage_Play(AttackMontage, 1.2f);
 	}

@@ -42,6 +42,8 @@ protected:
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	USkillComponent* SkillComponent;
+	UPROPERTY(EditAnywhere)
+	UCapsuleComponent* SwordCollider;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -61,4 +63,6 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")
 	bool bIsSpace = false;
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	bool bOnAttack = false;
 };

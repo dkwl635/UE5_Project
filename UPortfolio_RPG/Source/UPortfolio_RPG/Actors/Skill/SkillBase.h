@@ -3,16 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
 #include "SkillBase.generated.h"
 
 UCLASS()
-class UPORTFOLIO_RPG_API USkillBase : public UObject
+class UPORTFOLIO_RPG_API ASkillBase : public AActor
 {
 	GENERATED_BODY()
 	
 protected:
-	virtual void UseSkill() {}
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
 
 public:
 	UPROPERTY(EditAnywhere)

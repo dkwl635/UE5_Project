@@ -29,6 +29,7 @@ protected:
 	float HP = 100.f;
 	UPROPERTY()
 	float MP = 100.f;
-
+	UPROPERTY()
+	float AttackDamage = 100.f;
 		
 };

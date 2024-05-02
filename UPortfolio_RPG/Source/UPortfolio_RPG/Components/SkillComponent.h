@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SkillComponent.generated.h"
 
-class USkillBase;
+class ASkillBase;
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FSkillDataTableRow : public FTableRowBase
@@ -45,5 +45,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
-	TArray<TSubclassOf<USkillBase>> Skills;
+	TArray<TSubclassOf<ASkillBase>> Skills;
 };
