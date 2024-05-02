@@ -8,7 +8,7 @@
 UBTService_Detect::UBTService_Detect()
 {
 	NodeName = TEXT("Detect");
-	Interval = 1.f; //¼­ºñ½º°¡ ÀÛµ¿ÇÏ´Â ÁÖ±â
+	Interval = 1.f; //ï¿½ï¿½ï¿½ñ½º°ï¿½ ï¿½Ûµï¿½ï¿½Ï´ï¿½ ï¿½Ö±ï¿½
 }
 
 void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -20,35 +20,35 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.f;           //ÇÃ·¹ÀÌ¾î Å½Áö ¹üÀ§ º¯¼ö·Î »©°Å³ª, Å×ÀÌºí¿¡ ³Ö¾îµÎ°Ú½À´Ï´Ù.
+	float DetectRadius = 600.f;           //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½, ï¿½ï¿½ï¿½Ìºï¿½ï¿½ ï¿½Ö¾ï¿½Î°Ú½ï¿½ï¿½Ï´ï¿½.
 
 	if (nullptr == World) return;
 
-	//Å¸°Ù º¤ÅÍ·ÎÄÉÀÌ¼Ç
+	//Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
 	bool bResult = UKismetSystemLibrary::SphereTraceSingle(
 		GetWorld(),
 		Center,
-		Center + FVector(0.f, 0.f, 1.f), // ³¡Á¡À» ½ÃÀÛÁ¡¿¡¼­ ¾à°£ ³ôÀº ÁöÁ¡À¸·Î ¼³Á¤ÇÏ¿© ¶¥°úÀÇ Ãæµ¹À» ¹æÁöÇÕ´Ï´Ù.
+		Center + FVector(0.f, 0.f, 1.f), // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½à°£ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 		DetectRadius,
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //Ãæµ¹Ã¤³Î
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //ï¿½æµ¹Ã¤ï¿½ï¿½
 		false, //bTraceComplex
-		TArray<AActor*>(), //¹«½ÃÇÒ ¾×ÅÍµé
-		EDrawDebugTrace::ForDuration, //µð¹ö±× Æ®·¹ÀÌ½º
+		TArray<AActor*>(), //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Íµï¿½
+		EDrawDebugTrace::None, //ï¿½ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½Ì½ï¿½
 		HitResult,
 		true
 	);
 
-	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawnÀº ÇÃ·¹ÀÌ¾î(ACharacter)·Î ¹Ù²Ù±â
+	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawnï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½(ACharacter)ï¿½ï¿½ ï¿½Ù²Ù±ï¿½
 	{
-		// ÇÃ·¹ÀÌ¾î°¡ °¨ÁöµÇ¾úÀ» ¶§ÀÇ ÇÃ·¹ÀÌ¾î¸¦ µû¶ó°¡´Â µ¿ÀÛ ¼öÇà
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector(AEnemyAIController::TargetKey, HitResult.GetActor()->GetActorLocation()); //HitResult.Player(Ä³¸¯ÅÍ·Î ¹Ù²Ù±â)
+		// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ó°¡´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector(AEnemyAIController::TargetKey, HitResult.GetActor()->GetActorLocation()); //HitResult.Player(Ä³ï¿½ï¿½ï¿½Í·ï¿½ ï¿½Ù²Ù±ï¿½)
 		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
 	}
 	else
 	{
-		// ÇÃ·¹ÀÌ¾î¸¦ °¨ÁöÇÏÁö ¸øÇßÀ» ¶§ÀÇ µ¿ÀÛ ¼öÇà
+		// ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		OwnerComp.GetBlackboardComponent()->ClearValue(AEnemyAIController::TargetKey);
 		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
 	}

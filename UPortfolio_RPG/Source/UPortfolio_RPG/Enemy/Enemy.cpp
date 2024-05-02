@@ -13,7 +13,7 @@ AEnemy::AEnemy()
     //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
     Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-    Movement->MaxSpeed = 300.0f;                  ///¸ó½ºÅÍ ¼Óµµ Á¶Àý
+    Movement->MaxSpeed = 300.0f;                  ///ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
@@ -44,21 +44,21 @@ void AEnemy::Tick(float DeltaTime)
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (PlayerController)
     {
-        // ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍÀÇ À§Ä¡ °¡Á®¿À±â
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
 
-        // ¸ó½ºÅÍÀÇ À§Ä¡ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FVector MonsterLocation = GetActorLocation();
 
-        // ÇÃ·¹ÀÌ¾î¸¦ ÇâÇÏ´Â º¤ÅÍ °è»ê
+        // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
-        DirectionToPlayer.Z = 0.f; // Z Ãà °ªÀº ¹«½ÃÇÏ¿© ¼öÆò ¹æÇâÀ¸·Î¸¸ È¸ÀüÇÏµµ·Ï ÇÔ
+        DirectionToPlayer.Z = 0.f; // Z ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ È¸ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½
 
-        // ¸ñÇ¥ È¸Àü°ª °è»ê
+        // ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
-        MonsterRotation.Yaw -= 90.0f; //ÇÃ·¹ÀÌ¾î¿Í Ãà¹æÇâÀÌ ¸Â´Â È¸Àü °ªÀ» ³Ö¾îÁà¾ßÇÔ
+        MonsterRotation.Yaw -= 90.0f; //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // ¸ñÇ¥ È¸Àü°ª Àû¿ë
+        // ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         SetActorRotation(MonsterRotation);
     }
 }
