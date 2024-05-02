@@ -1,5 +1,8 @@
 #include "UI/Slot/QuickItemSlotData.h"
 #include "UI/Slot/InventorySlotData.h"
+#include "UI/RPGQuickSlotUserWidget.h"
+#include "Item/ItemEnum.h"
+#include "Item/ItemData.h"
 
 UQuickItemSlotData::UQuickItemSlotData()
 {
@@ -49,7 +52,7 @@ bool UQuickItemSlotData::NormalUse()
 
 void UQuickItemSlotData::SetSlotData(UInventorySlotData* Data)
 {
-	InventoryItemIndex = Data->ItemIndex;
+	InventoryItemIndex = Data->SlotIndex;
 	
 }
 

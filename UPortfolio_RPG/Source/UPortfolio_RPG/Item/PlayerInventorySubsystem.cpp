@@ -2,9 +2,9 @@
 
 
 #include "Item/PlayerInventorySubsystem.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Item/Item.h"
-
+#include "DataSubsystem/DataSubsystem.h"
+#include "UI/RPGSlotUserWidget.h"
+#include "Item.h"
 
 
 bool UPlayerInventorySubsystem::Init()
@@ -277,6 +277,11 @@ void UPlayerInventorySubsystem::UseItem(Inventory Inventory, int8 InventoryIndex
 
 FItemData* UPlayerInventorySubsystem::GetItemInfo(Inventory Inventory, int8 InventoryIndex)
 {
+	if(InventoryIndex < 0 || !Inventory)
+	{
+		return nullptr;
+	}
+
 	return (*Inventory)[InventoryIndex].Get();
 }
 

@@ -2,7 +2,8 @@
 
 
 #include "UI/Slot/InventorySlotData.h"
-
+#include "Item/PlayerInventorySubsystem.h"
+#include "Item/ItemData.h"
 
 UInventorySlotData::UInventorySlotData()
 {

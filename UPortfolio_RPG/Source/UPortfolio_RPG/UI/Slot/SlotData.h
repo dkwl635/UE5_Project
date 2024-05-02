@@ -1,10 +1,10 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/World.h"
-#include "Item/PlayerInventorySubsystem.h"
+
 #include "SlotData.generated.h"
 
-
+typedef  TArray<TSharedPtr<FItemData>>* Inventory;
 UCLASS()
 class UPORTFOLIO_RPG_API USlotData : public UObject
 {
@@ -12,7 +12,7 @@ class UPORTFOLIO_RPG_API USlotData : public UObject
 
 public:
 	static  TWeakObjectPtr<UWorld> SlotWorld;
-	static TWeakObjectPtr<UPlayerInventorySubsystem> InventorySubsystem;
+	static TWeakObjectPtr<class UPlayerInventorySubsystem> InventorySubsystem;
 	static void ClearStaticMember();
 public:
 	USlotData();

@@ -3,6 +3,7 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Slot/SlotData.h"
 #include "Slot/InventorySlotData.h"
+#include	"Item/ItemEnum.h"
 
 void URPGInventoryUserWidget::Init()
 {
@@ -40,7 +41,7 @@ void URPGInventoryUserWidget::Init()
 			else
 			{
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
-				InvenSlotData->ItemIndex = k + i * Col;
+				InvenSlotData->SlotIndex = k + i * Col;
 				InvenSlotData->Inventory = GearInvetory;
 				GearSlots.Add(Widget);
 				Widget->SetSlot();
@@ -65,7 +66,7 @@ void URPGInventoryUserWidget::Init()
 			else
 			{
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
-				InvenSlotData->ItemIndex = k + i * Col;
+				InvenSlotData->SlotIndex = k + i * Col;
 				InvenSlotData->Inventory = NormalInvetory;
 				NormalSlots.Add(Widget);
 				Widget->SetSlot();

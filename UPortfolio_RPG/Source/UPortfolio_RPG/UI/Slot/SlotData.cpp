@@ -2,6 +2,7 @@
 
 
 #include "UI/Slot/SlotData.h"
+#include "Item/PlayerInventorySubsystem.h"
 
 TWeakObjectPtr<UWorld> USlotData::SlotWorld = nullptr;
 TWeakObjectPtr<UPlayerInventorySubsystem> USlotData::InventorySubsystem = nullptr;

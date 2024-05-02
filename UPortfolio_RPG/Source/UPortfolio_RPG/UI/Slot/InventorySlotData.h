@@ -3,8 +3,6 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SlotData.h"
-#include "Item/PlayerInventorySubsystem.h"
-#include "Item/ItemData.h"
 #include "InventorySlotData.generated.h"
 
 /**
@@ -24,10 +22,10 @@ public:
 	bool NormalUse() override;
 
 
-	Inventory Inventory;
+	 Inventory Inventory;
 
 
-	int ItemIndex = -1;
+
 
 	//서로 상호작용이되는 
 	int8 QuickSlotIndex = -1;

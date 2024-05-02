@@ -1,11 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "DataSubsystem/DataSubsystem.h"
-#include "Item.h"
 #include "PlayerInventorySubsystem.generated.h"
 
 /**
@@ -45,6 +42,10 @@ private:
 	const int8 MaxInvenSize = 60;
 	TArray<TSharedPtr<FItemData>> GearInventory;
 	TArray<TSharedPtr<FItemData>> NormalInventory;
+
+	class URPGSlotUserWidget;
+	TArray<TSharedPtr<URPGSlotUserWidget>> GearSlots;
+	TArray<TSharedPtr<URPGSlotUserWidget>> NormalSlots;
 	
 public:
 

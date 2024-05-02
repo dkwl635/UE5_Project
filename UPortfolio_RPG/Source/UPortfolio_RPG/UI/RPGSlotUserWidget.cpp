@@ -5,6 +5,7 @@
 #include "Slot/SlotData.h"
 #include "Slot/InventorySlotData.h"
 #include "Slot/QuickItemSlotData.h"
+#include "Item/ItemData.h"
 
 UUserWidget* URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
 
