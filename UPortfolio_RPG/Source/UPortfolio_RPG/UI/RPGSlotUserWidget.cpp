@@ -17,16 +17,12 @@ void URPGSlotUserWidget::InitSlot()
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
 		SlotData = MakeShared<FInventorySlotData>(*(new FInventorySlotData()));
-
-	
 		break;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
-		SlotData = MakeShared<FInventorySlotData>(*(new FInventorySlotData()));
-
-		
-	//	break;
+		SlotData = MakeShared<FInventorySlotData>(*(new FInventorySlotData()));	
+		break;
 	}
 	default:
 		break;
@@ -61,6 +57,13 @@ void URPGSlotUserWidget::SetSlot()
 		SlotImg->SetBrushFromTexture(newImg);
 	}
 	
+
+}
+
+bool URPGSlotUserWidget::IsInValid()
+{
+	if (!GetSlotData()) { return false; }
+	return GetSlotData()->IsValid();
 
 }
 

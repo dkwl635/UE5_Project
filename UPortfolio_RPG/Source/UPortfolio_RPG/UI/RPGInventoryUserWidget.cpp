@@ -17,9 +17,6 @@ void URPGInventoryUserWidget::Init()
 	}
 	Inventory GearInvetory = Inven->GetInventory(EITEMTYPE::GEAR);
 	Inventory NormalInvetory = Inven->GetInventory(EITEMTYPE::POTION);
-	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), Row, Col);
-	
-	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
 
 	if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
 	{

@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "Item/ItemData.h"
 #include "InventorySlotData.generated.h"
 
 /**
@@ -22,7 +23,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ItemIndex = -1;
 
+
+
 	// USlotData을(를) 통해 상속됨
+	bool IsValid() override;
 	UTexture2D* GetSlotImg() override;
 	bool NormalUse() override;
+
+	
+	//서로 상호작용이되는 슬롯들
+
 };

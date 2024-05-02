@@ -18,6 +18,8 @@ enum class  ERPGSLOTTYPE : uint8
 	INVENTORY_GEAR, //인벤토리창 슬롯
 	INVENTORY_NORMARL, //인벤토리창 슬롯
 
+	QUICK_ITEM,			//퀵아이템 슬롯
+
 };
 
 UCLASS()
@@ -29,9 +31,14 @@ public:
 	void InitSlot();
 	~URPGSlotUserWidget();
 
+
+	int32 TestInt = 0;
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetSlot();
+
+	UFUNCTION(BlueprintCAllable)
+	bool IsInValid();
 
 	UFUNCTION(BlueprintCallable)
 	bool UseSlot();

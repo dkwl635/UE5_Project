@@ -8,6 +8,11 @@ FSlotData::FSlotData()
 {
 }
 
+bool FSlotData::IsValid()
+{
+    return false;
+}
+
 UTexture2D* FSlotData::GetSlotImg()
 {
     return nullptr;

@@ -15,6 +15,7 @@ enum class ERPG_UI : uint8
 {
 	NONE,
 	INVENTORY,
+	QUICKSLOTS,
 };
 
 USTRUCT(BlueprintType)

@@ -18,6 +18,9 @@ public:
 	int32 SlotIndex;
 
 public :
+	//데이터가 유효 체크
+	virtual bool IsValid();
+
 	virtual UTexture2D* GetSlotImg();
 	 //더블클릭 사용시
 	virtual bool NormalUse();	
