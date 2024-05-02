@@ -46,15 +46,17 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* AttackMontage;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* SpaceMontage;
 
 protected:
 	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
 	UPROPERTY(EditAnywhere)
-	float SpaceCoolTime = 5.f;
+	float SpaceCoolTime = 2.f;
 	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 10000.f;
+	float SpaceDistance = 12000.f;
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")

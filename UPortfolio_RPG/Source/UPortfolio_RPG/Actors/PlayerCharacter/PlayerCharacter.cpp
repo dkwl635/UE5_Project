@@ -32,14 +32,19 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetupAttachment(GetRootComponent());
 	}
 	{
-		static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
+		ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
 		ensure(Anim.Class);
 		GetMesh()->SetAnimInstanceClass(Anim.Class);
 	}
 	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Animations/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
+		ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Animations/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
 		ensure(Anim.Object);
 		AttackMontage = Anim.Object;
+	}
+	{
+		ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/AddContent/Frank_Slash_Pack/Frank_RPG_Warrior/Animations/Frank_Warrior_IP/Warrior_Evade_F_IP_Montage.Warrior_Evade_F_IP_Montage'"));
+		ensure(Anim.Object);
+		SpaceMontage = Anim.Object;
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
@@ -102,23 +107,25 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 		GetController()->StopMovement();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 		SetActorRotation(NewRotation);
-		
+
 		LaunchCharacter(Direction * SpaceDistance, true, true);
 	}
-	auto SpaceDelegate = [this]() {bIsSpace = false; };
-	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.5f, false);
+	auto SpaceDelegate = [this]() { bIsSpace = false; };
+	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 {
-	const FVector ActorLocation = GetActorLocation();
-	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
-	const FVector Destination = ActorLocation + Direction * SpaceDistance;
-	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	SetActorRotation(NewRotation);
-
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if(AttackMontage)
-		Animation->Montage_Play(AttackMontage,1.2f);
+	{
+		if (Animation->Montage_IsPlaying(nullptr)) { return; }
+		const FVector ActorLocation = GetActorLocation();
+		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
+		const FVector Destination = ActorLocation + Direction * SpaceDistance;
+		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+		SetActorRotation(NewRotation);
+		Animation->Montage_Play(AttackMontage, 1.2f);
+	}
 }
