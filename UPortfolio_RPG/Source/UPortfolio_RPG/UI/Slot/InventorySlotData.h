@@ -18,19 +18,17 @@ class UPORTFOLIO_RPG_API UInventorySlotData : public USlotData
 public:
 	UInventorySlotData();
 
-	Inventory Inventory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ItemIndex = -1;
-
-
-
 	// USlotData을(를) 통해 상속됨
 	bool IsValid() override;
 	UTexture2D* GetSlotImg() override;
 	bool NormalUse() override;
 
-	
-	//서로 상호작용이되는 슬롯들
 
+	Inventory Inventory;
+
+
+	int ItemIndex = -1;
+
+	//서로 상호작용이되는 
+	int8 QuickSlotIndex = -1;
 };

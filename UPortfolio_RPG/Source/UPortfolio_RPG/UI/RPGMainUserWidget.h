@@ -24,10 +24,13 @@ struct FRPGUI
 	GENERATED_BODY()
 
 public:
+	//종류
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ERPG_UI UIType;
+	//만들어야 하는거
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<URPGUserWidget> UIClass;
+
 }; 
 
 
@@ -58,6 +61,10 @@ public:
 public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FRPGUI> UICreatList;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	URPGUserWidget* QuickSlotUI;
+	
 
 	
 private:

@@ -3,7 +3,13 @@
 
 #include "UI/Slot/SlotData.h"
 
-TWeakObjectPtr<UWorld> USlotData::World = nullptr;
+TWeakObjectPtr<UWorld> USlotData::SlotWorld = nullptr;
+TWeakObjectPtr<UPlayerInventorySubsystem> USlotData::InventorySubsystem = nullptr;
+void USlotData::ClearStaticMember()
+{
+    SlotWorld = nullptr;
+    InventorySubsystem = nullptr;
+}
 USlotData::USlotData()
 {
 }

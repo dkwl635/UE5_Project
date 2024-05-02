@@ -30,7 +30,7 @@ void URPGInventoryUserWidget::Init()
 			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
 			ensure(Widget);
 			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
-			Widget->InitSlot();
+			Widget->Init();
 			GearBox->AddChildToUniformGrid(Widget, i, k);	
 			auto slotData = Widget->GetSlotData();
 			if (!slotData)
@@ -55,7 +55,7 @@ void URPGInventoryUserWidget::Init()
 			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
 			ensure(Widget);
 			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
-			Widget->InitSlot();
+			Widget->Init();
 			NormalBox->AddChildToUniformGrid(Widget, i, k);
 			auto slotData = Widget->GetSlotData();
 			if (!slotData)

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class UPORTFOLIO_RPG_API URPGUserWidget : public UUserWidget
 {
 	GENERATED_BODY()

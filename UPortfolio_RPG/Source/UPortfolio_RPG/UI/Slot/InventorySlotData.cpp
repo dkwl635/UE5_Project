@@ -10,27 +10,38 @@ UInventorySlotData::UInventorySlotData()
 
 bool UInventorySlotData::IsValid()
 {
-	if (!Inventory) { return false; }
-	if (ItemIndex < 0) { return false; }
-	FItemData* ItemData = (*Inventory)[ItemIndex].Get();
-	if (!ItemData) { return false; }
+	bool bValid = true;
 
-	return true;
+	if (!Inventory) { bValid = false; }
+	if (SlotIndex < 0) { bValid =  false; }
+	FItemData* ItemData = (*Inventory)[SlotIndex].Get();
+	if (!ItemData) { bValid =  false; }
+
+	if (!bValid)
+	{
+		QuickSlotIndex = -1;
+	}
+	return bValid;
 }
 
 UTexture2D* UInventorySlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 	
-	FItemData* ItemData = (*Inventory)[ItemIndex].Get();
+	FItemData* ItemData = (*Inventory)[SlotIndex].Get();
 	return ItemData->ItemImage;
 }
 
 bool UInventorySlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
-	if (!World.Get()) { return false; }
-	World->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>()->UseItem(Inventory, ItemIndex, 1);
+	if (!InventorySubsystem.Get()) { return false; }
+
+	InventorySubsystem->UseItem(Inventory, SlotIndex, 1);
+	if (QuickSlotIndex >= 0)
+	{
+		InventorySubsystem->QuickSlotRefresh(QuickSlotIndex);
+	}
 
 	return true;
 }

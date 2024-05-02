@@ -22,17 +22,17 @@ enum class  ERPGSLOTTYPE : uint8
 
 };
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	void InitSlot();
+	void Init() override;
 	~URPGSlotUserWidget();
 
 
-	int32 TestInt = 0;
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetSlot();

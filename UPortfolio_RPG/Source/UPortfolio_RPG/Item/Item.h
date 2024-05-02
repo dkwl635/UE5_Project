@@ -12,7 +12,6 @@ UCLASS()
 class UPORTFOLIO_RPG_API UItem : public UObject
 {
 	GENERATED_BODY()
-
 public:
 	friend class UDataSubsystem;
 private:
@@ -27,6 +26,8 @@ private:
 
 public:
 	
+
+
 	bool UseItem(AActor* Target , FItemData* ItemData);
 
 private:

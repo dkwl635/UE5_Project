@@ -14,13 +14,13 @@ bool UItem::UseItem(AActor* Target, FItemData* ItemData)
 	{
 		return false;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("My Name: %s"), *ItemData->ItemName.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("My Item: %s"), *ItemData->ItemName.ToString());
 	if (ItemData->ItemType == EITEMTYPE::POTION)
 	{
 		return	 UsePotion(GetPotionData(ItemData->StatusData.RowName));
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("My Name:"));
+	
 	return false;
 }
 
@@ -30,6 +30,7 @@ FPotionData* UItem::GetPotionData(FName Name)
 	if (!PotionDatas.Contains(Name))
 	{
 		FPotionData* GetData = DataSubsystem->FindPotionData(Name);
+		UE_LOG(LogTemp, Warning, TEXT("NewItemData: %s"), *Name.ToString());
 		PotionDatas.Add(Name, GetData);		
 	}
 

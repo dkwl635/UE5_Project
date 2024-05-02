@@ -22,7 +22,6 @@ bool UPlayerInventorySubsystem::Init()
 
 
 	ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>();
-	ItemClass->UseItem(nullptr , nullptr);
 
 	AddItem( TEXT("HP100"), 3);
 	AddItem( TEXT("HP200"), 3);
@@ -265,15 +264,20 @@ void UPlayerInventorySubsystem::UseItem(Inventory Inventory, int8 InventoryIndex
 	{
 		(*Inventory)[InventoryIndex] = nullptr;
 		UE_LOG(LogTemp, Warning, TEXT("UseItem 00"));
-		GEngine->ForceGarbageCollection(true);
 	}
 	else
 	{
 		data->CurrentBundleCount = NewCount;
 	}
 
-
+	ItemClass->UseItem(nullptr, data);
+	GEngine->ForceGarbageCollection(true);
 	
+}
+
+FItemData* UPlayerInventorySubsystem::GetItemInfo(Inventory Inventory, int8 InventoryIndex)
+{
+	return (*Inventory)[InventoryIndex].Get();
 }
 
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)
@@ -286,6 +290,11 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 	{
 		return &NormalInventory;
 	}
+
+}
+
+void UPlayerInventorySubsystem::QuickSlotRefresh(int8 QuickSlotIndex)
+{
 
 }
 

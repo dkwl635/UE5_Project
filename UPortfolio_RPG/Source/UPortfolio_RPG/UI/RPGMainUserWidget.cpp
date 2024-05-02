@@ -22,8 +22,9 @@ void URPGMainUserWidget::Init()
         }
 
         RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
-
     }
+
+    QuickSlotUI->Init();
 
 
 }
@@ -33,10 +34,6 @@ URPGMainUserWidget::~URPGMainUserWidget()
     if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
     {
         URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
-    }
-
-    if (USlotData::World.Get()) {
-        USlotData::World = nullptr;
     }
 
     RPGUIMap.Empty();

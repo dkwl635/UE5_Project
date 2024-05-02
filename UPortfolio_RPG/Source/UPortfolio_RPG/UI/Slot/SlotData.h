@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/World.h"
+#include "Item/PlayerInventorySubsystem.h"
 #include "SlotData.generated.h"
 
 
@@ -10,8 +11,9 @@ class UPORTFOLIO_RPG_API USlotData : public UObject
 	GENERATED_BODY()
 
 public:
-	static  TWeakObjectPtr<UWorld> World;
-
+	static  TWeakObjectPtr<UWorld> SlotWorld;
+	static TWeakObjectPtr<UPlayerInventorySubsystem> InventorySubsystem;
+	static void ClearStaticMember();
 public:
 	USlotData();
 	int32 SlotIndex;

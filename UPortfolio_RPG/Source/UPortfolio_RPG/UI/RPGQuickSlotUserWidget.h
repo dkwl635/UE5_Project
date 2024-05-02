@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UI/RPGUserWidget.h"
 #include "RPGSlotUserWidget.h"
+#include "Item/PlayerInventorySubsystem.h"
+#include "Components/CanvasPanel.h"
 #include "RPGQuickSlotUserWidget.generated.h"
 
 /**
@@ -18,11 +20,21 @@ class UPORTFOLIO_RPG_API URPGQuickSlotUserWidget : public URPGUserWidget
 public:
 	virtual void Init();
 
-	//아이템 슬롯
-	UPROPERTY(EditAnywhere , BlueprintReadWrite)
-	TArray<URPGSlotUserWidget*> QuickItemSlots;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UCanvasPanel* CanvasPanel;
 
 
+	//ex) 1번 퀵슬롯의 슬로UI연결
+	TMap<int8, URPGSlotUserWidget*> QuickSlotsIndex;
+	//ex)1번 퀵슬롯 인벤토리 넘버와 연결
+	TMap<int8, int8 > QuickIndexInvenIndex;
+
+
+
+public:
+	void SetSlot(URPGSlotUserWidget* InvetorySlotInfo);
+
+	void UseQuickSlot(int8 SlotIndex);
 
 
 };
