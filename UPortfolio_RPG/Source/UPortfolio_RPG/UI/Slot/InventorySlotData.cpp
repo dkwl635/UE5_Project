@@ -4,11 +4,11 @@
 #include "UI/Slot/InventorySlotData.h"
 
 
-FInventorySlotData::FInventorySlotData()
+UInventorySlotData::UInventorySlotData()
 {
 }
 
-bool FInventorySlotData::IsValid()
+bool UInventorySlotData::IsValid()
 {
 	if (!Inventory) { return false; }
 	if (ItemIndex < 0) { return false; }
@@ -18,7 +18,7 @@ bool FInventorySlotData::IsValid()
 	return true;
 }
 
-UTexture2D* FInventorySlotData::GetSlotImg()
+UTexture2D* UInventorySlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 	
@@ -26,10 +26,10 @@ UTexture2D* FInventorySlotData::GetSlotImg()
 	return ItemData->ItemImage;
 }
 
-bool FInventorySlotData::NormalUse()
+bool UInventorySlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
-	if (!World) { return false; }
+	if (!World.Get()) { return false; }
 	World->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>()->UseItem(Inventory, ItemIndex, 1);
 
 	return true;

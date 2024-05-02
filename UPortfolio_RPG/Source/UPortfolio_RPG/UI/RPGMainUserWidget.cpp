@@ -2,6 +2,8 @@
 
 
 #include "UI/RPGMainUserWidget.h"
+#include "UI/RPGSlotUserWidget.h"
+#include "UI/Slot/SlotData.h"
 
 
 void URPGMainUserWidget::Init()
@@ -24,6 +26,20 @@ void URPGMainUserWidget::Init()
     }
 
 
+}
+
+URPGMainUserWidget::~URPGMainUserWidget()
+{
+    if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
+    {
+        URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
+    }
+
+    if (USlotData::World.Get()) {
+        USlotData::World = nullptr;
+    }
+
+    RPGUIMap.Empty();
 }
 
 void URPGMainUserWidget::ShowUI(UUserWidget* UserWidget)

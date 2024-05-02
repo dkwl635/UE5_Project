@@ -44,6 +44,7 @@ private:
 private:
 
 	virtual void Init();
+	~URPGMainUserWidget();
 
 public:
 	UFUNCTION(BlueprintCallable)

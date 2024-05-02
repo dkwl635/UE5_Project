@@ -1,23 +1,23 @@
 #include "UI/Slot/QuickItemSlotData.h"
 
 
-FQuickItemSlotData::FQuickItemSlotData()
+UQuickItemSlotData::UQuickItemSlotData()
 {
 }
 
-bool FQuickItemSlotData::IsValid()
+bool UQuickItemSlotData::IsValid()
 {
 	
 	return true;
 }
 
-UTexture2D* FQuickItemSlotData::GetSlotImg()
+UTexture2D* UQuickItemSlotData::GetSlotImg()
 {
 	return nullptr;
 	
 }
 
-bool FQuickItemSlotData::NormalUse()
+bool UQuickItemSlotData::NormalUse()
 {
 
 

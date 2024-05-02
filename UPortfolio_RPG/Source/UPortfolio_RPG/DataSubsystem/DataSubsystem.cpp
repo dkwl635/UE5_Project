@@ -44,7 +44,7 @@ void UDataSubsystem::Init()
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
 	}
 
-	FSlotData::World = GetWorld();
+	USlotData::World = GetWorld();
 	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
 		bInit = true;
 }

@@ -4,13 +4,13 @@
 
 #include "QuickItemSlotData.generated.h"
 
-USTRUCT(BlueprintType)
-struct UPORTFOLIO_RPG_API FQuickItemSlotData : public FSlotData
+UCLASS()
+class UPORTFOLIO_RPG_API UQuickItemSlotData : public USlotData
 {
 	GENERATED_BODY()
 
 public:
-	FQuickItemSlotData();
+	UQuickItemSlotData();
 
 	// USlotData을(를) 통해 상속됨
 	bool IsValid() override;

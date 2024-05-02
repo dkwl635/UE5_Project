@@ -39,7 +39,7 @@ void URPGInventoryUserWidget::Init()
 			}
 			else
 			{
-				FInventorySlotData* InvenSlotData = (FInventorySlotData*)slotData;
+				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->ItemIndex = k + i * Col;
 				InvenSlotData->Inventory = GearInvetory;
 				GearSlots.Add(Widget);
@@ -64,7 +64,7 @@ void URPGInventoryUserWidget::Init()
 			}
 			else
 			{
-				FInventorySlotData* InvenSlotData = (FInventorySlotData*)slotData;
+				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->ItemIndex = k + i * Col;
 				InvenSlotData->Inventory = NormalInvetory;
 				NormalSlots.Add(Widget);

@@ -10,13 +10,13 @@
 /**
  * 
  */
-USTRUCT(BlueprintType)
-struct UPORTFOLIO_RPG_API FInventorySlotData : public FSlotData
+UCLASS()
+class UPORTFOLIO_RPG_API UInventorySlotData : public USlotData
 {
 	GENERATED_BODY()
 
 public:
-	FInventorySlotData();
+	UInventorySlotData();
 
 	Inventory Inventory;
 

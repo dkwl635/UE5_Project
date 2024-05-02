@@ -63,8 +63,10 @@ public :
 	UUserWidget* GetDragUserWidget();
 
 public:
-	TSharedPtr<FSlotData> SlotData;
-	FSlotData* GetSlotData();
+	UPROPERTY()
+	USlotData* SlotData;
+
+	USlotData* GetSlotData();
 
 public:
 	

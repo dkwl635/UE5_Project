@@ -16,12 +16,14 @@ void URPGSlotUserWidget::InitSlot()
 		break;
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
-		SlotData = MakeShared<FInventorySlotData>(*(new FInventorySlotData()));
+	//	SlotData = MakeShared<UInventorySlotData>(*(new UInventorySlotData()));
+		SlotData = NewObject<UInventorySlotData>();
+
 		break;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
-		SlotData = MakeShared<FInventorySlotData>(*(new FInventorySlotData()));	
+		SlotData = NewObject<UInventorySlotData>();
 		break;
 	}
 	default:
@@ -40,13 +42,17 @@ void URPGSlotUserWidget::InitSlot()
 URPGSlotUserWidget::~URPGSlotUserWidget()
 {
 	SlotData = nullptr;
+
+	int a = 1;
+
+	
 }
 
 void URPGSlotUserWidget::SetSlot()
 {
 
 
-	UTexture2D* newImg = SlotData.Get()->GetSlotImg();
+	UTexture2D* newImg = SlotData->GetSlotImg();
 	if (!newImg)
 	{
 		SlotImg->SetVisibility(ESlateVisibility::Hidden);
@@ -87,9 +93,9 @@ UUserWidget* URPGSlotUserWidget::GetDragUserWidget()
 	return DragUserWidgetPonter;
 }
 
-FSlotData* URPGSlotUserWidget::GetSlotData()
+USlotData* URPGSlotUserWidget::GetSlotData()
 {
-	return SlotData.Get();
+	return SlotData;
 }
 
 void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
@@ -113,8 +119,8 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("(StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)"));
 		
-		FInventorySlotData* thisSlotData = (FInventorySlotData*)GetSlotData();
-		FInventorySlotData* StartSlotData = (FInventorySlotData*)StarDataData->GetSlotData();
+		UInventorySlotData* thisSlotData = (UInventorySlotData*)GetSlotData();
+		UInventorySlotData* StartSlotData = (UInventorySlotData*)StarDataData->GetSlotData();
 		
 		TSharedPtr<FItemData>& thisItemData = (*thisSlotData->Inventory)[thisSlotData->ItemIndex];
 		TSharedPtr<FItemData>& StartItemData = (*StartSlotData->Inventory)[StartSlotData->ItemIndex];

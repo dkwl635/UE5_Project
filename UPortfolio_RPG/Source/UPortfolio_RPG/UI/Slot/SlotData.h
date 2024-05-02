@@ -2,19 +2,18 @@
 #include "CoreMinimal.h"
 #include "Engine/World.h"
 #include "SlotData.generated.h"
-/**
- * 
- */
-USTRUCT(BlueprintType)
-struct UPORTFOLIO_RPG_API FSlotData 
+
+
+UCLASS()
+class UPORTFOLIO_RPG_API USlotData : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	static UWorld* World;
+	static  TWeakObjectPtr<UWorld> World;
 
 public:
-	FSlotData();
+	USlotData();
 	int32 SlotIndex;
 
 public :

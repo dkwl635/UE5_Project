@@ -3,34 +3,34 @@
 
 #include "UI/Slot/SlotData.h"
 
-UWorld* FSlotData::World = nullptr;
-FSlotData::FSlotData()
+TWeakObjectPtr<UWorld> USlotData::World = nullptr;
+USlotData::USlotData()
 {
 }
 
-bool FSlotData::IsValid()
+bool USlotData::IsValid()
 {
     return false;
 }
 
-UTexture2D* FSlotData::GetSlotImg()
+UTexture2D* USlotData::GetSlotImg()
 {
     return nullptr;
 }
 
 
 
-bool FSlotData::NormalUse()
+bool USlotData::NormalUse()
 {
     return false;
 }
 
-bool FSlotData::QuickUse()
+bool USlotData::QuickUse()
 {
     return false;
 }
 
-bool FSlotData::SpecialUse()
+bool USlotData::SpecialUse()
 {
     return false;
 }
