@@ -18,4 +18,6 @@ class UPORTFOLIO_RPG_API URPGUserWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void RefreshUI();
+	UFUNCTION(BlueprintCallable)
+	virtual void Init();
 };

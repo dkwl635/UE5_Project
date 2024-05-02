@@ -39,10 +39,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryBtn;
 
-	
 
 private:
-	virtual void NativeConstruct();
+
+	virtual void Init();
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void ShowUI(UUserWidget* UserWidget);

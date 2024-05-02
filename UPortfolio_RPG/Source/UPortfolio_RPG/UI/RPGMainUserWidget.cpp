@@ -4,14 +4,14 @@
 #include "UI/RPGMainUserWidget.h"
 
 
-
-void URPGMainUserWidget::NativeConstruct()
+void URPGMainUserWidget::Init()
 {
-    Super::NativeConstruct();
 
     for (int i = 0; i < UICreatList.Num(); i++)
     {
         UUserWidget* NewUserWidget = CreateWidget(GetWorld(), UICreatList[i].UIClass);
+        URPGUserWidget* UI = (URPGUserWidget*)NewUserWidget;
+        UI->Init();
 
         if (RPGUIMap.Contains(UICreatList[i].UIType))
         {
@@ -22,7 +22,7 @@ void URPGMainUserWidget::NativeConstruct()
         RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
 
     }
-    
+
 
 }
 

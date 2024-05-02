@@ -4,10 +4,8 @@
 #include "Slot/SlotData.h"
 #include "Slot/InventorySlotData.h"
 
-void URPGInventoryUserWidget::NativeConstruct()
+void URPGInventoryUserWidget::Init()
 {
-	Super::NativeConstruct();
-
 	//return;
 	int32 Col = InvenSlotSizeX;
 	int32 Row = InvenSlotSizeY;
@@ -22,6 +20,11 @@ void URPGInventoryUserWidget::NativeConstruct()
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), Row, Col);
 	
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
+
+	if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
+	{
+		URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
+	}
 
 	for (int32 i = 0; i < Row; i++)
 	{
@@ -73,6 +76,8 @@ void URPGInventoryUserWidget::NativeConstruct()
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
+	
+	
 }
 
 void URPGInventoryUserWidget::RefreshUI()

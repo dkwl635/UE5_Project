@@ -6,3 +6,7 @@
 void URPGUserWidget::RefreshUI()
 {
 }
+
+void URPGUserWidget::Init()
+{
+}

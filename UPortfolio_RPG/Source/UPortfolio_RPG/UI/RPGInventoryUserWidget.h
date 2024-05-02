@@ -19,7 +19,7 @@ class UPORTFOLIO_RPG_API URPGInventoryUserWidget : public URPGUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual void NativeConstruct() override;
+	virtual void Init() override;
 	
 public:
 	virtual void RefreshUI() override;

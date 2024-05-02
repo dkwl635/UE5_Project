@@ -108,7 +108,7 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
 	//기타 가방 -> 기타 가방
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("(StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)"));
+		//UE_LOG(LogTemp, Warning, TEXT("(StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)"));
 		
 		FInventorySlotData* thisSlotData = (FInventorySlotData*)GetSlotData();
 		FInventorySlotData* StartSlotData = (FInventorySlotData*)StarDataData->GetSlotData();
