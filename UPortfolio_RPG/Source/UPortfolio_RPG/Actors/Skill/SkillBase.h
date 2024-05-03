@@ -28,4 +28,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Sk_Image;
 	
+	bool bSuperArmor;	// 피면
+	bool bSuperStance;	// 경면
 };

@@ -33,6 +33,12 @@ public:
 	void OnSpace(const FVector& HitPoint);
 	void OnDefaultAttack(const FVector& HitPoint);
 
+public:
+	void DefaultAttackCheck();
+
+public:
+	UStatusComponent* GetStatusComponent() { return StatusComponent; }
+
 protected:
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* SpringArmComponent;

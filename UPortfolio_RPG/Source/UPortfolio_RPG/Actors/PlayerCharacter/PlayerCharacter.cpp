@@ -6,12 +6,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
-
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -134,9 +134,9 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 	if(AttackMontage)
 	{
-		if (Animation->Montage_IsPlaying(nullptr)) { return; }
 		const FVector ActorLocation = GetActorLocation();
 		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
 		const FVector Destination = ActorLocation + Direction * SpaceDistance;
@@ -145,6 +145,31 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 		NewRotation.Pitch = CurrentRotation.Pitch;
 		NewRotation.Roll = CurrentRotation.Roll;
 		SetActorRotation(NewRotation);
-		Animation->Montage_Play(AttackMontage, 1.2f);
+		Animation->Montage_Play(AttackMontage, 1.f);
+	}
+}
+
+#include "Engine/DamageEvents.h"
+void APlayerCharacter::DefaultAttackCheck()
+{
+	float Radius = 100.f;
+	FVector Start = GetActorLocation() + GetActorForwardVector() * Radius;
+	TArray<AActor*> IgnoreActors;
+	TArray<FHitResult> HitResult;
+
+	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
+		ETraceTypeQuery::TraceTypeQuery3, false,
+		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+	if (bIsHit)
+	{
+		for (auto& It : HitResult)
+		{
+			if(It.GetActor())
+			{
+				AActor* DamagedActor = It.GetActor();
+				FDamageEvent DamageEvent;
+				DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
+			}
+		}
 	}
 }
