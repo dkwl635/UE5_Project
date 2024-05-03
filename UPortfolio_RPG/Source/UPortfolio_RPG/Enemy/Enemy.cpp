@@ -9,25 +9,50 @@ AEnemy::AEnemy()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
+
     CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
     //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-    Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+    SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
     Movement->MaxSpeed = 300.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
     SetRootComponent(CapsuleComponent);
-    Mesh->SetupAttachment(GetRootComponent());
+    SkeletalMeshComponent->SetupAttachment(GetRootComponent());
+    SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> NormalMonster(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonMinions/Characters/Minions/Prime_Helix/Meshes/Prime_Helix.Prime_Helix'"));
     if (NormalMonster.Succeeded())
     {
-        Mesh->SetSkeletalMesh(NormalMonster.Object);
+    //    SkeletalMeshComponent->SetSkeletalMesh(NormalMonster.Object);
     }
 
-    AIControllerClass = AEnemyAIController::StaticClass();
+
+    //AIController설정
+    AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+AEnemy::~AEnemy()
+{
+}
+
+void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
+{
+    ensure(InData);
+
+    EnemyDataTableRow = InData;
+
+    CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
+    CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
+
+    SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
+    SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
+    SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
+
+
+
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +60,12 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AEnemy::OnConstrution(const FTransform& Transform)
+{
+    Super::OnConstruction(Transform);
+    SetEnemyData(EnemyDataTableRow);
 }
 
 // Called every frame
