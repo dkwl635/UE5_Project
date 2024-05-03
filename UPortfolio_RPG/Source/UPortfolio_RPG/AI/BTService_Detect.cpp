@@ -43,7 +43,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
 	{
 		// �÷��̾ �����Ǿ��� ���� �÷��̾ ���󰡴� ���� ����
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector(AEnemyAIController::TargetKey, HitResult.GetActor()->GetActorLocation()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetKey, HitResult.GetActor()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
 		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
 	}
 	else
@@ -53,6 +53,19 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
 	}
 
+	// vector 위치 기반
+	//if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
+	//{
+	//	// �÷��̾ �����Ǿ��� ���� �÷��̾ ���󰡴� ���� ����
+	//	OwnerComp.GetBlackboardComponent()->SetValueAsVector(AEnemyAIController::TargetKey, HitResult.GetActor()->GetActorLocation()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
+	//	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
+	//}
+	//else
+	//{
+	//	// �÷��̾ �������� ������ ���� ���� ����
+	//	OwnerComp.GetBlackboardComponent()->ClearValue(AEnemyAIController::TargetKey);
+	//	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
+	//}
 
 	
 }

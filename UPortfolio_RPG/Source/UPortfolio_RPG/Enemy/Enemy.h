@@ -10,6 +10,11 @@
 #include "GameFramework/Pawn.h"
 #include "Enemy.generated.h"
 
+//USTRUCT()
+//{
+//
+//}
+
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
 {
