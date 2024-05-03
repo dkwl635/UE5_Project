@@ -8,19 +8,7 @@
 #include "Slot/SlotData.h"
 #include "RPGSlotUserWidget.generated.h"
 
-/**
- * 
- */
-UENUM(BlueprintType)
-enum class  ERPGSLOTTYPE : uint8
-{
-	NONE,
-	INVENTORY_GEAR, //¿Œ∫•≈‰∏Æ√¢ ΩΩ∑‘
-	INVENTORY_NORMARL, //¿Œ∫•≈‰∏Æ√¢ ΩΩ∑‘
 
-	QUICK_ITEM,			//ƒ¸æ∆¿Ã≈€ ΩΩ∑‘
-
-};
 
 UCLASS(Blueprintable, BlueprintType)
 class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
@@ -46,7 +34,7 @@ public:
 public :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
-	ERPGSLOTTYPE SlotType;
+	ERPGSLOTTYPE SlotType = ERPGSLOTTYPE::NONE;
 
 	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	UImage* SlotImg;
@@ -57,10 +45,9 @@ public :
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UUserWidget> DragUserWidget;
 
+	
+
 public :
-	static UUserWidget* DragUserWidgetPonter;
-	UFUNCTION(BlueprintCallable)
-	UUserWidget* GetDragUserWidget();
 
 public:
 	UPROPERTY()

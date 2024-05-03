@@ -12,7 +12,6 @@ public:
 
 	TWeakObjectPtr<class URPGQuickSlotUserWidget> Helper;
 
-	Inventory Inventory;
 public:
 	UQuickItemSlotData();
 	// USlotData을(를) 통해 상속됨
@@ -26,5 +25,6 @@ public:
 public :
 
 	int InventoryItemIndex = -1;
-
+	//임시로 가지고 있는 아이템 정보
+	TWeakPtr<struct  FItemData> ItemData;
 };

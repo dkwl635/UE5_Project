@@ -2,50 +2,50 @@
 
 
 #include "UI/RPGSlotUserWidget.h"
-#include "Slot/SlotData.h"
 #include "Slot/InventorySlotData.h"
 #include "Slot/QuickItemSlotData.h"
 #include "Item/ItemData.h"
+#include "Item/PlayerInventorySubsystem.h"
 
-UUserWidget* URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
+
+
+using enum ERPGSLOTTYPE;
 
 void URPGSlotUserWidget::Init()
 {
 
-	switch (SlotType)
+	int type = static_cast<int>(SlotType);
+	UE_LOG(LogTemp, Warning, TEXT("Slot : %d"),type);
+	switch (type)
 	{
-	case ERPGSLOTTYPE::NONE:
-		break;
-	case ERPGSLOTTYPE::INVENTORY_GEAR:
+
+	case 1:
 	{
 	//	SlotData = MakeShared<UInventorySlotData>(*(new UInventorySlotData()));
 		SlotData = NewObject<UInventorySlotData>();
 
 		break;
 	}
-	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	case 2:
 	{
 		SlotData = NewObject<UInventorySlotData>();
 		break;
 	}
-	case ERPGSLOTTYPE::QUICK_ITEM:
+	case 3:
 	{
-		auto  Data = NewObject<UQuickItemSlotData>();
-
-		SlotData = Data;
+		SlotData = NewObject<UQuickItemSlotData>();
 		break;
 	}
 	default:
 		break;
 	}
 
-	if (DragUserWidgetPonter == nullptr)
-	{
-		DragUserWidgetPonter = CreateWidget(GetWorld(), DragUserWidget);
-	}
-
-
 	
+
+	ensure(SlotData);
+
+	SlotData->SlotType = SlotType;
+
 }
 
 URPGSlotUserWidget::~URPGSlotUserWidget()
@@ -55,6 +55,7 @@ URPGSlotUserWidget::~URPGSlotUserWidget()
 
 void URPGSlotUserWidget::SetSlot()
 {
+	SlotData->SetData();
 
 
 	UTexture2D* newImg = SlotData->GetSlotImg();
@@ -93,10 +94,7 @@ bool URPGSlotUserWidget::UseSlot()
 
 
 
-UUserWidget* URPGSlotUserWidget::GetDragUserWidget()
-{
-	return DragUserWidgetPonter;
-}
+
 
 USlotData* URPGSlotUserWidget::GetSlotData()
 {
@@ -119,25 +117,25 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
 
 	//(무기 가방 -> 무기 가방) || (기타 가방 -> 기타 가방)
 	if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
-		||(StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
+		|| (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 		)
 	{
+		EITEMTYPE ItemType = EITEMTYPE::None;
+		if (StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
+		{
+			ItemType = EITEMTYPE::GEAR;
+		}
+		else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
+		{
+			ItemType = EITEMTYPE::OTHER;
+		}
+
+		UPlayerInventorySubsystem* PlayerInven =	GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 
 		UInventorySlotData* thisSlotData = (UInventorySlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StarDataData->GetSlotData();
 
-		TSharedPtr<FItemData>& thisItemData = (*thisSlotData->Inventory)[thisSlotData->SlotIndex];
-		TSharedPtr<FItemData>& StartItemData = (*StartSlotData->Inventory)[StartSlotData->SlotIndex];
-
-		UE_LOG(LogTemp, Warning, TEXT("thisSlotData %d ,StartSlotData %d"), thisSlotData->SlotIndex, StartSlotData->SlotIndex);
-
-
-		Swap(thisItemData, StartItemData);
-		//thisItemData = nullptr;
-		//StartItemData = nullptr;
-
-		//TSharedPtr<FItemData>& StartData = S
-
+		PlayerInven->SwapItem(ItemType, thisSlotData->SlotIndex, StartSlotData->SlotIndex);
 		this->SetSlot();
 		StarDataData->SetSlot();
 	}

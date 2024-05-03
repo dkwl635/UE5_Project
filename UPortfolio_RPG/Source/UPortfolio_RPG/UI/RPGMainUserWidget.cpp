@@ -31,10 +31,7 @@ void URPGMainUserWidget::Init()
 
 URPGMainUserWidget::~URPGMainUserWidget()
 {
-    if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
-    {
-        URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
-    }
+    
 
     RPGUIMap.Empty();
 }

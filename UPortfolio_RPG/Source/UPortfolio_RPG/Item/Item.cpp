@@ -17,7 +17,9 @@ bool UItem::UseItem(AActor* Target, FItemData* ItemData)
 	UE_LOG(LogTemp, Warning, TEXT("My Item: %s"), *ItemData->ItemName.ToString());
 	if (ItemData->ItemType == EITEMTYPE::POTION)
 	{
-		return	 UsePotion(GetPotionData(ItemData->StatusData.RowName));
+		FPotionData* PotionData =	GetPotionData(ItemData->StatusData.RowName);
+		bool result =  UsePotion(PotionData);
+		return result;
 	}
 
 	
@@ -48,6 +50,5 @@ bool UItem::UsePotion(FPotionData* PotionData)
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), PotionData->EPotionType , PotionData->PotionValue);
 
 	
-
 	return true;
 }

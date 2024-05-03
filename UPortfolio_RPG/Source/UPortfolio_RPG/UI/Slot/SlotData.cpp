@@ -20,6 +20,12 @@ bool USlotData::IsValid()
     return false;
 }
 
+void USlotData::SetData()
+{
+}
+
+
+
 UTexture2D* USlotData::GetSlotImg()
 {
     return nullptr;

@@ -16,13 +16,15 @@ bool UQuickItemSlotData::IsValid()
 	{
 		bValid = false;
 	}
-	
-	if (!Inventory)
-	{
-		Inventory = InventorySubsystem.Get()->GetInventory(EITEMTYPE::BATTLEITEM);
-	}
 
-	InventorySubsystem.Get()->GetItemInfo(Inventory, InventoryItemIndex);
+	if (ItemData.IsValid())
+	{
+		bValid = false;
+	}
+	else
+	{		
+	}
+	
 
 	return bValid;
 }
@@ -31,8 +33,7 @@ UTexture2D* UQuickItemSlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 
-	FItemData* ItemData = (*Inventory)[SlotIndex].Get();
-	return ItemData->ItemImage;
+	return ItemData.Pin()->ItemImage;
 
 	return nullptr;
 	
@@ -43,7 +44,7 @@ bool UQuickItemSlotData::NormalUse()
 	if (!IsValid()) { return false; }
 	if (!InventorySubsystem.Get()) { return false; }
 
-	InventorySubsystem->UseItem(Inventory, SlotIndex, 1);
+	InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
 
 
 

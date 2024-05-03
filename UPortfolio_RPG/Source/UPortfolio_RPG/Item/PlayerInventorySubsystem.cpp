@@ -5,30 +5,34 @@
 #include "DataSubsystem/DataSubsystem.h"
 #include "UI/RPGSlotUserWidget.h"
 #include "Item.h"
+#include "UI/RPGSlotUserWidget.h"
 
+
+UPlayerInventorySubsystem::UPlayerInventorySubsystem()
+{
+
+}
+
+void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	
+}
 
 bool UPlayerInventorySubsystem::Init()
 {	
 	NormalInventory.SetNum(MaxInvenSize, false);
 	GearInventory.SetNum(MaxInvenSize, false);
-
+	
 	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
-	//UItem::DataSubsystem = DataSubsystem;
-
-	if (!DataSubsystem)
-	{
-		return false;
-	}
-
-
-	ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>();
+	if (ItemClass){ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>();}
 
 	AddItem( TEXT("HP100"), 3);
 	AddItem( TEXT("HP200"), 3);
-	//ItemClass->UseItem(nullptr, NormalInventory[0].Get());
-	return true;
 
 	
+	return true;
 }
 
 bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
@@ -241,25 +245,25 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 	return false;
 }
 
-void UPlayerInventorySubsystem::ClearTempData()
-{
-}
 
-void UPlayerInventorySubsystem::UseItem(Inventory Inventory, int8 InventoryIndex , int8 count = 1)
+
+void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex , int8 Count = 1)
 {
-	if (!Inventory || count <= 0)
+	Inventory Inventory = GetInventory(ItemType);
+
+	if (!Inventory || Count <= 0)
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("UseItem : %d : %d") , InventoryIndex , count);
+	
 	FItemData* data = (*Inventory)[InventoryIndex].Get();
 	if(!data)
 	{
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("UseItem__ : %s : %d"), *data->ItemName.ToString(), data->CurrentBundleCount);
-	int NewCount = (data->CurrentBundleCount - count);
+	
+	int NewCount = (data->CurrentBundleCount - Count);
 	if (NewCount <= 0)
 	{
 		(*Inventory)[InventoryIndex] = nullptr;
@@ -270,19 +274,36 @@ void UPlayerInventorySubsystem::UseItem(Inventory Inventory, int8 InventoryIndex
 		data->CurrentBundleCount = NewCount;
 	}
 
-	ItemClass->UseItem(nullptr, data);
+	UseItem(data, Count);
 	GEngine->ForceGarbageCollection(true);
 	
 }
 
-FItemData* UPlayerInventorySubsystem::GetItemInfo(Inventory Inventory, int8 InventoryIndex)
+void UPlayerInventorySubsystem::UseItem(FItemData* ItemData, int8 Count)
 {
+	ItemClass->UseItem(nullptr, ItemData);
+}
+
+TWeakPtr<FItemData> UPlayerInventorySubsystem::GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex)
+{
+	Inventory Inventory = GetInventory(ItemType);
 	if(InventoryIndex < 0 || !Inventory)
 	{
 		return nullptr;
 	}
 
-	return (*Inventory)[InventoryIndex].Get();
+	return (*Inventory)[InventoryIndex];
+}
+
+void UPlayerInventorySubsystem::SwapItem(EITEMTYPE ItemType, int8 index1, int8 index2)
+{
+	Inventory Inventory = GetInventory(ItemType);
+
+	TSharedPtr<FItemData>& thisItemData = (*Inventory)[index1];
+	TSharedPtr<FItemData>& StartItemData = (*Inventory)[index2];
+
+
+	Swap(thisItemData, StartItemData);
 }
 
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)
@@ -298,8 +319,14 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 
 }
 
+void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserWidget* slot)
+{
+}
+
 void UPlayerInventorySubsystem::QuickSlotRefresh(int8 QuickSlotIndex)
 {
 
 }
+
+
 

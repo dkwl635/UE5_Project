@@ -15,14 +15,9 @@ void URPGInventoryUserWidget::Init()
 	if (!Inven)
 	{
 		return;
-	}
-	Inventory GearInvetory = Inven->GetInventory(EITEMTYPE::GEAR);
-	Inventory NormalInvetory = Inven->GetInventory(EITEMTYPE::POTION);
+	}	
 
-	if (URPGSlotUserWidget::DragUserWidgetPonter != nullptr)
-	{
-		URPGSlotUserWidget::DragUserWidgetPonter = nullptr;
-	}
+	
 
 	for (int32 i = 0; i < Row; i++)
 	{
@@ -42,7 +37,7 @@ void URPGInventoryUserWidget::Init()
 			{
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->SlotIndex = k + i * Col;
-				InvenSlotData->Inventory = GearInvetory;
+			
 				GearSlots.Add(Widget);
 				Widget->SetSlot();
 			}
@@ -67,7 +62,7 @@ void URPGInventoryUserWidget::Init()
 			{
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->SlotIndex = k + i * Col;
-				InvenSlotData->Inventory = NormalInvetory;
+	
 				NormalSlots.Add(Widget);
 				Widget->SetSlot();
 			}	

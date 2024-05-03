@@ -2,6 +2,7 @@
 #include "DataSubsystem/DataSubsystem.h"
 #include "UI/Slot/SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "Item/Item.h"
 
 UDataSubsystem::UDataSubsystem()
 {
@@ -50,6 +51,7 @@ void UDataSubsystem::Init()
 	
 
 	//인벤은 게임모드에 넣을지 고민해야 함
+	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	if (Inven->Init())
 	{

@@ -8,15 +8,23 @@
 UInventorySlotData::UInventorySlotData()
 {
 }
+void UInventorySlotData::SetData()
+{
+	if (SlotIndex < 0) { return; }
+	
+	EITEMTYPE itemType = EITEMTYPE::None;
+	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL) { itemType = EITEMTYPE::OTHER; }
+	else 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) { itemType = EITEMTYPE::GEAR; }
+
+	ItemData = InventorySubsystem->GetItemInfo(itemType, SlotIndex);
+}
 
 bool UInventorySlotData::IsValid()
 {
 	bool bValid = true;
 
-	if (!Inventory) { bValid = false; }
 	if (SlotIndex < 0) { bValid =  false; }
-	FItemData* ItemData = (*Inventory)[SlotIndex].Get();
-	if (!ItemData) { bValid =  false; }
+	if (!ItemData.IsValid()) { bValid =  false; }
 
 	if (!bValid)
 	{
@@ -28,9 +36,9 @@ bool UInventorySlotData::IsValid()
 UTexture2D* UInventorySlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
-	
-	FItemData* ItemData = (*Inventory)[SlotIndex].Get();
-	return ItemData->ItemImage;
+	if (!ItemData.IsValid()) { return nullptr; }
+
+	return ItemData.Pin()->ItemImage;
 }
 
 bool UInventorySlotData::NormalUse()
@@ -38,7 +46,7 @@ bool UInventorySlotData::NormalUse()
 	if (!IsValid()) { return false; }
 	if (!InventorySubsystem.Get()) { return false; }
 
-	InventorySubsystem->UseItem(Inventory, SlotIndex, 1);
+	InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
 	if (QuickSlotIndex >= 0)
 	{
 		InventorySubsystem->QuickSlotRefresh(QuickSlotIndex);
@@ -46,3 +54,4 @@ bool UInventorySlotData::NormalUse()
 
 	return true;
 }
+

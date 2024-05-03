@@ -1,10 +1,10 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/World.h"
-
+#include "SlotEnum.h"
 #include "SlotData.generated.h"
 
-typedef  TArray<TSharedPtr<FItemData>>* Inventory;
+
 UCLASS()
 class UPORTFOLIO_RPG_API USlotData : public UObject
 {
@@ -15,12 +15,15 @@ public:
 	static TWeakObjectPtr<class UPlayerInventorySubsystem> InventorySubsystem;
 	static void ClearStaticMember();
 public:
+	ERPGSLOTTYPE SlotType;
 	USlotData();
 	int32 SlotIndex;
 
 public :
 	//데이터가 유효 체크
 	virtual bool IsValid();
+	//데이터 셋팅하기
+	virtual void SetData();
 
 	virtual UTexture2D* GetSlotImg();
 	 //더블클릭 사용시
