@@ -23,7 +23,7 @@ APlayerCharacter::APlayerCharacter()
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-		SwordCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollider"));
+		//SwordCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollider"));
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
@@ -41,7 +41,17 @@ APlayerCharacter::APlayerCharacter()
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
 		ensure(Anim.Object);
-		AttackMontage = Anim.Object;
+		AttackAMontage = Anim.Object;
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryB_Montage.Attack_PrimaryB_Montage'"));
+		ensure(Anim.Object);
+		AttackAMontage = Anim.Object;
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryC_Montage.Attack_PrimaryC_Montage'"));
+		ensure(Anim.Object);
+		AttackAMontage = Anim.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/AnimMontage_Evade.AnimMontage_Evade'"));
@@ -66,12 +76,7 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
-	SwordCollider->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
-	SwordCollider->SetRelativeLocation(FVector(0., 0., 60.));
-	SwordCollider->SetRelativeScale3D(FVector(0.37, 0.37, 1.662500));
-	SwordCollider->bHiddenInGame = false;
-	SwordCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SwordCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	CurrentMontage = AttackAMontage;
 }
 
 // Called when the game starts or when spawned
@@ -115,61 +120,59 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	if (!bIsSpace)
 	{
 		bIsSpace = true;
-		const FVector ActorLocation = GetActorLocation();
-		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
-		const FVector Destination = ActorLocation + Direction * SpaceDistance;
 		GetController()->StopMovement();
-		FRotator CurrentRotation = GetActorRotation();
-		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-		NewRotation.Pitch = CurrentRotation.Pitch;
-		NewRotation.Roll = CurrentRotation.Roll;
-		SetActorRotation(NewRotation);
+		LookAtMouseCursor(HitPoint);
 		Animation->Montage_Play(SpaceMontage, 1.2f);
 	}
 	auto SpaceDelegate = [this]() { bIsSpace = false; };
 	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
+	
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 {
-	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
-	ensure(Animation);
-	if (Animation->Montage_IsPlaying(nullptr)) { return; }
-	if(AttackMontage)
+	if(!bOnAttack)
 	{
-		const FVector ActorLocation = GetActorLocation();
-		const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
-		const FVector Destination = ActorLocation + Direction * SpaceDistance;
-		FRotator CurrentRotation = GetActorRotation();
-		FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-		NewRotation.Pitch = CurrentRotation.Pitch;
-		NewRotation.Roll = CurrentRotation.Roll;
-		SetActorRotation(NewRotation);
-		Animation->Montage_Play(AttackMontage, 1.f);
+		UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+		ensure(Animation);
+		if (Animation->Montage_IsPlaying(nullptr)) { return; }
+		
+		bOnAttack = true;
+		LookAtMouseCursor(HitPoint);
+		Animation->Montage_Play(CurrentMontage, 1.2f);
 	}
 }
 
 #include "Engine/DamageEvents.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
-	float Radius = 100.f;
-	FVector Start = GetActorLocation() + GetActorForwardVector() * Radius;
+	float Radius = 80.f;
+	FVector Start = GetActorLocation() + GetActorForwardVector() * 120.f;
 	TArray<AActor*> IgnoreActors;
-	TArray<FHitResult> HitResult;
+	FHitResult HitResult;
 
-	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
-		ETraceTypeQuery::TraceTypeQuery3, false,
-		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+	bool bIsHit = UKismetSystemLibrary::SphereTraceSingle(this, Start, Start, Radius,
+		ETraceTypeQuery::TraceTypeQuery4, false,
+		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
 	if (bIsHit)
 	{
-		for (auto& It : HitResult)
+		if(IsValid(HitResult.GetActor()))
 		{
-			if(It.GetActor())
-			{
-				AActor* DamagedActor = It.GetActor();
-				FDamageEvent DamageEvent;
-				DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
-			}
+			AActor* DamagedActor = HitResult.GetActor();
+			FDamageEvent DamageEvent;
+			DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
 		}
 	}
+}
+
+void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
+{
+	const FVector ActorLocation = GetActorLocation();
+	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
+	const FVector Destination = ActorLocation + Direction * SpaceDistance;
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	NewRotation.Pitch = CurrentRotation.Pitch;
+	NewRotation.Roll = CurrentRotation.Roll;
+	SetActorRotation(NewRotation);
 }

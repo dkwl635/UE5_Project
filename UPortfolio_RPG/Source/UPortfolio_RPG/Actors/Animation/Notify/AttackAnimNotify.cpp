@@ -8,7 +8,6 @@ void UAttackAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 	AActor* Actor = MeshComp->GetOwner();
-	APlayerCharacter* Character = Cast<APlayerCharacter>(Actor);
-	ensure(Character);
-	Character->DefaultAttackCheck();
+	if(APlayerCharacter * Character = Cast<APlayerCharacter>(Actor))
+		Character->DefaultAttackCheck();
 }

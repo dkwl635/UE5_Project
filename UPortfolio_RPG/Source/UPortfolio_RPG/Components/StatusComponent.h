@@ -35,11 +35,11 @@ public:
 	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HP = 100.f;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MP = 100.f;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackDamage = 100.f;
 		
 	bool bSuperArmor;

@@ -48,14 +48,19 @@ protected:
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	USkillComponent* SkillComponent;
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent* SwordCollider;
+	/*UPROPERTY(EditAnywhere)
+	UCapsuleComponent* SwordCollider;*/
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackMontage;
+	UAnimMontage* AttackAMontage;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* AttackBMontage;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* AttackCMontage;
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* SpaceMontage;
+	UAnimMontage* CurrentMontage;
 
 protected:
 	FTimerHandle SpaceCoolTimer;
@@ -69,6 +74,10 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")
 	bool bIsSpace = false;
-	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	
+	uint8 ComboCount = 0;
 	bool bOnAttack = false;
+
+private:
+	void LookAtMouseCursor(const FVector& HitPoint);
 };
