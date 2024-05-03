@@ -4,20 +4,32 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
+#include "UI/RPGSlotUserWidget.h"
 #include "PlayerInventorySubsystem.generated.h"
 
-/**
- * 
- */
-//struct  FItemData;
+
 
 UCLASS()
 class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+public:
 	typedef  TArray<TSharedPtr<FItemData>>* Inventory;
-	class URPGSlotUserWidget;
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PlayerCoin = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PlayerGold = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 EnchantStone = 0;
+
+private:
+	const int8 MaxInvenSize = 60;
+	TArray<TSharedPtr<FItemData>> GearInventory;
+	TArray<TSharedPtr<FItemData>> NormalInventory;
 public : 
 	UPlayerInventorySubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -49,40 +61,30 @@ private:
 	bool MoveItemToInventory(Inventory Inventory, FItemData* ItemData, int8 Count);
 
 public:
-
-	void AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserWidget* Slot);
-
-	void QuickSlotRefresh(int8 QuickSlotIndex);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* DragSlot;
 
 private:
 
-
-	const int8 MaxInvenSize = 60;
-	TArray<TSharedPtr<FItemData>> GearInventory;
-	TArray<TSharedPtr<FItemData>> NormalInventory;
-
-
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> GearSlots;
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> NormalSlots;
+	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
+		
+
+
+public:
+
+	void AttachSlot(ERPGSLOTTYPE SlotType, URPGSlotUserWidget* Slot);
+	
+	void QuickSlotRefresh(int8 QuickSlotIndex);
+	//Äü ½½·Ô¿¡ ÀåÂø µÇ¾î ÀÖ´ÂÁö
+	URPGSlotUserWidget* CheckQuickSlotItem(URPGSlotUserWidget* Slot);
 
 
 
 	
 public:
 
-	UPROPERTY(EditAnywhere , BlueprintReadWrite)
-	int32 PlayerCoin = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 PlayerGold = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 EnchantStone = 0;
-
-	
-public:
-
-	 UDataSubsystem* DataSubsystem;
+	 class UDataSubsystem* DataSubsystem;
 	 UItem* ItemClass;
 };

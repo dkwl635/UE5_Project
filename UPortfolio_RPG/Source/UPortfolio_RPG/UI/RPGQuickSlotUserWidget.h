@@ -26,13 +26,9 @@ public:
 
 	//ex) 1번 퀵슬롯의 슬로UI연결
 	TMap<int8, URPGSlotUserWidget*> QuickSlotsIndex;
-	//ex)1번 퀵슬롯 인벤토리 넘버와 연결
-	TMap<int8, int8 > QuickIndexInvenIndex;
-
 
 
 public:
-	void SetSlot(URPGSlotUserWidget* InvetorySlotInfo);
 
 	void UseQuickSlot(int8 SlotIndex);
 

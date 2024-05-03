@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Item/PlayerInventorySubsystem.h"
+#include "PlayerInventorySubsystem.h"
 #include "DataSubsystem/DataSubsystem.h"
-#include "UI/RPGSlotUserWidget.h"
 #include "Item.h"
-#include "UI/RPGSlotUserWidget.h"
+
+#include "UI/Slot/QuickItemSlotData.h"
+
 
 
 UPlayerInventorySubsystem::UPlayerInventorySubsystem()
@@ -321,11 +320,45 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 
 void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserWidget* slot)
 {
+	switch (SlotType)
+	{
+	case ERPGSLOTTYPE::NONE:
+		break;
+	case ERPGSLOTTYPE::INVENTORY_GEAR:
+	{
+		GearSlots.Add(slot);
+		break;
+		}
+	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	{
+		NormalSlots.Add(slot);
+		break;
+	}
+	case ERPGSLOTTYPE::QUICK_ITEM:
+	{
+		QuickItemSlots.Add(slot);
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void UPlayerInventorySubsystem::QuickSlotRefresh(int8 QuickSlotIndex)
 {
 
+}
+
+URPGSlotUserWidget* UPlayerInventorySubsystem::CheckQuickSlotItem(URPGSlotUserWidget* Slot)
+{
+	for (int8 i = 0; i < QuickItemSlots.Num(); i++)
+	{
+		UQuickItemSlotData* data = (UQuickItemSlotData*)QuickItemSlots[i].Get()->GetSlotData();
+		if (data->OrginSlot == Slot)
+			return QuickItemSlots[i].Get();
+	}
+
+	return nullptr;
 }
 
 

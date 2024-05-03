@@ -1,8 +1,5 @@
 #include "UI/Slot/QuickItemSlotData.h"
-#include "UI/Slot/InventorySlotData.h"
-#include "UI/RPGQuickSlotUserWidget.h"
-#include "Item/ItemEnum.h"
-#include "Item/ItemData.h"
+#include "UI/RPGSlotUserWidget.h"
 
 UQuickItemSlotData::UQuickItemSlotData()
 {
@@ -10,50 +7,33 @@ UQuickItemSlotData::UQuickItemSlotData()
 
 bool UQuickItemSlotData::IsValid()
 {
-	bool bValid = true;
-
-	if (InventoryItemIndex < 0)
+	if (!OrginSlot.Get())
 	{
-		bValid = false;
+		return false;
 	}
 
-	if (ItemData.IsValid())
-	{
-		bValid = false;
-	}
-	else
-	{		
-	}
-	
-
-	return bValid;
+	return  true;
 }
 
 UTexture2D* UQuickItemSlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 
-	return ItemData.Pin()->ItemImage;
-
-	return nullptr;
-	
+	return OrginSlot.Get()->GetSlotData()->GetSlotImg();
 }
 
 bool UQuickItemSlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
-	if (!InventorySubsystem.Get()) { return false; }
-
-	InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
-
-
-
+	
+	OrginSlot.Get()->GetSlotData()->NormalUse();
+	OrginSlot.Get()->SetSlot();
 	return true;
 }
 
-void UQuickItemSlotData::SetSlotData(UInventorySlotData* Data)
+void UQuickItemSlotData::SetSlotData(URPGSlotUserWidget* Slot)
 {
-	InventoryItemIndex = Data->SlotIndex;
-	
+	this->OrginSlot = Slot;
+
 }
 

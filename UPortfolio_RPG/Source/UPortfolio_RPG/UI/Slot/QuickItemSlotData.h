@@ -20,11 +20,11 @@ public:
 	bool NormalUse() override;
 
 public:
-	void SetSlotData(class UInventorySlotData* Data);
-
+	void SetSlotData(class URPGSlotUserWidget* Slot);
+	
 public :
 
-	int InventoryItemIndex = -1;
-	//임시로 가지고 있는 아이템 정보
-	TWeakPtr<struct  FItemData> ItemData;
+	//원본 슬롯
+	TWeakObjectPtr<class URPGSlotUserWidget> OrginSlot;
+
 };

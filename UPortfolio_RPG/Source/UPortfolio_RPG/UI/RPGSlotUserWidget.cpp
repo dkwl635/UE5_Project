@@ -16,29 +16,32 @@ void URPGSlotUserWidget::Init()
 
 	int type = static_cast<int>(SlotType);
 	UE_LOG(LogTemp, Warning, TEXT("Slot : %d"),type);
-	switch (type)
-	{
 
-	case 1:
+	switch (SlotType)
 	{
-	//	SlotData = MakeShared<UInventorySlotData>(*(new UInventorySlotData()));
-		SlotData = NewObject<UInventorySlotData>();
-
+	case ERPGSLOTTYPE::NONE:
 		break;
-	}
-	case 2:
+	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
 		SlotData = NewObject<UInventorySlotData>();
 		break;
 	}
-	case 3:
+	
+	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	{
+		SlotData = NewObject<UInventorySlotData>();
+		break;
+	}
+	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		SlotData = NewObject<UQuickItemSlotData>();
 		break;
 	}
+
 	default:
 		break;
 	}
+	
 
 	
 
@@ -101,20 +104,18 @@ USlotData* URPGSlotUserWidget::GetSlotData()
 	return SlotData;
 }
 
-void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
+void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 {
-
-	if (this == StarDataData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Succens DT_ITEM"));
+	if (this == StartSlot)
+	{	
 		return;
 	}
 
-	ERPGSLOTTYPE StartSlotType = StarDataData->SlotType;
+	ERPGSLOTTYPE StartSlotType = StartSlot->SlotType;
 	ERPGSLOTTYPE EndSlotType = this->SlotType;
 
-
-
+	UE_LOG(LogTemp, Warning, TEXT("Succens DragEnd"));
+	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	//(무기 가방 -> 무기 가방) || (기타 가방 -> 기타 가방)
 	if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		|| (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
@@ -130,46 +131,55 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StarDataData)
 			ItemType = EITEMTYPE::OTHER;
 		}
 
-		UPlayerInventorySubsystem* PlayerInven =	GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		
 
-		UInventorySlotData* thisSlotData = (UInventorySlotData*)GetSlotData();
-		UInventorySlotData* StartSlotData = (UInventorySlotData*)StarDataData->GetSlotData();
+		UInventorySlotData* ThisSlotData = (UInventorySlotData*)GetSlotData();
+		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
-		PlayerInven->SwapItem(ItemType, thisSlotData->SlotIndex, StartSlotData->SlotIndex);
+		
+		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);
+		
 		this->SetSlot();
-		StarDataData->SetSlot();
+		StartSlot->SetSlot();
+	
+		if (URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot))
+		{
+			UQuickItemSlotData* QuickSlotData = (UQuickItemSlotData*)QuickSlot->GetSlotData();
+			QuickSlotData->SetSlotData(this);
+			QuickSlot->SetSlot();
+		}
+
 	}
+	//아이템 창고-> 퀵 슬롯
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
-		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
-		UInventorySlotData* StartSlotData = (UInventorySlotData*)StarDataData->GetSlotData();
-		thisSlotData->SetSlotData(StartSlotData);
+		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::QUICK_ITEM"));
+		if (PlayerInven->CheckQuickSlotItem(StartSlot) != nullptr)
+		{
+			return;
+		}
 
+		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
+		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
+		thisSlotData->SetSlotData(StartSlot);
+		
+		this->SetSlot();
+	}
+	//퀵슬롯 끼리 교환
+	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("QUICK_ITEM && QUICK_ITEM"));
+		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
+		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
+
+		auto temp = thisSlotData->OrginSlot;
+		thisSlotData->OrginSlot = StartSlotData->OrginSlot;
+		StartSlotData->OrginSlot = temp;
+	
+		//thisSlotData->SetSlotData(StartSlot);
+		StartSlot->SetSlot();
+		this->SetSlot();
 	}
 
 
-	////기타 가방 -> 기타 가방
-	//else if ()
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("(StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)"));
-	//	
-	//	UInventorySlotData* thisSlotData = (UInventorySlotData*)GetSlotData();
-	//	UInventorySlotData* StartSlotData = (UInventorySlotData*)StarDataData->GetSlotData();
-	//	
-	//	TSharedPtr<FItemData>& thisItemData = (*thisSlotData->Inventory)[thisSlotData->ItemIndex];
-	//	TSharedPtr<FItemData>& StartItemData = (*StartSlotData->Inventory)[StartSlotData->ItemIndex];
-	//		
-	//	UE_LOG(LogTemp, Warning, TEXT("thisSlotData %d ,StartSlotData %d") , thisSlotData->ItemIndex , StartSlotData->ItemIndex);
-
-
-	//	Swap(thisItemData, StartItemData);
-	//	thisItemData = nullptr;
-	//	StartItemData = nullptr;
-
-	//	TSharedPtr<FItemData>& StartData = S
-
-	//	this->SetSlot();
-	//	StarDataData->SetSlot();
-
-	//}
 }
