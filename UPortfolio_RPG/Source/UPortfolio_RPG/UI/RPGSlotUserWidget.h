@@ -58,6 +58,8 @@ public:
 public:
 	
 	UFUNCTION(BlueprintCallable)
-	void DragEnd(URPGSlotUserWidget* StarDataData);
+	bool DragEnd(URPGSlotUserWidget* StarDataData);
+	UFUNCTION(BlueprintCallable)
+	void DragFailed(URPGSlotUserWidget* StarDataData);
 };
 

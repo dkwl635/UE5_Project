@@ -104,11 +104,11 @@ USlotData* URPGSlotUserWidget::GetSlotData()
 	return SlotData;
 }
 
-void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
+bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 {
 	if (this == StartSlot)
 	{	
-		return;
+		return false;
 	}
 
 	ERPGSLOTTYPE StartSlotType = StartSlot->SlotType;
@@ -156,7 +156,7 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::QUICK_ITEM"));
 		if (PlayerInven->CheckQuickSlotItem(StartSlot) != nullptr)
 		{
-			return;
+			return false;
 		}
 
 		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
@@ -181,5 +181,34 @@ void URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		this->SetSlot();
 	}
 
+
+
+	return true;
+}
+
+void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
+{
+	
+	UE_LOG(LogTemp, Warning, TEXT("DragFailed"));
+
+	ERPGSLOTTYPE StartSlotType = StartSlot->SlotType;
+	switch (StartSlotType)
+	{
+	case ERPGSLOTTYPE::NONE:
+		break;
+	case ERPGSLOTTYPE::INVENTORY_GEAR:
+		break;
+	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+		break;
+	case ERPGSLOTTYPE::QUICK_ITEM:
+	{
+		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
+		StartSlotData->SetSlotData(nullptr);
+		this->SetSlot();
+		break;
+	}		
+	default:
+		break;
+	}
 
 }
