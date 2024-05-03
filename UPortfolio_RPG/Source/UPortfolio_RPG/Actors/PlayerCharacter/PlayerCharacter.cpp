@@ -41,17 +41,17 @@ APlayerCharacter::APlayerCharacter()
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
 		ensure(Anim.Object);
-		AttackAMontage = Anim.Object;
+		AttackMontage_A = Anim.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryB_Montage.Attack_PrimaryB_Montage'"));
 		ensure(Anim.Object);
-		AttackAMontage = Anim.Object;
+		AttackMontage_B = Anim.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryC_Montage.Attack_PrimaryC_Montage'"));
 		ensure(Anim.Object);
-		AttackAMontage = Anim.Object;
+		AttackMontage_C = Anim.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/AnimMontage_Evade.AnimMontage_Evade'"));
@@ -76,7 +76,7 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
-	CurrentMontage = AttackAMontage;
+	CurrentMontage = AttackMontage_A;
 }
 
 // Called when the game starts or when spawned

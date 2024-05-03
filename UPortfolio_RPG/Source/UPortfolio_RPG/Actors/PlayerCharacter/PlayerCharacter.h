@@ -44,7 +44,7 @@ protected:
 	class USpringArmComponent* SpringArmComponent;
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Status")
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	USkillComponent* SkillComponent;
@@ -52,13 +52,13 @@ protected:
 	UCapsuleComponent* SwordCollider;*/
 
 public:
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackAMontage;
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackBMontage;
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AttackCMontage;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_A;
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_B;
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_C;
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	UAnimMontage* SpaceMontage;
 	UAnimMontage* CurrentMontage;
 
@@ -75,7 +75,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")
 	bool bIsSpace = false;
 	
-	uint8 ComboCount = 0;
 	bool bOnAttack = false;
 
 private:

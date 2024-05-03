@@ -22,6 +22,6 @@ void UComboAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSeq
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(MeshComp->GetOwner()))
 	{
 		if(Player->bOnAttack)
-			Player->CurrentMontage = Player->AttackAMontage;
+			Player->CurrentMontage = Player->AttackMontage_A;
 	}
 }

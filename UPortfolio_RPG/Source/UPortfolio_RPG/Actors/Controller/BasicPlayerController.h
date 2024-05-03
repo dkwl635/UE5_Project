@@ -8,6 +8,7 @@
 
 class UNiagaraSystem;
 struct FInputActionValue;
+class APlayerCharacter;
 
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
@@ -28,11 +29,11 @@ protected:
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased(); 
 	void OnDefaultAttack();
-	void OnSkill(const FInputActionValue& InputValue);
+	void OnSkill_Q(const FInputActionValue& InputValue);
 	void OnSpace();
 	void OnOpenSkillUI();
 
 private:
 	FVector CachedDestination;
-	
+	APlayerCharacter* PlayerCharacter;
 };
