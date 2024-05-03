@@ -38,10 +38,23 @@ AEnemy::~AEnemy()
 {
 }
 
+void AEnemy::SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle)
+{
+    DataTableRowHandle = InDataTableRowHandle;
+    if (DataTableRowHandle.IsNull()) { return; }
+    if (DataTableRowHandle.RowName == NAME_None) { return; }
+    EnemyDataTableRow = DataTableRowHandle.GetRow<FEnemyDataTableRow>(TEXT(""));
+    SetEnemyData(EnemyDataTableRow);
+}
+
 void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
 {
     ensure(InData);
-
+    if (!ensure(InData))
+    {
+        UE_LOG(LogTemp, Error, TEXT("InData is nullptr!"));
+        return;
+    }
     EnemyDataTableRow = InData;
 
     CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
@@ -62,10 +75,10 @@ void AEnemy::BeginPlay()
 	
 }
 
-void AEnemy::OnConstrution(const FTransform& Transform)
+void AEnemy::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
-    SetEnemyData(EnemyDataTableRow);
+    SetEnemyData(DataTableRowHandle);
 }
 
 // Called every frame

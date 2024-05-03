@@ -41,13 +41,14 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 	~AEnemy();
+	virtual void SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle);
 	virtual void SetEnemyData(const FEnemyDataTableRow* InData);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 protected:
-	virtual void OnConstrution(const FTransform& Transform);
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:	
 	// Called every frame
@@ -63,8 +64,15 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* SkeletalMeshComponent;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
+	FDataTableRowHandle DataTableRowHandle;
+
+
+public:										  //animInstance에서 가져다 쓰기위해서..
+	UPROPERTY(EditAnywhere)            
 	UFloatingPawnMovement* Movement;
+
+	
 
 protected:
 	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
