@@ -18,9 +18,9 @@ public:
 	bool IsValid() override;
 	UTexture2D* GetSlotImg() override;
 	bool NormalUse() override;
+	void ClearData() override;
+	void RefreshData() override;
 
-public:
-	void SetSlotData(class URPGSlotUserWidget* Slot);
 	
 public :
 

@@ -17,14 +17,17 @@ public:
 	UInventorySlotData();
 
 	// USlotData을(를) 통해 상속됨
-	bool IsValid() override;
-	
 	UTexture2D* GetSlotImg() override;
+	bool IsValid() override;
 	bool NormalUse() override;
-	 void SetData() override;
+	void RefreshData() override;
+	void ClearData() override;
+	void SetData() override;
+	
 	//임시로 가지고 있는 아이템 정보
 	TWeakPtr<struct  FItemData> ItemData;
 
 	//서로 상호작용이되는 
-	int8 QuickSlotIndex = -1;
+	//원본 슬롯
+	TWeakObjectPtr<class URPGSlotUserWidget> QuickSlot;
 };

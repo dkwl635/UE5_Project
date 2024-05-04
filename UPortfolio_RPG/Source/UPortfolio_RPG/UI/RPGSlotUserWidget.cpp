@@ -88,14 +88,55 @@ bool URPGSlotUserWidget::UseSlot()
 
 	if (SlotData->NormalUse())
 	{
-		SetSlot();
+		RefreshSlot();
 		return true;
 	}
 
 	return false;
 }
 
+void URPGSlotUserWidget::ClearSlot()
+{
+	SlotImg->SetVisibility(ESlateVisibility::Hidden);
+	
+	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+	if (QuickSlot)
+	{
+		QuickSlot->ClearSlot();
+	}
+}
 
+void URPGSlotUserWidget::RefreshSlot()
+{	
+	//½½·Ô¾È¿¡ ÀÖ´Â µ¥ÀÌÅÍ °»½Å
+	SlotData->RefreshData();
+	if (!SlotData->IsValid())
+	{
+		ClearSlot();
+		return;
+	}
+
+	UTexture2D* newImg = SlotData->GetSlotImg();
+	if (!newImg)
+	{
+		SlotImg->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		SlotImg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		SlotImg->SetBrushFromTexture(newImg);
+	}
+
+	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+	if (QuickSlot)
+	{
+		QuickSlot->RefreshSlot();
+	}
+
+	
+}
 
 
 
@@ -139,14 +180,14 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		
 		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);
 		
-		this->SetSlot();
-		StartSlot->SetSlot();
+		this->RefreshSlot();
+		StartSlot->RefreshSlot();
 	
 		if (URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot))
 		{
 			UQuickItemSlotData* QuickSlotData = (UQuickItemSlotData*)QuickSlot->GetSlotData();
-			QuickSlotData->SetSlotData(this);
-			QuickSlot->SetSlot();
+			QuickSlotData->OrginSlot = this;
+			QuickSlot->RefreshSlot();
 		}
 
 	}
@@ -161,9 +202,9 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 
 		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
-		thisSlotData->SetSlotData(StartSlot);
-		
-		this->SetSlot();
+		thisSlotData->OrginSlot = StartSlot;
+		StartSlotData->QuickSlot = this;
+		this->RefreshSlot();
 	}
 	//Äü½½·Ô ³¢¸® ±³È¯
 	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
@@ -176,9 +217,10 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		thisSlotData->OrginSlot = StartSlotData->OrginSlot;
 		StartSlotData->OrginSlot = temp;
 	
+
 		//thisSlotData->SetSlotData(StartSlot);
-		StartSlot->SetSlot();
-		this->SetSlot();
+		StartSlot->RefreshSlot();
+		this->RefreshSlot();
 	}
 
 
@@ -203,7 +245,7 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
-		StartSlotData->SetSlotData(nullptr);
+		StartSlotData->OrginSlot = nullptr;
 		this->SetSlot();
 		break;
 	}		

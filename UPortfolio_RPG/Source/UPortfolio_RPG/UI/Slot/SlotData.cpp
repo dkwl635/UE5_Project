@@ -24,6 +24,14 @@ void USlotData::SetData()
 {
 }
 
+void USlotData::RefreshData()
+{
+}
+
+void USlotData::ClearData()
+{
+}
+
 
 
 UTexture2D* USlotData::GetSlotImg()

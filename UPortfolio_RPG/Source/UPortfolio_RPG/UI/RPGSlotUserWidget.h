@@ -30,7 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool UseSlot();
-
+	void ClearSlot();
+	//½½·Ô °»½Å
+	void RefreshSlot();
 public :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")

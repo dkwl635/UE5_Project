@@ -11,12 +11,13 @@ class UPORTFOLIO_RPG_API USlotData : public UObject
 	GENERATED_BODY()
 
 public:
+	USlotData();
+public:
 	static  TWeakObjectPtr<UWorld> SlotWorld;
 	static TWeakObjectPtr<class UPlayerInventorySubsystem> InventorySubsystem;
 	static void ClearStaticMember();
 public:
 	ERPGSLOTTYPE SlotType;
-	USlotData();
 	int32 SlotIndex;
 
 public :
@@ -24,7 +25,11 @@ public :
 	virtual bool IsValid();
 	//데이터 셋팅하기
 	virtual void SetData();
-
+	//데이터 갱신
+	virtual void RefreshData();
+	//데이터 초기화
+	virtual void ClearData();
+	//슬롯 이미지 
 	virtual UTexture2D* GetSlotImg();
 	 //더블클릭 사용시
 	virtual bool NormalUse();	

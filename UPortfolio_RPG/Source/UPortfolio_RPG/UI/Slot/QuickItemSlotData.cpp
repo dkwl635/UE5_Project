@@ -26,14 +26,25 @@ bool UQuickItemSlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
 	
-	OrginSlot.Get()->GetSlotData()->NormalUse();
-	OrginSlot.Get()->SetSlot();
+	OrginSlot.Get()->UseSlot();
+	
 	return true;
 }
 
-void UQuickItemSlotData::SetSlotData(URPGSlotUserWidget* Slot)
+void UQuickItemSlotData::ClearData()
 {
-	this->OrginSlot = Slot;
-
+	OrginSlot = nullptr;
 }
+
+void UQuickItemSlotData::RefreshData()
+{
+	if (OrginSlot.IsValid())
+	{
+		if (!OrginSlot.Get()->GetSlotData()->IsValid())
+		{
+			
+		}
+	}
+}
+
 

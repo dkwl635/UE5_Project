@@ -19,6 +19,27 @@ void UInventorySlotData::SetData()
 	ItemData = InventorySubsystem->GetItemInfo(itemType, SlotIndex);
 }
 
+void UInventorySlotData::RefreshData()
+{
+	
+	if (!ItemData.IsValid()) 
+	{ 
+		ClearData();
+	}
+}
+
+void UInventorySlotData::ClearData()
+{
+	ItemData = nullptr;
+
+	if (QuickSlot.IsValid())
+	{
+		QuickSlot->ClearSlot();
+		QuickSlot = nullptr;
+	}
+
+}
+
 bool UInventorySlotData::IsValid()
 {
 	bool bValid = true;
@@ -26,10 +47,6 @@ bool UInventorySlotData::IsValid()
 	if (SlotIndex < 0) { bValid =  false; }
 	if (!ItemData.IsValid()) { bValid =  false; }
 
-	if (!bValid)
-	{
-		QuickSlotIndex = -1;
-	}
 	return bValid;
 }
 
@@ -47,11 +64,8 @@ bool UInventorySlotData::NormalUse()
 	if (!InventorySubsystem.Get()) { return false; }
 
 	InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
-	if (QuickSlotIndex >= 0)
-	{
-		InventorySubsystem->QuickSlotRefresh(QuickSlotIndex);
-	}
-
+	
+	RefreshData();
 	return true;
 }
 
