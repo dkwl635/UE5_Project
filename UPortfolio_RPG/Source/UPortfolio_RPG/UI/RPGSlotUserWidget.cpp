@@ -99,12 +99,16 @@ void URPGSlotUserWidget::ClearSlot()
 {
 	SlotImg->SetVisibility(ESlateVisibility::Hidden);
 	
-	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
-	if (QuickSlot)
+	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		QuickSlot->ClearSlot();
+		UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+		if (QuickSlot)
+		{
+			QuickSlot->ClearSlot();
+		}
 	}
+
 }
 
 void URPGSlotUserWidget::RefreshSlot()
@@ -178,6 +182,7 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
 		
+
 		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);
 		
 		this->RefreshSlot();
@@ -195,7 +200,8 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::QUICK_ITEM"));
-		if (PlayerInven->CheckQuickSlotItem(StartSlot) != nullptr)
+		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot);
+		if (QuickSlot != nullptr)
 		{
 			return false;
 		}
@@ -203,7 +209,7 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 		thisSlotData->OrginSlot = StartSlot;
-		StartSlotData->QuickSlot = this;
+		//StartSlotData->QuickSlot = this;
 		this->RefreshSlot();
 	}
 	//Äü½½·Ô ³¢¸® ±³È¯

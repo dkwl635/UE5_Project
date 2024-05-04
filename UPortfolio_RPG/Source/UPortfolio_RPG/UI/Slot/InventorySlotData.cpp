@@ -12,16 +12,17 @@ void UInventorySlotData::SetData()
 {
 	if (SlotIndex < 0) { return; }
 	
-	EITEMTYPE itemType = EITEMTYPE::None;
-	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL) { itemType = EITEMTYPE::OTHER; }
-	else 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) { itemType = EITEMTYPE::GEAR; }
+	ItemType = EITEMTYPE::None;
+	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL) { ItemType = EITEMTYPE::OTHER; }
+	else 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) { ItemType = EITEMTYPE::GEAR; }
 
-	ItemData = InventorySubsystem->GetItemInfo(itemType, SlotIndex);
+	
+	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
 }
 
 void UInventorySlotData::RefreshData()
 {
-	
+	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
 	if (!ItemData.IsValid()) 
 	{ 
 		ClearData();
@@ -32,11 +33,11 @@ void UInventorySlotData::ClearData()
 {
 	ItemData = nullptr;
 
-	if (QuickSlot.IsValid())
+	/*if (QuickSlot.IsValid())
 	{
 		QuickSlot->ClearSlot();
 		QuickSlot = nullptr;
-	}
+	}*/
 
 }
 
