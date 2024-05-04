@@ -176,24 +176,30 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 			ItemType = EITEMTYPE::OTHER;
 		}
 
-		
-
 		UInventorySlotData* ThisSlotData = (UInventorySlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
-		
-
 		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);
-		
+
+		URPGSlotUserWidget* QuickSlot1 = PlayerInven->CheckQuickSlotItem(StartSlot);
+		URPGSlotUserWidget* QuickSlot2 = PlayerInven->CheckQuickSlotItem(this);
+		if (QuickSlot1 && QuickSlot2)
+		{
+			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();	
+			UQuickItemSlotData* QuickSlotData2 = (UQuickItemSlotData*)QuickSlot2->GetSlotData();
+			Swap(QuickSlotData1->OrginSlot , QuickSlotData2->OrginSlot);
+			
+		}
+		else if (QuickSlot1)
+		{
+			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();
+			QuickSlotData1->OrginSlot = this;
+		}
+	
+	
 		this->RefreshSlot();
 		StartSlot->RefreshSlot();
-	
-		if (URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot))
-		{
-			UQuickItemSlotData* QuickSlotData = (UQuickItemSlotData*)QuickSlot->GetSlotData();
-			QuickSlotData->OrginSlot = this;
-			QuickSlot->RefreshSlot();
-		}
+		
 
 	}
 	//아이템 창고-> 퀵 슬롯
