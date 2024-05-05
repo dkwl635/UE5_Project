@@ -64,6 +64,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* SkeletalMeshComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* HPBarWidget;
+
 	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
 	FDataTableRowHandle DataTableRowHandle;
 

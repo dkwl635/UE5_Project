@@ -2,6 +2,7 @@
 
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
+#include "Components/WidgetComponent.h"
 //#include "PlayerController.h"
 
 // Sets default values
@@ -14,6 +15,8 @@ AEnemy::AEnemy()
     //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
     SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+    HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+
     Movement->MaxSpeed = 300.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
@@ -22,12 +25,18 @@ AEnemy::AEnemy()
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
     SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    static ConstructorHelpers::FObjectFinder<USkeletalMesh> NormalMonster(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonMinions/Characters/Minions/Prime_Helix/Meshes/Prime_Helix.Prime_Helix'"));
-    if (NormalMonster.Succeeded())
-    {
-    //    SkeletalMeshComponent->SetSkeletalMesh(NormalMonster.Object);
-    }
+    HPBarWidget->SetupAttachment(SkeletalMeshComponent);
+    HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
+    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+    if (UI_HUD.Succeeded())
+    {
+        
+        HPBarWidget->SetWidgetClass(UI_HUD.Class);
+        HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+    }
+   
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
@@ -63,8 +72,7 @@ void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
     SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
     SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
     SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
-
-
+    
 
 }
 
