@@ -7,13 +7,13 @@
 #include "RPGSlotUserWidget.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Components/CanvasPanel.h"
-#include "RPGQuickSlotUserWidget.generated.h"
+#include "RPGQuickSlotsUserWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UPORTFOLIO_RPG_API URPGQuickSlotUserWidget : public URPGUserWidget
+class UPORTFOLIO_RPG_API URPGQuickSlotsUserWidget : public URPGUserWidget
 {
 	GENERATED_BODY()
 	

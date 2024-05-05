@@ -63,7 +63,7 @@ public :
 	TArray<FRPGUI> UICreatList;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	URPGUserWidget* QuickSlotUI;
+	URPGUserWidget* QuickSlotsUI;
 	
 
 	

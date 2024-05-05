@@ -39,6 +39,11 @@ UTexture2D* USlotData::GetSlotImg()
     return nullptr;
 }
 
+int32 USlotData::GetCount()
+{
+    return 1;
+}
+
 
 
 bool USlotData::NormalUse()

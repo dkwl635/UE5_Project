@@ -20,6 +20,12 @@ void UInventorySlotData::SetData()
 	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
 }
 
+int32 UInventorySlotData::GetCount()
+{
+	if (!ItemData.IsValid()) { return 0; }
+	return ItemData.Pin()->CurrentBundleCount;
+}
+
 void UInventorySlotData::RefreshData()
 {
 	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
@@ -32,12 +38,6 @@ void UInventorySlotData::RefreshData()
 void UInventorySlotData::ClearData()
 {
 	ItemData = nullptr;
-
-	/*if (QuickSlot.IsValid())
-	{
-		QuickSlot->ClearSlot();
-		QuickSlot = nullptr;
-	}*/
 
 }
 

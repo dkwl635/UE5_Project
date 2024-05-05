@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/RPGQuickSlotUserWidget.h"
+#include "UI/RPGQuickSlotsUserWidget.h"
 #include "Slot/QuickItemSlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlotUserWidget.h"
 
-void URPGQuickSlotUserWidget::Init()
+void URPGQuickSlotsUserWidget::Init()
 {
 	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	auto Childs =  CanvasPanel->GetSlots();
@@ -39,7 +39,7 @@ void URPGQuickSlotUserWidget::Init()
 
 
 
-void URPGQuickSlotUserWidget::UseQuickSlot(int8 SlotIndex)
+void URPGQuickSlotsUserWidget::UseQuickSlot(int8 SlotIndex)
 {
 
 }

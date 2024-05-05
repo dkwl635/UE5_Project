@@ -24,7 +24,7 @@ void URPGMainUserWidget::Init()
         RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
     }
 
-    QuickSlotUI->Init();
+    QuickSlotsUI->Init();
 
 
 }

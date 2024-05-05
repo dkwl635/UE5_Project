@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "RPGUserWidget.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Slot/SlotData.h"
 #include "RPGSlotUserWidget.generated.h"
 
@@ -18,8 +19,6 @@ class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
 public:
 	void Init() override;
 	~URPGSlotUserWidget();
-
-
 	
 public:
 	UFUNCTION(BlueprintCallable)
@@ -30,9 +29,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool UseSlot();
+
+	//ΩΩ∑‘ √ ±‚»≠
+	UFUNCTION(BlueprintCallable)
 	void ClearSlot();
 	//ΩΩ∑‘ ∞ªΩ≈
+	UFUNCTION(BlueprintCallable)
 	void RefreshSlot();
+
+	UFUNCTION(BlueprintCallable)
+	FText GetCountText();
+
+
 public :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
@@ -43,6 +51,9 @@ public :
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* HoverImg;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* CountText;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UUserWidget> DragUserWidget;

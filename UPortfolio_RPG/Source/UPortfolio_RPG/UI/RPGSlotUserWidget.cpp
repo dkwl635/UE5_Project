@@ -48,7 +48,8 @@ void URPGSlotUserWidget::Init()
 	ensure(SlotData);
 
 	SlotData->SlotType = SlotType;
-
+	CountText->TextDelegate.BindDynamic(this, &ThisClass::GetCountText);
+	CountText->SynchronizeProperties();
 }
 
 URPGSlotUserWidget::~URPGSlotUserWidget()
@@ -98,7 +99,7 @@ bool URPGSlotUserWidget::UseSlot()
 void URPGSlotUserWidget::ClearSlot()
 {
 	SlotImg->SetVisibility(ESlateVisibility::Hidden);
-	
+
 	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
 		UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
@@ -109,12 +110,17 @@ void URPGSlotUserWidget::ClearSlot()
 		}
 	}
 
+	SlotData->ClearData();
+	CountText->SynchronizeProperties();
 }
 
 void URPGSlotUserWidget::RefreshSlot()
 {	
 	//슬롯안에 있는 데이터 갱신
+
 	SlotData->RefreshData();
+	CountText->SynchronizeProperties();
+
 	if (!SlotData->IsValid())
 	{
 		ClearSlot();
@@ -140,6 +146,22 @@ void URPGSlotUserWidget::RefreshSlot()
 	}
 
 	
+}
+
+FText URPGSlotUserWidget::GetCountText()
+{
+
+	if (!SlotData->IsValid())
+	{
+		FText text = FText::FromString(TEXT(""));
+		return text;
+	}
+	else
+	{
+		int32 Count = SlotData->GetCount();
+		FText text = FText::AsNumber(Count);
+		return text;
+	}
 }
 
 

@@ -7,7 +7,7 @@ UQuickItemSlotData::UQuickItemSlotData()
 
 bool UQuickItemSlotData::IsValid()
 {
-	if (!OrginSlot.Get())
+	if (!OrginSlot.IsValid())
 	{
 		return false;
 	}
@@ -19,14 +19,14 @@ UTexture2D* UQuickItemSlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 
-	return OrginSlot.Get()->GetSlotData()->GetSlotImg();
+	return OrginSlot->GetSlotData()->GetSlotImg();
 }
 
 bool UQuickItemSlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
 	
-	OrginSlot.Get()->UseSlot();
+	OrginSlot->UseSlot();
 	
 	return true;
 }
@@ -40,11 +40,24 @@ void UQuickItemSlotData::RefreshData()
 {
 	if (OrginSlot.IsValid())
 	{
-		if (!OrginSlot.Get()->GetSlotData()->IsValid())
+		if (!OrginSlot->GetSlotData()->IsValid())
 		{
-			
+			OrginSlot = nullptr;
 		}
 	}
+}
+
+int32 UQuickItemSlotData::GetCount()
+{
+	if (OrginSlot->GetSlotData())
+	{
+		return OrginSlot->GetSlotData()->GetCount();
+	}
+	else
+	{
+		return  0;
+	}
+	
 }
 
 

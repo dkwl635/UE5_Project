@@ -10,7 +10,7 @@ class UPORTFOLIO_RPG_API UQuickItemSlotData : public USlotData
 
 public:
 
-	TWeakObjectPtr<class URPGQuickSlotUserWidget> Helper;
+	TWeakObjectPtr<class URPGQuickSlotsUserWidget> Helper;
 
 public:
 	UQuickItemSlotData();
@@ -20,6 +20,7 @@ public:
 	bool NormalUse() override;
 	void ClearData() override;
 	void RefreshData() override;
+	int32 GetCount() override;
 
 	
 public :
