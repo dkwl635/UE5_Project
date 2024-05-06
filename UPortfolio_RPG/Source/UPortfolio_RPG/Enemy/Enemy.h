@@ -53,6 +53,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -83,5 +84,15 @@ protected:
 public:
 	void Attack();
 	void AttackCheck();
+
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool IsAttacking;
+
+	UPROPERTY()
+	class UEnemyAnimInstance* EnemyAnim;
 
 };

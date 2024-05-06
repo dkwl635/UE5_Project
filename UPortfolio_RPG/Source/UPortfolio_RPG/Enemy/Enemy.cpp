@@ -9,6 +9,7 @@
 // Sets default values
 AEnemy::AEnemy()
 {
+    IsAttacking = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
@@ -18,7 +19,7 @@ AEnemy::AEnemy()
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
     HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
 
-    Movement->MaxSpeed = 300.0f;                  ///���� �ӵ� ����
+    Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
@@ -116,16 +117,33 @@ void AEnemy::Tick(float DeltaTime)
     }
 }
 
+void AEnemy::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+    EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+    if (EnemyAnim)
+    {
+        EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+    }
+
+   // EnemyAnim->OnAttackHitCheck.AddUObject(this, &AEnemy::AttackCheck);
+}
+
 void AEnemy::Attack()
 {
-    auto AnimInstance = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-    if (nullptr == AnimInstance) return;
+    if (IsAttacking) return;
 
-    AnimInstance->PlayAttackMontage();
+    EnemyAnim->PlayAttackMontage();
+    IsAttacking = true;
 }
 
 void AEnemy::AttackCheck()
 {
 
+}
+
+void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    IsAttacking = false;
 }
 

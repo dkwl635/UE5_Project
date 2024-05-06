@@ -33,7 +33,7 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
-	if (!Montage_IsPlaying(AttackMontage))
+	//if (!Montage_IsPlaying(AttackMontage))
 	{
 		Montage_Play(AttackMontage, 1.0f);
 	}

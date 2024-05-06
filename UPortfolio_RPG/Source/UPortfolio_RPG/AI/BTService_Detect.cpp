@@ -9,7 +9,7 @@
 UBTService_Detect::UBTService_Detect()
 {
 	NodeName = TEXT("Detect");
-	Interval = 1.f; //���񽺰� �۵��ϴ� �ֱ�
+	Interval = 0.5f; //���񽺰� �۵��ϴ� �ֱ�
 }
 
 void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -25,7 +25,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.f;           //�÷��̾� Ž�� ���� ������ ���ų�, ���̺�� �־�ΰڽ��ϴ�.
+	float DetectRadius = 700.f;           //�÷��̾� Ž�� ���� ������ ���ų�, ���̺�� �־�ΰڽ��ϴ�.
 
 	if (nullptr == World) return;
 
