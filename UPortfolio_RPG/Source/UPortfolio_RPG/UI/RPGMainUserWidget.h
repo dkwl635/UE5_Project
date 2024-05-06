@@ -18,21 +18,6 @@ enum class ERPG_UI : uint8
 	QUICKSLOTS,
 };
 
-USTRUCT(BlueprintType)
-struct FRPGUI
-{
-	GENERATED_BODY()
-
-public:
-	//종류
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ERPG_UI UIType;
-	//만들어야 하는거
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<URPGUserWidget> UIClass;
-
-}; 
-
 
 UCLASS()
 class UPORTFOLIO_RPG_API URPGMainUserWidget : public URPGUserWidget
@@ -59,12 +44,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UUserWidget* GetRPGUI(ERPG_UI UI_Type);
 public :
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FRPGUI> UICreatList;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	URPGUserWidget* InventoryUI;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	URPGUserWidget* QuickSlotsUI;
 	
+
 
 	
 private:

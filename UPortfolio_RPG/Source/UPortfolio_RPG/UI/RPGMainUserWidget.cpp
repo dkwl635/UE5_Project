@@ -9,24 +9,11 @@
 void URPGMainUserWidget::Init()
 {
 
-    for (int i = 0; i < UICreatList.Num(); i++)
-    {
-        UUserWidget* NewUserWidget = CreateWidget(GetWorld(), UICreatList[i].UIClass);
-        URPGUserWidget* UI = (URPGUserWidget*)NewUserWidget;
-        UI->Init();
-
-        if (RPGUIMap.Contains(UICreatList[i].UIType))
-        {
-            ensure(false);
-            continue;
-        }
-
-        RPGUIMap.Add(UICreatList[i].UIType, NewUserWidget);
-    }
-
+    InventoryUI->Init();
     QuickSlotsUI->Init();
 
-
+    //auto pos  = InventoryUI->
+    InventoryUI->RemoveFromViewport();
 }
 
 URPGMainUserWidget::~URPGMainUserWidget()
@@ -75,8 +62,17 @@ void URPGMainUserWidget::ToggleUI(UUserWidget* UserWidget)
 
 UUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI UI_Type)
 {
-    if (RPGUIMap.Contains(UI_Type))
-        return RPGUIMap[UI_Type];
+    switch (UI_Type)
+    {
+    case ERPG_UI::NONE:
+        break;
+    case ERPG_UI::INVENTORY:
+        return InventoryUI;
+    case ERPG_UI::QUICKSLOTS:
+        return QuickSlotsUI;
+    default:
+        break;
+    }
 
     return nullptr;
 }

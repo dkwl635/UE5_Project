@@ -26,6 +26,8 @@ public:
 	void GearInventoryRefresh();
 	void NormalInventoryRefresh();
 
+	
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* GearButton;
