@@ -60,7 +60,7 @@ void URPGMainUserWidget::ToggleUI(UUserWidget* UserWidget)
     }
 }
 
-UUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI UI_Type)
+URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI UI_Type)
 {
     switch (UI_Type)
     {

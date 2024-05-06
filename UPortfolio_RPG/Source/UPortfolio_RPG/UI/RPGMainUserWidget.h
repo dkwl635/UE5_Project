@@ -42,7 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleUI(UUserWidget* UserWidget);
 	UFUNCTION(BlueprintCallable)
-	UUserWidget* GetRPGUI(ERPG_UI UI_Type);
+	URPGUserWidget* GetRPGUI(ERPG_UI UI_Type);
 public :
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	URPGUserWidget* InventoryUI;
