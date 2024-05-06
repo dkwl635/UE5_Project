@@ -37,6 +37,7 @@ void UInventorySlotData::RefreshData()
 
 void UInventorySlotData::ClearData()
 {
+	
 	ItemData = nullptr;
 
 }

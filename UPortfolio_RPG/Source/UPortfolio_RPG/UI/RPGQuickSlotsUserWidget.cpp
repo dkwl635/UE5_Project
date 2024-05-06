@@ -25,7 +25,7 @@ void URPGQuickSlotsUserWidget::Init()
 		data->Helper = this;
 		
 
-		SlotWidget->SetSlot();
+		SlotWidget->RefreshSlot();
 		QuickSlotsIndex.Add(i, SlotWidget);
 	
 	

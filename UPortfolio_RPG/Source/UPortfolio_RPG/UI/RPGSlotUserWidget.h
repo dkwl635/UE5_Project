@@ -17,12 +17,13 @@ class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
 	GENERATED_BODY()
 	
 public:
+	//한번만 호출되는
 	void Init() override;
 	~URPGSlotUserWidget();
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetSlot();
+	//UFUNCTION(BlueprintCallable)
+	//void SetSlot();
 
 	UFUNCTION(BlueprintCAllable)
 	bool IsInValid();

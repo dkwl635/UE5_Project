@@ -17,18 +17,16 @@ void URPGInventoryUserWidget::Init()
 		return;
 	}	
 
-	
-
 	for (int32 i = 0; i < Row; i++)
 	{
 		for (int32 k = 0; k < Col; k++)
 		{
-			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
-			ensure(Widget);
-			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
-			Widget->Init();
-			GearBox->AddChildToUniformGrid(Widget, i, k);	
-			auto slotData = Widget->GetSlotData();
+			URPGSlotUserWidget* SlotrWidget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
+			ensure(SlotrWidget);
+			SlotrWidget->SlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
+			SlotrWidget->Init();
+			GearBox->AddChildToUniformGrid(SlotrWidget, i, k);
+			auto slotData = SlotrWidget->GetSlotData();
 			if (!slotData)
 			{
 				UE_LOG(LogTemp, Display, TEXT("slotData null"));
@@ -38,8 +36,8 @@ void URPGInventoryUserWidget::Init()
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->SlotIndex = k + i * Col;
 			
-				GearSlots.Add(Widget);
-				Widget->SetSlot();
+				GearSlots.Add(SlotrWidget);
+				SlotrWidget->RefreshSlot();
 			}
 		}		
 	}
@@ -48,12 +46,12 @@ void URPGInventoryUserWidget::Init()
 	{
 		for (int32 k = 0; k < Col; k++)
 		{
-			URPGSlotUserWidget* Widget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
-			ensure(Widget);
-			Widget->SlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
-			Widget->Init();
-			NormalBox->AddChildToUniformGrid(Widget, i, k);
-			auto slotData = Widget->GetSlotData();
+			URPGSlotUserWidget* SlotWidget = Cast<URPGSlotUserWidget>(CreateWidget(this, SlotBP));
+			ensure(SlotWidget);
+			SlotWidget->SlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
+			SlotWidget->Init();
+			NormalBox->AddChildToUniformGrid(SlotWidget, i, k);
+			auto slotData = SlotWidget->GetSlotData();
 			if (!slotData)
 			{
 				UE_LOG(LogTemp, Display, TEXT("slotData null"));
@@ -63,13 +61,14 @@ void URPGInventoryUserWidget::Init()
 				UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
 				InvenSlotData->SlotIndex = k + i * Col;
 	
-				NormalSlots.Add(Widget);
-				Widget->SetSlot();
+				NormalSlots.Add(SlotWidget);
+				SlotWidget->RefreshSlot();
 			}	
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), NormalSlots.Num(), GearSlots.Num());
 	
+
 	
 }
 

@@ -13,10 +13,7 @@ using enum ERPGSLOTTYPE;
 
 void URPGSlotUserWidget::Init()
 {
-
-	int type = static_cast<int>(SlotType);
-	UE_LOG(LogTemp, Warning, TEXT("Slot : %d"),type);
-
+	//int type = static_cast<int>(SlotType);	
 	switch (SlotType)
 	{
 	case ERPGSLOTTYPE::NONE:
@@ -42,12 +39,10 @@ void URPGSlotUserWidget::Init()
 		break;
 	}
 	
-
-	
-
 	ensure(SlotData);
 
 	SlotData->SlotType = SlotType;
+	SlotData->SetData();
 	CountText->TextDelegate.BindDynamic(this, &ThisClass::GetCountText);
 	CountText->SynchronizeProperties();
 }
@@ -57,24 +52,7 @@ URPGSlotUserWidget::~URPGSlotUserWidget()
 	SlotData = nullptr;
 }
 
-void URPGSlotUserWidget::SetSlot()
-{
-	SlotData->SetData();
 
-
-	UTexture2D* newImg = SlotData->GetSlotImg();
-	if (!newImg)
-	{
-		SlotImg->SetVisibility(ESlateVisibility::Hidden);
-	}
-	else
-	{
-		SlotImg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		SlotImg->SetBrushFromTexture(newImg);
-	}
-	
-
-}
 
 bool URPGSlotUserWidget::IsInValid()
 {
@@ -117,10 +95,10 @@ void URPGSlotUserWidget::ClearSlot()
 void URPGSlotUserWidget::RefreshSlot()
 {	
 	//슬롯안에 있는 데이터 갱신
-
 	SlotData->RefreshData();
 	CountText->SynchronizeProperties();
 
+	bool test = SlotData->IsValid();
 	if (!SlotData->IsValid())
 	{
 		ClearSlot();
@@ -280,7 +258,7 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 	{
 		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
 		StartSlotData->OrginSlot = nullptr;
-		this->SetSlot();
+		this->RefreshSlot();
 		break;
 	}		
 	default:
