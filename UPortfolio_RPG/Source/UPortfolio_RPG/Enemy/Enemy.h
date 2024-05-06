@@ -80,4 +80,8 @@ public:										  //animInstance에서 가져다 쓰기위해서..
 protected:
 	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
 
+public:
+	void Attack();
+	void AttackCheck();
+
 };

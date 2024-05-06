@@ -3,6 +3,7 @@
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
+#include "Enemy/Animation/EnemyAnimInstance.h"
 //#include "PlayerController.h"
 
 // Sets default values
@@ -23,7 +24,8 @@ AEnemy::AEnemy()
 
     SetRootComponent(CapsuleComponent);
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
-    SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+  //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
     HPBarWidget->SetupAttachment(SkeletalMeshComponent);
     HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
@@ -36,7 +38,6 @@ AEnemy::AEnemy()
         HPBarWidget->SetWidgetClass(UI_HUD.Class);
         HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
-   
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
@@ -113,5 +114,18 @@ void AEnemy::Tick(float DeltaTime)
         // ��ǥ ȸ���� ����
         SetActorRotation(MonsterRotation);
     }
+}
+
+void AEnemy::Attack()
+{
+    auto AnimInstance = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+    if (nullptr == AnimInstance) return;
+
+    AnimInstance->PlayAttackMontage();
+}
+
+void AEnemy::AttackCheck()
+{
+
 }
 

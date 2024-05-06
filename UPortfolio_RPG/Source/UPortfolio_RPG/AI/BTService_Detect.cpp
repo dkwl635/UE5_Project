@@ -3,6 +3,7 @@
 #include "AI/BTService_Detect.h"
 #include "EnemyAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Enemy/Enemy.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UBTService_Detect::UBTService_Detect()
