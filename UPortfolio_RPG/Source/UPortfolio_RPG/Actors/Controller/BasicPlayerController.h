@@ -29,7 +29,7 @@ protected:
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased(); 
 	void OnDefaultAttack();
-	void OnSkill_Q(const FInputActionValue& InputValue);
+	void OnSkill_Q();
 	void OnSpace();
 	void OnOpenSkillUI();
 

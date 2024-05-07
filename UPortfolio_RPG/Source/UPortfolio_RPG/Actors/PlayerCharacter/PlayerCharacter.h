@@ -10,6 +10,24 @@ struct FInputActionValue;
 class UStatusComponent;
 class USkillComponent;
 
+USTRUCT()
+struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackMontage_A;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackMontage_B;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackMontage_C;
+	UPROPERTY(EditAnywhere, Category = "Evade")
+	UAnimMontage* SpaceMontage;
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	UAnimMontage* Skill_Q_Montage;
+
+};
+
 UCLASS()
 class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
 {
@@ -18,6 +36,8 @@ class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+	void SetAnimData(const FDataTableRowHandle& InDataTableRowHandle);
+	void SetAnimData(const FCharacterAnimDataTableRow* InData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,7 +49,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void OnSkill(const FInputActionValue& InputActionValue);
+	void OnSkill(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	void OnDefaultAttack(const FVector& HitPoint);
 
@@ -51,6 +71,10 @@ protected:
 	/*UPROPERTY(EditAnywhere)
 	UCapsuleComponent* SwordCollider;*/
 
+protected:
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.CharacterAnimDataTableRow"))
+	FDataTableRowHandle DataTableRowHandle;
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	UAnimMontage* AttackMontage_A;
@@ -60,6 +84,9 @@ public:
 	UAnimMontage* AttackMontage_C;
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	UAnimMontage* SpaceMontage;
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	UAnimMontage* Skill_Q_Montage;
+
 	UAnimMontage* CurrentMontage;
 
 protected:
@@ -68,14 +95,15 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float SpaceCoolTime = 2.f;
-	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 12000.f;
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")
 	bool bIsSpace = false;
 	
 	bool bOnAttack = false;
+
+protected:
+	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
