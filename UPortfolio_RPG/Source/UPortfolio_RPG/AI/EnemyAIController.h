@@ -17,8 +17,8 @@ class UPORTFOLIO_RPG_API AEnemyAIController : public AAIController
 	GENERATED_BODY()
 public:
 	AEnemyAIController();
-	virtual void OnPossess(APawn* InPawn) override;  //ÄÁÆ®·Ñ·¯ ºùÀÇ
-	virtual void OnUnPossess() override;			 //ºùÀÇ ÇØÁ¦
+	virtual void OnPossess(APawn* InPawn) override;  //ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ï¿½ï¿½
+	virtual void OnUnPossess() override;			 //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 public:
 	static const FName TargetKey;
@@ -26,7 +26,7 @@ public:
 private:
 	void OnRepeatTimer();
 
-	FTimerHandle RepeatTimerHandle;   //Å¸ÀÌ¸Ó
+	FTimerHandle RepeatTimerHandle;   //Å¸ï¿½Ì¸ï¿½
 	float RepeatInterval;
 
 	UPROPERTY()
