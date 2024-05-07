@@ -22,6 +22,7 @@ public:
 public:
 	UInputAction* Move = nullptr;
 	UInputAction* DefaultAttack = nullptr;
-	UInputAction* Skill = nullptr;
+	UInputAction* Skill_Q = nullptr;
 	UInputAction* Space = nullptr;
+	UInputAction* OpenSkillUI = nullptr;
 };

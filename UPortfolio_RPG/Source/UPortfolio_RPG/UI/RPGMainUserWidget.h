@@ -10,23 +10,51 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class ERPG_UI : uint8
+{
+	NONE,
+	INVENTORY,
+	QUICKSLOTS,
+};
+
+
 UCLASS()
 class UPORTFOLIO_RPG_API URPGMainUserWidget : public URPGUserWidget
 {
 	GENERATED_BODY()
+
+private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryBtn;
 
-	
-private :
 
+private:
+
+	virtual void Init();
+	~URPGMainUserWidget();
+
+public:
 	UFUNCTION(BlueprintCallable)
-	void OpenInventoryUI();
-
+	void ShowUI(UUserWidget* UserWidget);
+	UFUNCTION(BlueprintCallable)
+	void HideUI(UUserWidget* UserWidget);
+	UFUNCTION(BlueprintCallable)
+	void ToggleUI(UUserWidget* UserWidget);
+	UFUNCTION(BlueprintCallable)
+	URPGUserWidget* GetRPGUI(ERPG_UI UI_Type);
 public :
-	//인벤토리 UI
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<URPGUserWidget> InventoryUI;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	URPGUserWidget* InventoryUI;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	URPGUserWidget* QuickSlotsUI;
 	
+
+
+	
+private:
+
+	TMap<ERPG_UI, UUserWidget*> RPGUIMap;
 
 };

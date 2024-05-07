@@ -20,22 +20,22 @@ public:
 	int8 CurrentBundleCount = 0;
 
 	UPROPERTY(EditAnywhere)
-	FName ItemName;
+	FName ItemName = "";
 	
 	UPROPERTY(EditAnywhere)
-	EITEMTYPE ItemType;
+	EITEMTYPE ItemType = EITEMTYPE::None;
 
 	UPROPERTY(EditAnywhere)
-	int8 MaxBundleCount ;
+	int8 MaxBundleCount  = 0;
 
 	UPROPERTY(EditAnywhere)
-	UTexture2D* ItemImage;
+	UTexture2D* ItemImage = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	FText ItemDesc;
 
 	UPROPERTY(EditAnywhere)
-	FDataTableRowHandle StatusData;
+	FDataTableRowHandle StatusData ;
 };
 
 
@@ -50,7 +50,7 @@ public:
 	int16 PotionValue = 0;
 
 	UPROPERTY(EditAnyWhere, meta = (Bitmask, BitmaskEnum = EPOTIONTYPE))
-	uint8 EPotionType;
+	uint8 EPotionType = 0;
 };
 
 USTRUCT()
@@ -64,7 +64,7 @@ public:
 	int16 GearValue = 0;
 
 	UPROPERTY(EditAnyWhere)
-	EGEARTYPE EGearType;
+	EGEARTYPE EGearType = EGEARTYPE::None;
 };
 
 

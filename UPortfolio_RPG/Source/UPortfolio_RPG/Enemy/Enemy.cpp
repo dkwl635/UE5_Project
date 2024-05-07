@@ -2,31 +2,82 @@
 
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
+#include "Components/WidgetComponent.h"
+#include "Enemy/Animation/EnemyAnimInstance.h"
 //#include "PlayerController.h"
 
 // Sets default values
 AEnemy::AEnemy()
 {
+    IsAttacking = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-    Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+
+    CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+    //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+    SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-    Movement->MaxSpeed = 500.0f;
+    HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+
+    Movement->MaxSpeed = 100.0f;                  ///ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
-    BoxComponent->SetupAttachment(RootComponent);
-    Mesh->SetupAttachment(BoxComponent);
+    SetRootComponent(CapsuleComponent);
+    SkeletalMeshComponent->SetupAttachment(GetRootComponent());
+  //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
-    static ConstructorHelpers::FObjectFinder<USkeletalMesh> NormalMonster(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonMinions/Characters/Minions/Prime_Helix/Meshes/Prime_Helix.Prime_Helix'"));
-    if (NormalMonster.Succeeded())
+
+    HPBarWidget->SetupAttachment(SkeletalMeshComponent);
+    HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
+    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+    if (UI_HUD.Succeeded())
     {
-        Mesh->SetSkeletalMesh(NormalMonster.Object);
+        
+        HPBarWidget->SetWidgetClass(UI_HUD.Class);
+        HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
 
-    AIControllerClass = AEnemyAIController::StaticClass();
+
+    //AIControllerì„¤ì •
+    AIControllerClass = AEnemyAIController::StaticClass(); //ë‚˜ì¤‘ì— ë°ì´í„° í…Œì´ë¸”í™” ì‹œí‚¤ê¸°
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+AEnemy::~AEnemy()
+{
+}
+
+void AEnemy::SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle)
+{
+    DataTableRowHandle = InDataTableRowHandle;
+    if (DataTableRowHandle.IsNull()) { return; }
+    if (DataTableRowHandle.RowName == NAME_None) { return; }
+    EnemyDataTableRow = DataTableRowHandle.GetRow<FEnemyDataTableRow>(TEXT(""));
+    SetEnemyData(EnemyDataTableRow);
+}
+
+void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
+{
+    ensure(InData);
+    if (!ensure(InData))
+    {
+        UE_LOG(LogTemp, Error, TEXT("InData is nullptr!"));
+        return;
+    }
+    EnemyDataTableRow = InData;
+
+    CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
+    CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
+
+    SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
+    SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
+    SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
+    
+
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +87,12 @@ void AEnemy::BeginPlay()
 	
 }
 
+void AEnemy::OnConstruction(const FTransform& Transform)
+{
+    Super::OnConstruction(Transform);
+    SetEnemyData(DataTableRowHandle);
+}
+
 // Called every frame
 void AEnemy::Tick(float DeltaTime)
 {
@@ -43,22 +100,52 @@ void AEnemy::Tick(float DeltaTime)
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (PlayerController)
     {
-        // ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍÀÇ À§Ä¡ °¡Á®¿À±â
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
 
-        // ¸ó½ºÅÍÀÇ À§Ä¡ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         FVector MonsterLocation = GetActorLocation();
 
-        // ÇÃ·¹ÀÌ¾î¸¦ ÇâÇÏ´Â º¤ÅÍ °è»ê
+        // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
-        DirectionToPlayer.Z = 0.f; // Z Ãà °ªÀº ¹«½ÃÇÏ¿© ¼öÆò ¹æÇâÀ¸·Î¸¸ È¸ÀüÇÏµµ·Ï ÇÔ
+        DirectionToPlayer.Z = 0.f; // Z ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ È¸ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½
 
-        // ¸ñÇ¥ È¸Àü°ª °è»ê
+        // ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
-        MonsterRotation.Yaw -= 90.0f; //ÇÃ·¹ÀÌ¾î¿Í Ãà¹æÇâÀÌ ¸Â´Â È¸Àü °ªÀ» ³Ö¾îÁà¾ßÇÔ
+        MonsterRotation.Yaw -= 90.0f; //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â´ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // ¸ñÇ¥ È¸Àü°ª Àû¿ë
+        // ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         SetActorRotation(MonsterRotation);
     }
+}
+
+void AEnemy::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+    EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+    if (EnemyAnim)
+    {
+        EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+    }
+
+   // EnemyAnim->OnAttackHitCheck.AddUObject(this, &AEnemy::AttackCheck);
+}
+
+void AEnemy::Attack()
+{
+    if (IsAttacking) return;
+
+    EnemyAnim->PlayAttackMontage();
+    IsAttacking = true;
+}
+
+void AEnemy::AttackCheck()
+{
+
+}
+
+void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    IsAttacking = false;
 }
 

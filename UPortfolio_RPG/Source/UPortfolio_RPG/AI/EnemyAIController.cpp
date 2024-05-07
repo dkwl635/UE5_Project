@@ -10,7 +10,7 @@ const FName AEnemyAIController::TargetKey(TEXT("Target"));
 
 AEnemyAIController::AEnemyAIController()
 {
-	//	RepeatInterval = 2.f;       //Å¸ÀÌ¸Ó ½Ã°£ 2ÃÊ¸¶´Ù
+	//	RepeatInterval = 2.f;       //Å¸ï¿½Ì¸ï¿½ ï¿½Ã°ï¿½ 2ï¿½Ê¸ï¿½ï¿½ï¿½
 
 	{
 		static ConstructorHelpers::FObjectFinder<UBlackboardData> Asset(TEXT("/Script/AIModule.BlackboardData'/Game/LJY/AI_NormalMonster/BBD_NormalMonsterAI.BBD_NormalMonsterAI'"));
@@ -42,12 +42,12 @@ void AEnemyAIController::OnRepeatTimer()
 	auto CurrentPawn = GetPawn();
 	ensure(CurrentPawn);
 
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld()); //¿ùµå¿¡ ¹èÄ¡ÇØ µÐ ³×ºñ¸Þ½¬ ÀÐ¾î¿À±â
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld()); //ï¿½ï¿½ï¿½å¿¡ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ ï¿½×ºï¿½Þ½ï¿½ ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½
 	if (NavSystem == nullptr) return;
 
-	FNavLocation NextLocation;         //AIÆùÀÌ ÀÌµ¿ÇÒ ´ÙÀ½ À§Ä¡ ÀúÀå
+	FNavLocation NextLocation;         //AIï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, NextLocation)) 
 	{
-		MoveToLocation(NextLocation.Location);     //AIMoveTo ³ëµå, ´ÙÀ½ À§Ä¡·Î ÀÌµ¿
+		MoveToLocation(NextLocation.Location);     //AIMoveTo ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ìµï¿½
 	}
 }

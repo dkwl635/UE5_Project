@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "DataSubsystem/DataSubsystem.h"
-
+#include "UI/Slot/SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "Item/Item.h"
 
 UDataSubsystem::UDataSubsystem()
 {
@@ -28,6 +29,13 @@ UDataSubsystem::UDataSubsystem()
 
 }
 
+UDataSubsystem::~UDataSubsystem()
+{
+	UItem::DataSubsystem = nullptr;
+	USlotData::ClearStaticMember();
+
+}
+
 void UDataSubsystem::Init()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UDataSubsystem->Init"));
@@ -35,14 +43,28 @@ void UDataSubsystem::Init()
 	{
 		return;
 	}
-	UItem::DataSubsystem = this;
+	if (UItem::DataSubsystem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UItem->Init"));
+		UItem::DataSubsystem = this;
+	}
+	
 
+	//인벤은 게임모드에 넣을지 고민해야 함
+	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	if (Inven->Init())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
 	}
 
+	{
+		USlotData::SlotWorld = GetWorld();
+		USlotData::InventorySubsystem = Inven;
+	}
+	
+
+	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
 		bInit = true;
 }
 

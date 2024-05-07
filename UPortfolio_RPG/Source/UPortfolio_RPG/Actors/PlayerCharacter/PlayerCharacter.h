@@ -8,6 +8,7 @@
 
 struct FInputActionValue;
 class UStatusComponent;
+class USkillComponent;
 
 UCLASS()
 class UPORTFOLIO_RPG_API APlayerCharacter : public ACharacter
@@ -23,31 +24,59 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
 	void OnSkill(const FInputActionValue& InputActionValue);
 	void OnSpace(const FVector& HitPoint);
+	void OnDefaultAttack(const FVector& HitPoint);
+
+public:
+	void DefaultAttackCheck();
+
+public:
+	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 
 protected:
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* SpringArmComponent;
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComponent;
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere, Category = "Status")
 	UStatusComponent* StatusComponent;
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	USkillComponent* SkillComponent;
+	/*UPROPERTY(EditAnywhere)
+	UCapsuleComponent* SwordCollider;*/
 
+public:
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_A;
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_B;
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* AttackMontage_C;
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	UAnimMontage* SpaceMontage;
+	UAnimMontage* CurrentMontage;
+
+protected:
 	FTimerHandle SpaceCoolTimer;
+	FTimerHandle SpaceTimer;
+
+	UPROPERTY(EditAnywhere)
+	float SpaceCoolTime = 2.f;
+	UPROPERTY(EditAnywhere)
+	float SpaceDistance = 12000.f;
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Space")
+	bool bIsSpace = false;
+	
+	bool bOnAttack = false;
 
 private:
-	UPROPERTY(EditAnywhere)
-	float SpaceCoolTime = 3.f;
-	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 700.f;
-
-	float CachedWalkSpeed = 0.f;
+	void LookAtMouseCursor(const FVector& HitPoint);
 };

@@ -16,7 +16,8 @@ class UPORTFOLIO_RPG_API UDataSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 public:
 	UDataSubsystem();
-
+	~UDataSubsystem();
+	//나중에 게임모드쪽에 넣으면 좋을꺼 같음
 	UFUNCTION(BlueprintCallable)
 	void Init();
 public:
