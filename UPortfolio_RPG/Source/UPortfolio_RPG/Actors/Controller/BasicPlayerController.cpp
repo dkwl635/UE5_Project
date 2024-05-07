@@ -81,9 +81,12 @@ void ABasicPlayerController::OnDefaultAttack()
 	PlayerCharacter->OnDefaultAttack(Hit.Location);
 }
 
-void ABasicPlayerController::OnSkill_Q(const FInputActionValue& InputActionValue)
+void ABasicPlayerController::OnSkill_Q()
 {
-	
+	StopMovement();
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	PlayerCharacter->OnSkill(Hit.Location);
 }
 
 void ABasicPlayerController::OnSpace()

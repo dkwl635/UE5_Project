@@ -49,7 +49,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void OnSkill(const FInputActionValue& InputActionValue);
+	void OnSkill(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	void OnDefaultAttack(const FVector& HitPoint);
 
@@ -95,8 +95,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float SpaceCoolTime = 2.f;
-	UPROPERTY(EditAnywhere)
-	float SpaceDistance = 12000.f;
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Space")

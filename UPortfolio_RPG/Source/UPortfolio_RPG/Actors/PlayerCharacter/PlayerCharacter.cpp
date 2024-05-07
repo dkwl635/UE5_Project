@@ -89,7 +89,7 @@ void APlayerCharacter::BeginPlay()
 
 	if (!DataTableRowHandle.IsNull() && DataTableRowHandle.RowName != NAME_None)
 	{
-		AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT("DefaultCharacter"));
+		AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
 
 		SetAnimData(AnimDataTableRow);
 	}
@@ -109,9 +109,14 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
-void APlayerCharacter::OnSkill(const FInputActionValue& InputActionValue)
+void APlayerCharacter::OnSkill(const FVector& HitPoint)
 {
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
+	LookAtMouseCursor(HitPoint);
+	Animation->Montage_Play(Skill_Q_Montage, 1.2f);
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
@@ -158,18 +163,21 @@ void APlayerCharacter::DefaultAttackCheck()
 	float Radius = 80.f;
 	FVector Start = GetActorLocation() + GetActorForwardVector() * 120.f;
 	TArray<AActor*> IgnoreActors;
-	FHitResult HitResult;
+	TArray<FHitResult> HitResult;
 
-	bool bIsHit = UKismetSystemLibrary::SphereTraceSingle(this, Start, Start, Radius,
+	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
 		ETraceTypeQuery::TraceTypeQuery4, false,
-		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
+		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
 	if (bIsHit)
 	{
-		if(IsValid(HitResult.GetActor()))
+		for(auto& It:HitResult)
 		{
-			AActor* DamagedActor = HitResult.GetActor();
-			FDamageEvent DamageEvent;
-			DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
+			if (IsValid(It.GetActor()))
+			{
+				AActor* DamagedActor = It.GetActor();
+				FDamageEvent DamageEvent;
+				DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
+			}
 		}
 	}
 }
@@ -178,7 +186,6 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 {
 	const FVector ActorLocation = GetActorLocation();
 	const FVector Direction = (HitPoint - ActorLocation).GetSafeNormal();
-	const FVector Destination = ActorLocation + Direction * SpaceDistance;
 	FRotator CurrentRotation = GetActorRotation();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	NewRotation.Pitch = CurrentRotation.Pitch;
