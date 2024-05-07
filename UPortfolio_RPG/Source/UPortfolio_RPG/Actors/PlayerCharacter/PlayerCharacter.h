@@ -25,7 +25,8 @@ struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
 	UAnimMontage* SpaceMontage;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	UAnimMontage* Skill_Q_Montage;
-
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	UAnimMontage* Skill_W_Montage;
 };
 
 UCLASS()
@@ -49,7 +50,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void OnSkill(const FVector& HitPoint);
+	void OnSkill_Q(const FVector& HitPoint);
+	void OnSkill_W(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	void OnDefaultAttack(const FVector& HitPoint);
 
@@ -85,6 +87,8 @@ public:
 	UAnimMontage* SpaceMontage;
 	UPROPERTY()
 	UAnimMontage* Skill_Q_Montage;
+	UPROPERTY()
+	UAnimMontage* Skill_W_Montage;
 
 	UAnimMontage* CurrentMontage;
 
@@ -92,13 +96,15 @@ protected:
 	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
-	UPROPERTY(EditAnywhere, Category = "Space")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "Space")
 	float SpaceCoolTime = 2.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Space")
+	float RemainingTime = 0.f;
 
 public:
 	UPROPERTY()
 	bool bIsSpace = false;
-	
+	bool bIsDown = false;
 	bool bOnAttack = false;
 
 protected:

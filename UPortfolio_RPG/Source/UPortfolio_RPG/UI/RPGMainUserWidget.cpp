@@ -28,7 +28,7 @@ void URPGMainUserWidget::ShowUI(UUserWidget* UserWidget)
     if (!UserWidget) { return; }
     if (!UserWidget->IsInViewport())
     {
-        // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+        // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         UserWidget->AddToViewport();
     }
    
@@ -51,7 +51,7 @@ void URPGMainUserWidget::ToggleUI(UUserWidget* UserWidget)
 
     if (!UserWidget->IsInViewport())
     {
-        // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+        // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         ShowUI(UserWidget);
     }
     else

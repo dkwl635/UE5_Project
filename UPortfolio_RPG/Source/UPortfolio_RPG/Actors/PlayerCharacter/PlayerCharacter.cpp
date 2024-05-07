@@ -17,7 +17,7 @@
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	{
 		SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -78,6 +78,7 @@ void APlayerCharacter::SetAnimData(const FCharacterAnimDataTableRow* InData)
 	AttackMontage_C = InData->AttackMontage_C;
 	SpaceMontage = InData->SpaceMontage;
 	Skill_Q_Montage = InData->Skill_Q_Montage;
+	Skill_W_Montage = InData->Skill_W_Montage;
 
 	CurrentMontage = AttackMontage_A;
 }
@@ -99,7 +100,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(SpaceCoolTimer);
 }
 
 // Called to bind functionality to input
@@ -109,7 +110,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
-void APlayerCharacter::OnSkill(const FVector& HitPoint)
+void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
@@ -119,28 +120,37 @@ void APlayerCharacter::OnSkill(const FVector& HitPoint)
 	Animation->Montage_Play(Skill_Q_Montage, 1.2f);
 }
 
-void APlayerCharacter::OnSpace(const FVector& HitPoint)
+void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
+	LookAtMouseCursor(HitPoint);
+	Animation->Montage_Play(Skill_W_Montage, 1.2f);
+}
+
+void APlayerCharacter::OnSpace(const FVector& HitPoint)
+{
 	// 쿨타임 타이머
+	
 	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
 	if (bIsSpaceCool) { return; }
 	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);// 회피 5초쿨
-
-	GetController()->StopMovement();
-
+	
 	if (!bIsSpace)
 	{
+		UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+		ensure(Animation);
+		if (Animation->Montage_IsPlaying(nullptr)) { return; }
+
 		bIsSpace = true;
 		GetController()->StopMovement();
 		LookAtMouseCursor(HitPoint);
 		Animation->Montage_Play(SpaceMontage, 1.2f);
+		auto SpaceDelegate = [this]() { bIsSpace = false; };
+		GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
 	}
-	auto SpaceDelegate = [this]() { bIsSpace = false; };
-	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
@@ -168,7 +178,7 @@ void APlayerCharacter::DefaultAttackCheck()
 	TSet<AActor*> AlreadyDamagedActors;
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
-		ETraceTypeQuery::TraceTypeQuery4, false,
+		ETraceTypeQuery::TraceTypeQuery1, false,
 		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
 	if (bIsHit)
 	{

@@ -30,6 +30,7 @@ protected:
 	void OnSetDestinationReleased(); 
 	void OnDefaultAttack();
 	void OnSkill_Q();
+	void OnSkill_W();
 	void OnSpace();
 	void OnOpenSkillUI();
 
