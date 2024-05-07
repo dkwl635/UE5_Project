@@ -39,26 +39,6 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetAnimInstanceClass(Anim.Class);
 	}
 	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage'"));
-		ensure(Anim.Object);
-		AttackMontage_A = Anim.Object;
-	}
-	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryB_Montage.Attack_PrimaryB_Montage'"));
-		ensure(Anim.Object);
-		AttackMontage_B = Anim.Object;
-	}
-	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Attack_PrimaryC_Montage.Attack_PrimaryC_Montage'"));
-		ensure(Anim.Object);
-		AttackMontage_C = Anim.Object;
-	}
-	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Anim(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/AnimMontage_Evade.AnimMontage_Evade'"));
-		ensure(Anim.Object);
-		SpaceMontage = Anim.Object;
-	}
-	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
 		SpringArmComponent->TargetArmLength = 800.f;
 		SpringArmComponent->bInheritPitch = false;
@@ -76,6 +56,29 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
+}
+
+void APlayerCharacter::SetAnimData(const FDataTableRowHandle& InDataTableRowHandle)
+{
+	DataTableRowHandle = InDataTableRowHandle;
+	if (DataTableRowHandle.IsNull()) { return; }
+	if (DataTableRowHandle.RowName == NAME_None) { return; }
+	AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
+	SetAnimData(AnimDataTableRow);
+}
+
+void APlayerCharacter::SetAnimData(const FCharacterAnimDataTableRow* InData)
+{
+	ensure(InData);
+	if (!InData) { return; }
+
+	AnimDataTableRow = InData;
+	AttackMontage_A = InData->AttackMontage_A;
+	AttackMontage_B = InData->AttackMontage_B;
+	AttackMontage_C = InData->AttackMontage_C;
+	SpaceMontage = InData->SpaceMontage;
+	Skill_Q_Montage = InData->Skill_Q_Montage;
+
 	CurrentMontage = AttackMontage_A;
 }
 
@@ -83,6 +86,13 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!DataTableRowHandle.IsNull() && DataTableRowHandle.RowName != NAME_None)
+	{
+		AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT("DefaultCharacter"));
+
+		SetAnimData(AnimDataTableRow);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -126,7 +136,6 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	}
 	auto SpaceDelegate = [this]() { bIsSpace = false; };
 	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
-	
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)

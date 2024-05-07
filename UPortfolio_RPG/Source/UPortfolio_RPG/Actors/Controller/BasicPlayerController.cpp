@@ -83,8 +83,7 @@ void ABasicPlayerController::OnDefaultAttack()
 
 void ABasicPlayerController::OnSkill_Q(const FInputActionValue& InputActionValue)
 {
-	StopMovement();
-	PlayerCharacter;
+	
 }
 
 void ABasicPlayerController::OnSpace()
