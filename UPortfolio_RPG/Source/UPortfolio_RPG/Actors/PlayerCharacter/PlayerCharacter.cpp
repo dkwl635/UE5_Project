@@ -179,7 +179,6 @@ void APlayerCharacter::DefaultAttackCheck()
 			{
 				FDamageEvent DamageEvent;
 				DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
-				UE_LOG(LogTemp, Warning, TEXT("%f"), StatusComponent->GetAttackDamage());
 				AlreadyDamagedActors.Add(DamagedActor); // 공격한 대상을 세트에 추가
 			}
 		}
