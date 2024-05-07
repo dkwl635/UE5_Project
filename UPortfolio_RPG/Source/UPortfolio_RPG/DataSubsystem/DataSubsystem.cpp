@@ -52,11 +52,11 @@ void UDataSubsystem::Init()
 
 	//인벤은 게임모드에 넣을지 고민해야 함
 	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	if (Inven->Init())
+	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	/*if (Inven->Init())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
-	}
+	}*/
 
 	{
 		USlotData::SlotWorld = GetWorld();

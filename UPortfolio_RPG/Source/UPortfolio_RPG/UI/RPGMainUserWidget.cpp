@@ -9,8 +9,8 @@
 void URPGMainUserWidget::Init()
 {
 
-    InventoryUI->Init();
     QuickSlotsUI->Init();
+    InventoryUI->Init();
 
     //auto pos  = InventoryUI->
     InventoryUI->RemoveFromViewport();

@@ -16,21 +16,25 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerInventorySubsystem :: Initialize"));
+
+	NormalInventory.SetNum(MaxInvenSize, false);
+	GearInventory.SetNum(MaxInvenSize, false);
+
+	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
+	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
 }
 
 bool UPlayerInventorySubsystem::Init()
 {	
-	NormalInventory.SetNum(MaxInvenSize, false);
-	GearInventory.SetNum(MaxInvenSize, false);
-	
-	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
-	if (ItemClass){ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>();}
+	GearSlots.Empty();
+	NormalSlots.Empty();
+	QuickItemSlots.Empty();
+
 
 	AddItem( TEXT("HP100"), 3);
 	AddItem( TEXT("HP200"), 3);
 
-	
 	return true;
 }
 

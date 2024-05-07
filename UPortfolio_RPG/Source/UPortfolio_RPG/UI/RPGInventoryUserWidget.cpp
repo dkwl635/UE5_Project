@@ -11,7 +11,7 @@ void URPGInventoryUserWidget::Init()
 	int32 Col = InvenSlotSizeX;
 	int32 Row = InvenSlotSizeY;
 
-	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	if (!Inven)
 	{
 		return;

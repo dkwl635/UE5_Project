@@ -8,7 +8,7 @@
 
 void URPGQuickSlotsUserWidget::Init()
 {
-	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	auto Childs =  CanvasPanel->GetSlots();
 	
 	for (int8 i = 0; i < Childs.Num(); i++)

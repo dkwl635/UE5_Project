@@ -80,7 +80,7 @@ void URPGSlotUserWidget::ClearSlot()
 
 	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
 		if (QuickSlot)
 		{
@@ -116,7 +116,7 @@ void URPGSlotUserWidget::RefreshSlot()
 		SlotImg->SetBrushFromTexture(newImg);
 	}
 
-	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
 	if (QuickSlot)
 	{
@@ -160,7 +160,7 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	ERPGSLOTTYPE EndSlotType = this->SlotType;
 
 	UE_LOG(LogTemp, Warning, TEXT("Succens DragEnd"));
-	UPlayerInventorySubsystem* PlayerInven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	//(무기 가방 -> 무기 가방) || (기타 가방 -> 기타 가방)
 	if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		|| (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)

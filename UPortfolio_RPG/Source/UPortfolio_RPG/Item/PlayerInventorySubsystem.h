@@ -33,7 +33,8 @@ private:
 public : 
 	UPlayerInventorySubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
+	
+	UFUNCTION(BlueprintCallable)
 	bool Init();
 	//아이템 추가
 	bool AddItem(const FName& InKey, int8 Count);
@@ -70,6 +71,7 @@ private:
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> NormalSlots;
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
 		
+
 
 
 public:

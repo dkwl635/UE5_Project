@@ -49,8 +49,11 @@ public :
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	URPGUserWidget* QuickSlotsUI;
-	
 
+public:
+	//Interaction
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInteraction;
 
 	
 private:
