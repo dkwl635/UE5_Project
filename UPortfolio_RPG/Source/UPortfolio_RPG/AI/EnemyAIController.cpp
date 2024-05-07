@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardData.h"
 
 const FName AEnemyAIController::TargetKey(TEXT("Target"));
+const FName AEnemyAIController::TargetActorKey(TEXT("TargetActor"));
 
 AEnemyAIController::AEnemyAIController()
 {
