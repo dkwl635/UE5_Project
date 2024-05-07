@@ -60,9 +60,9 @@ public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComponent;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	UStatusComponent* StatusComponent;
@@ -76,15 +76,14 @@ protected:
 	FDataTableRowHandle DataTableRowHandle;
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	UAnimMontage* AttackMontage_A;
-	UPROPERTY(EditAnywhere, Category = "Montage")
+	UPROPERTY()UAnimMontage* AttackMontage_A;
+	UPROPERTY()
 	UAnimMontage* AttackMontage_B;
-	UPROPERTY(EditAnywhere, Category = "Montage")
+	UPROPERTY()
 	UAnimMontage* AttackMontage_C;
-	UPROPERTY(EditAnywhere, Category = "Montage")
+	UPROPERTY()
 	UAnimMontage* SpaceMontage;
-	UPROPERTY(EditAnywhere, Category = "Skill")
+	UPROPERTY()
 	UAnimMontage* Skill_Q_Montage;
 
 	UAnimMontage* CurrentMontage;
@@ -93,11 +92,11 @@ protected:
 	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Space")
 	float SpaceCoolTime = 2.f;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = "Space")
+	UPROPERTY()
 	bool bIsSpace = false;
 	
 	bool bOnAttack = false;
