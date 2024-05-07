@@ -24,9 +24,24 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
-	UPROPERTY()
-	float HP = 100.f;
+public:
+	float GetHP() { return HP; }
+	void SetHP(float InHP) { HP = InHP; }
+	float GetMP() { return MP; }
+	void SetMP(float InMP) { MP = InMP; }
+	float GetAttackDamage() { return AttackDamage; }
+	void SetAttackDamage(float Damage) { AttackDamage = Damage; }
+	void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
+	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HP = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MP = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackDamage = 100.f;
 		
+	bool bSuperArmor;
+	bool bSuperStance;
 };

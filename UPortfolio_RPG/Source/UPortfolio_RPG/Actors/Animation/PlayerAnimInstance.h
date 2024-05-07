@@ -14,4 +14,19 @@ class UPORTFOLIO_RPG_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
+public:
+	UPlayerAnimInstance();
+
+protected:
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	double Speed;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsSpace;
+
+private:
+	ACharacter* Character;
 };

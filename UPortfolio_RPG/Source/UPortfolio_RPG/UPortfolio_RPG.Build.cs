@@ -13,8 +13,8 @@ public class UPortfolio_RPG : ModuleRules
             ,"AIModule" , "Niagara","NavigationSystem", "GameplayTasks"
         });
 
-        //¸ðµâ Ãß°¡½Ã ´Ù¸¥°÷¿¡ ¸Þ¸ðÇØ ÁÖ¼¼¿ä.
-        //º´ÇÕÇÒ¶§ Âü°íÇÏ°Ú½À´Ï´Ù.
+        //ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°Ú½ï¿½ï¿½Ï´ï¿½.
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
         PublicIncludePaths.Add("UPortfolio_RPG");

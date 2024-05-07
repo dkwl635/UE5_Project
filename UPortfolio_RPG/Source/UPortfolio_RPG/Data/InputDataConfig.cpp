@@ -7,7 +7,7 @@ UInputDataConfig::UInputDataConfig()
 {
 	{
 		static ConstructorHelpers::FObjectFinder<UInputMappingContext> Asset
-		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/KSH/Character/Input/IA_Player.IA_Player'") };
+		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/KSH/Character/Input/IMC_Player.IMC_Player'") };
 		check(Asset.Succeeded());
 		InputMappingContext = Asset.Object;
 	}
@@ -27,12 +27,18 @@ UInputDataConfig::UInputDataConfig()
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
 		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill.IA_Skill'") };
 		check(Asset.Succeeded());
-		Skill = Asset.Object;
+		Skill_Q = Asset.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
 		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Space.IA_Space'") };
 		check(Asset.Succeeded());
 		Space = Asset.Object;
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_OpenSkillUI.IA_OpenSkillUI'") };
+		check(Asset.Succeeded());
+		OpenSkillUI = Asset.Object;
 	}
 }

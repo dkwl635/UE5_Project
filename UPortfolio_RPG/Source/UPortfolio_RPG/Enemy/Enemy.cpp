@@ -28,6 +28,7 @@ AEnemy::AEnemy()
   //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
+
     HPBarWidget->SetupAttachment(SkeletalMeshComponent);
     HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
     HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -39,6 +40,7 @@ AEnemy::AEnemy()
         HPBarWidget->SetWidgetClass(UI_HUD.Class);
         HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
+
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기

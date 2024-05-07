@@ -27,6 +27,7 @@ void ABasicPlayerController::BeginPlay()
 		const UInputDataConfig* InputDataConfig = GetDefault<UInputDataConfig>();
 		Subsystem->AddMappingContext(InputDataConfig->InputMappingContext, 0);
 	}
+	PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 }
 
 void ABasicPlayerController::SetupInputComponent()
@@ -39,9 +40,10 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnSetDestinationTriggered);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Completed, this, &ABasicPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Canceled, this, &ABasicPlayerController::OnSetDestinationReleased);
-		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Started, this, &ABasicPlayerController::OnDefaultAttack);
-		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnDefaultAttack);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_Q);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
 	}
 
 }
@@ -66,28 +68,33 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 
 void ABasicPlayerController::OnSetDestinationReleased()
 {
-	{
-		// We move there and spawn some particles
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-	}
+	// We move there and spawn some particles
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 }
 
 void ABasicPlayerController::OnDefaultAttack()
 {
 	StopMovement();
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	PlayerCharacter->OnDefaultAttack(Hit.Location);
 }
 
-void ABasicPlayerController::OnSkill(const FInputActionValue& InputActionValue)
+void ABasicPlayerController::OnSkill_Q(const FInputActionValue& InputActionValue)
 {
-	
+	StopMovement();
+	PlayerCharacter;
 }
 
 void ABasicPlayerController::OnSpace()
 {
 	FHitResult Hit;
-	GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1, true, Hit);
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-	ensure(PlayerCharacter);
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 	PlayerCharacter->OnSpace(Hit.Location);
+}
+
+void ABasicPlayerController::OnOpenSkillUI()
+{
+
 }
