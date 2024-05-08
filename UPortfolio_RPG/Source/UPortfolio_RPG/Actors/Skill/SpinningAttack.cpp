@@ -22,11 +22,6 @@ ASpinningAttack::ASpinningAttack()
 		StaticMesh->SetStaticMesh(Asset.Object);
 	}
 	{
-		static ConstructorHelpers::FObjectFinder<UMaterialInstance> Asset(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/KSH/Character/Skill/Material/MI_Hotdog_Spark_VLerp_Colour_Shockwave_Slow.MI_Hotdog_Spark_VLerp_Colour_Shockwave_Slow'"));
-		ensure(Asset.Object);
-		StaticMesh->SetMaterial(0, Asset.Object);
-	}
-	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/SpinningAttack_Montage.SpinningAttack_Montage'"));
 		ensure(Asset.Object);
 		Montage = Asset.Object;

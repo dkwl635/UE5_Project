@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/Animation/Notify/SpinningAttackNotify.h"
-#include "Actors/Skill/SpinningAttack.h"
+#include "Actors/Animation/Notify/SkillSpawnNotify.h"
+#include "Actors/Skill/SkillBase.h"
 
-void USpinningAttackNotify::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
+void USkillSpawnNotify::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration,EventReference);
 
-    if (MeshComp && MeshComp->GetOwner())
+    if (MeshComp && MeshComp->GetOwner()&&SkillActorClass)
     {
         UWorld* World = MeshComp->GetOwner()->GetWorld();
         if (World)
@@ -18,22 +18,23 @@ void USpinningAttackNotify::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
             FRotator Rotation = MeshComp->GetOwner()->GetActorRotation();
 
             // Spawning Actor Class
-            TSubclassOf<AActor> ActorToSpawn = ASpinningAttack::StaticClass();
-
-            // Spawn Actor
-            SpawnActor = World->SpawnActor<AActor>(ActorToSpawn, Location, Rotation);
+            SpawnActor = World->SpawnActor<ASkillBase>(SkillActorClass, Location, Rotation);
         }
     }
 }
 
-void USpinningAttackNotify::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+void USkillSpawnNotify::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
     if (MeshComp && MeshComp->GetOwner())
     {
         UWorld* World = MeshComp->GetOwner()->GetWorld();
         if (World)
         {
-            World->DestroyActor(SpawnActor);
+            if(SpawnActor)
+            {
+                World->DestroyActor(SpawnActor);
+                SpawnActor = nullptr;
+            }
         }
     }
 	Super::NotifyEnd(MeshComp, Animation,EventReference);

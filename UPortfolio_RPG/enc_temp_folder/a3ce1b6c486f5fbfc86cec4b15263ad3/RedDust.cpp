@@ -27,8 +27,8 @@ ARedDust::ARedDust()
 		Montage = Asset.Object;
 	}
 
-	StaticMesh->SetRelativeLocation(FVector(250., 0., -88.));
-	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
+	StaticMesh->SetRelativeLocation(FVector(180., 0., -88.));
+	StaticMesh->SetRelativeScale3D(FVector(2.5, 0.5, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 }
 

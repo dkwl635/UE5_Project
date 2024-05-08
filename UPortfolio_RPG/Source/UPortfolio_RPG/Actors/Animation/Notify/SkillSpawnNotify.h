@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "SpinningAttackNotify.generated.h"
+#include "SkillSpawnNotify.generated.h"
+
+class ASkillBase;
 
 UCLASS()
-class UPORTFOLIO_RPG_API USpinningAttackNotify : public UAnimNotifyState
+class UPORTFOLIO_RPG_API USkillSpawnNotify : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
@@ -15,6 +17,9 @@ protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
+	TSubclassOf<ASkillBase> SkillActorClass;
 private:
-	AActor* SpawnActor;
+	ASkillBase* SpawnActor;
 };
