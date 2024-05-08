@@ -24,7 +24,7 @@ bool UBTDecorator_Attack::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 		return false;
 
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= 200.0f);
-	UE_LOG(LogTemp, Warning, TEXT("bResult: %d"), bResult);
+//	UE_LOG(LogTemp, Warning, TEXT("bResult: %d"), bResult);
 	return bResult;
 
 	/*FVector TargetVector = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AEnemyAIController::TargetKey);

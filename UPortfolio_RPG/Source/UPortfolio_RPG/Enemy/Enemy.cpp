@@ -17,7 +17,9 @@ AEnemy::AEnemy()
     //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
     SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-    HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+    StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+    EnemyState = CreateDefaultSubobject<UStatusComponent>(TEXT("EnemyState"));
+
 
     Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
@@ -29,16 +31,16 @@ AEnemy::AEnemy()
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
 
-    HPBarWidget->SetupAttachment(SkeletalMeshComponent);
-    HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
-    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    StatusWidget->SetupAttachment(SkeletalMeshComponent);
+    
+    StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
     static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
         
-        HPBarWidget->SetWidgetClass(UI_HUD.Class);
-        HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+        StatusWidget->SetWidgetClass(UI_HUD.Class);
+        StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
 
 
@@ -76,6 +78,14 @@ void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
     SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
     SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
     SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
+
+    EnemyState->SetEnemyHP(InData->EnemyHP);
+    MaxHP = InData->EnemyHP;
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP());
+    UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
+
+    FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
+    StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
     
 
 }
@@ -129,6 +139,47 @@ void AEnemy::PostInitializeComponents()
     }
 
    // EnemyAnim->OnAttackHitCheck.AddUObject(this, &AEnemy::AttackCheck);
+}
+
+float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    // Call the base class version of TakeDamage
+    float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+    // 적의 상태 객체에서 HP를 가져와서 데미지를 적용합니다.
+    float CurrentHP = EnemyState->GetEnemyHP();
+    float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+    EnemyState->SetEnemyHP(NewHP);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP()); 
+
+    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+    if (StatusUserWidget)
+    {
+        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+        if (EnemyStatusUserWidget)
+        {
+
+            UE_LOG(LogTemp, Warning, TEXT("NewHP : %f"), NewHP);
+            UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
+            EnemyStatusUserWidget->SetHP(NewHP, MaxHP);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Error"));
+        }
+
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Err"));
+    }
+
+    if (EnemyState->GetEnemyHP() <= 0.f)
+    {
+        Destroy();
+    }
+
+    return Damage;
 }
 
 void AEnemy::Attack()

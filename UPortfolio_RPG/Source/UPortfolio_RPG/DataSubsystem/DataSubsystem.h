@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Item/ItemData.h"
+#include "Enemy/EnemyData.h"
 #include "DataSubsystem.generated.h"
 
 /**
@@ -17,13 +18,15 @@ class UPORTFOLIO_RPG_API UDataSubsystem : public UGameInstanceSubsystem
 public:
 	UDataSubsystem();
 	~UDataSubsystem();
-	//³ªÁß¿¡ °ÔÀÓ¸ðµåÂÊ¿¡ ³ÖÀ¸¸é ÁÁÀ»²¨ °°À½
+	//ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintCallable)
 	void Init();
 public:
 	
 	FItemData* FindItem(const FName& InKey);
 	FPotionData* FindPotionData(const FName& InKey);
+	FEnemyData* FindEnemyData(const FName& InKey);
+
 protected:
 
 	bool bInit = false;
@@ -34,5 +37,11 @@ protected:
 
 	UPROPERTY()
 	UDataTable* DT_Potion;
+
+
+
+// Enemy
+	UPROPERTY()
+	UDataTable* DT_Enemy;
 
 };

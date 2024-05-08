@@ -44,4 +44,16 @@ protected:
 		
 	bool bSuperArmor;
 	bool bSuperStance;
+
+
+
+//EnemyState
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Enemy_HP = 0.f;
+
+public:
+	float GetEnemyHP() { return Enemy_HP; }
+	void SetEnemyHP(float InHP) { Enemy_HP = InHP; }
+
 };
