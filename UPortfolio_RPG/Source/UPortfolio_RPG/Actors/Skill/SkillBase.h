@@ -15,6 +15,10 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
 
 public:
+	UAnimMontage* GetSkillMontage() { return Montage; }
+	void SetSkillMontage(UAnimMontage* InMontage) { Montage = InMontage; }
+
+public:
 	UPROPERTY(EditAnywhere)
 	FName Sk_Name;
 	UPROPERTY(EditAnywhere)
@@ -27,6 +31,8 @@ public:
 	float Sk_ManaUsage;
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Sk_Image;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* Montage;
 	
 	bool bSuperArmor;	// 피면
 	bool bSuperStance;	// 경면

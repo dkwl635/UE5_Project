@@ -10,6 +10,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
+#include "Actors/Skill/SkillBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
 
@@ -23,7 +24,6 @@ APlayerCharacter::APlayerCharacter()
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-		//SwordCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollider"));
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
@@ -60,10 +60,10 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::SetAnimData(const FDataTableRowHandle& InDataTableRowHandle)
 {
-	DataTableRowHandle = InDataTableRowHandle;
-	if (DataTableRowHandle.IsNull()) { return; }
-	if (DataTableRowHandle.RowName == NAME_None) { return; }
-	AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
+	AnimDataTableRowHandle = InDataTableRowHandle;
+	if (AnimDataTableRowHandle.IsNull()) { return; }
+	if (AnimDataTableRowHandle.RowName == NAME_None) { return; }
+	AnimDataTableRow = AnimDataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
 	SetAnimData(AnimDataTableRow);
 }
 
@@ -77,8 +77,6 @@ void APlayerCharacter::SetAnimData(const FCharacterAnimDataTableRow* InData)
 	AttackMontage_B = InData->AttackMontage_B;
 	AttackMontage_C = InData->AttackMontage_C;
 	SpaceMontage = InData->SpaceMontage;
-	Skill_Q_Montage = InData->Skill_Q_Montage;
-	Skill_W_Montage = InData->Skill_W_Montage;
 
 	CurrentMontage = AttackMontage_A;
 }
@@ -88,9 +86,15 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!DataTableRowHandle.IsNull() && DataTableRowHandle.RowName != NAME_None)
+	if (!SkillDataTableRowHandle.IsNull() && SkillDataTableRowHandle.RowName != NAME_None)
 	{
-		AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
+		SkillDataTableRow = SkillDataTableRowHandle.GetRow<FSkillDataTableRow>(TEXT(""));
+
+		SkillComponent->SetSkillData(SkillDataTableRow);
+	}
+	if (!AnimDataTableRowHandle.IsNull() && AnimDataTableRowHandle.RowName != NAME_None)
+	{
+		AnimDataTableRow = AnimDataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
 
 		SetAnimData(AnimDataTableRow);
 	}
@@ -117,7 +121,13 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
 	LookAtMouseCursor(HitPoint);
-	Animation->Montage_Play(Skill_Q_Montage, 1.2f);
+	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[0]));
+	if (Skill)
+	{
+		UAnimMontage* Montage = Skill->GetSkillMontage();
+		Animation->Montage_Play(Montage, 1.2f);
+		Skill->Destroy();
+	}
 }
 
 void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
@@ -127,7 +137,13 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
 	LookAtMouseCursor(HitPoint);
-	Animation->Montage_Play(Skill_W_Montage, 1.2f);
+	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[1]));
+	if (Skill)
+	{
+		UAnimMontage* Montage = Skill->GetSkillMontage();
+		Animation->Montage_Play(Montage, 1.2f);
+		Skill->Destroy();
+	}
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)

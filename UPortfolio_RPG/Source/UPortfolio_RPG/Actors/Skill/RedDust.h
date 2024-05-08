@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Actors/Skill/SkillBase.h"
-#include "SpinningAttack.generated.h"
+#include "RedDust.generated.h"
 
 UCLASS()
-class UPORTFOLIO_RPG_API ASpinningAttack : public ASkillBase
+class UPORTFOLIO_RPG_API ARedDust : public ASkillBase
 {
 	GENERATED_BODY()
 	
 public:
-	ASpinningAttack();
+	ARedDust();
 
 	virtual void BeginPlay() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;

@@ -13,14 +13,14 @@ void USpinningAttackNotify::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
         UWorld* World = MeshComp->GetOwner()->GetWorld();
         if (World)
         {
-            // 액터 스폰 위치와 회전 정의
+            // Actor Spawn Location & Rotation
             FVector Location = MeshComp->GetOwner()->GetActorLocation();
             FRotator Rotation = MeshComp->GetOwner()->GetActorRotation();
 
-            // 스폰할 액터 클래스 지정
+            // Spawning Actor Class
             TSubclassOf<AActor> ActorToSpawn = ASpinningAttack::StaticClass();
 
-            // 액터 스폰
+            // Spawn Actor
             SpawnActor = World->SpawnActor<AActor>(ActorToSpawn, Location, Rotation);
         }
     }

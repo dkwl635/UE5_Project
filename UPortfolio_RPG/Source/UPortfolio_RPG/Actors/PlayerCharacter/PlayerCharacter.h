@@ -9,6 +9,7 @@
 struct FInputActionValue;
 class UStatusComponent;
 class USkillComponent;
+struct FSkillDataTableRow;
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
@@ -23,10 +24,6 @@ struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
 	UAnimMontage* AttackMontage_C;
 	UPROPERTY(EditAnywhere, Category = "Evade")
 	UAnimMontage* SpaceMontage;
-	UPROPERTY(EditAnywhere, Category = "Skill")
-	UAnimMontage* Skill_Q_Montage;
-	UPROPERTY(EditAnywhere, Category = "Skill")
-	UAnimMontage* Skill_W_Montage;
 };
 
 UCLASS()
@@ -70,12 +67,12 @@ protected:
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	USkillComponent* SkillComponent;
-	/*UPROPERTY(EditAnywhere)
-	UCapsuleComponent* SwordCollider;*/
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.CharacterAnimDataTableRow"))
-	FDataTableRowHandle DataTableRowHandle;
+	FDataTableRowHandle AnimDataTableRowHandle;
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.SkillDataTableRow"))
+	FDataTableRowHandle SkillDataTableRowHandle;
 
 public:
 	UPROPERTY()UAnimMontage* AttackMontage_A;
@@ -109,7 +106,7 @@ public:
 
 protected:
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
-
+	const FSkillDataTableRow* SkillDataTableRow = nullptr;
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
 };
