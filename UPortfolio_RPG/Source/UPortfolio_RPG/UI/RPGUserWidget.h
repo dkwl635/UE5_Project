@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UIEnum.h"
 #include "RPGUserWidget.generated.h"
 
 /**
  * 
  */	
-//DECLARE_DYNAMIC_DELEGATE_OneParam(FDele_Dynamic_OneParam, UCanvasPanelSlot*, UI);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, UCanvasPanelSlot*, MoveUI);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, UCanvasPanel*, SomeParameter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, ERPG_UI, SomeParameter);
 
 UCLASS(BlueprintType)
 class UPORTFOLIO_RPG_API URPGUserWidget : public UUserWidget
@@ -19,7 +18,14 @@ class UPORTFOLIO_RPG_API URPGUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public :
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Type")
+	ERPG_UI UI_Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartPos")
+	int x;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartPos")
+	int y;
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void RefreshUI();

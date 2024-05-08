@@ -10,9 +10,11 @@ UCLASS()
 class UPORTFOLIO_RPG_API ANPC : public AActor
 {
 	GENERATED_BODY()
-	
 public:
-	class ANPCManager* NPCManager;
+	// Sets default values for this actor's properties
+	ANPC();
+public:
+	TWeakObjectPtr<class ANPCManager> NPCManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCapsuleComponent* BodyCollision;
@@ -21,9 +23,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USphereComponent* TriggerCollision;
 
-public:	
-	// Sets default values for this actor's properties
-	ANPC();
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	class UCameraComponent* NPCCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* TopMessage;
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,5 +36,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	virtual void BeginOverlapTrigger();
+	UFUNCTION(BlueprintCallable)
+	virtual void EndOverlapTrigger();
+
+public :
+	void StartInteraction();
+	void EndInteraction();
 
 };

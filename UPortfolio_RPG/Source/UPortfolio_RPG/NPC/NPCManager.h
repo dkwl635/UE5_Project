@@ -27,4 +27,41 @@ public:
 	void BeginOverlapPlayer(class ANPC* Target);
 	void EndOverlapPlayer(class ANPC* Target);
 
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void StartInteractiorNPC();
+
+	UFUNCTION(BlueprintCallable)
+	void EndInteractiorNPC();
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ReceiveStartInteractiorNPC();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ReceiveEndInteractiorNPC();
+
+	UFUNCTION(BlueprintCallable)
+	void InteractiorNPC();
+	UFUNCTION(BlueprintCallable)
+	void LeaveNPC();
+
+public:
+
+	class URPGMainUserWidget* UserUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TWeakObjectPtr<class ANPC>  CurrentNPC;
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	bool bInteractior = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> NPCUserWidget;
+
+	class UNPCTalkBoxUserwidget* NPCTalkBoxUserwidget;
+
+public:
+	//Shop
+	UFUNCTION(BlueprintCallable)
+	void OpenShopUI();
 };

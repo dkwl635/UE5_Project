@@ -75,5 +75,8 @@ public:
 	bool DragEnd(URPGSlotUserWidget* StarDataData);
 	UFUNCTION(BlueprintCallable)
 	void DragFailed(URPGSlotUserWidget* StarDataData);
+	
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
+	FDele_Dynamic_OneParam ClickSlotEvent;
 };
 

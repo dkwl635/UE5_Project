@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "RPGUserWidget.h"
 #include "Components/Button.h"
@@ -10,15 +9,6 @@
 /**
  * 
  */
-UENUM(BlueprintType)
-enum class ERPG_UI : uint8
-{
-	NONE,
-	INVENTORY,
-	QUICKSLOTS,
-};
-
-
 UCLASS()
 class UPORTFOLIO_RPG_API URPGMainUserWidget : public URPGUserWidget
 {
@@ -28,7 +18,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryBtn;
 
-
+	
 private:
 
 	virtual void Init();
@@ -42,13 +32,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleUI(UUserWidget* UserWidget);
 	UFUNCTION(BlueprintCallable)
-	URPGUserWidget* GetRPGUI(ERPG_UI UI_Type);
-public :
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	URPGUserWidget* InventoryUI;
+	URPGUserWidget* GetRPGUI(ERPG_UI Type);
+	UFUNCTION(BlueprintCallable)
+	class UCanvasPanel* GetCanvasPanel(ERPG_UI Type);
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	URPGUserWidget* QuickSlotsUI;
+public :
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
+	class UCanvasPanel* RPGUI;
 
 public:
 	//Interaction
@@ -58,6 +48,7 @@ public:
 	
 private:
 
-	TMap<ERPG_UI, UUserWidget*> RPGUIMap;
+	TMap<ERPG_UI, URPGUserWidget*> RPGUIMap;
+	TMap<ERPG_UI, UCanvasPanel*> RPGUICanvasMap;
 
 };

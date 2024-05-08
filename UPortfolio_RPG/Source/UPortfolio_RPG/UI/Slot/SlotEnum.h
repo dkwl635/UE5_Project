@@ -11,4 +11,6 @@ enum class  ERPGSLOTTYPE : uint8
 
 	QUICK_ITEM,			//дЭ╬фюлеш ╫╫╥т
 
+	SHOP_BUY,
+
 };
