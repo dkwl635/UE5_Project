@@ -26,7 +26,8 @@ void URPGInventoryUserWidget::Init()
 		{
 			continue;
 		}
-		SlotWidget->SlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
+		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
+	
 		SlotWidget->Init();
 		auto slotData = SlotWidget->GetSlotData();
 		if (!slotData)
@@ -39,7 +40,7 @@ void URPGInventoryUserWidget::Init()
 			InvenSlotData->SlotIndex = i;
 
 			GearSlots.Add(SlotWidget);
-			SlotWidget->RefreshSlot();
+			//SlotWidget->RefreshSlot();
 		}
 	}
 
@@ -52,7 +53,7 @@ void URPGInventoryUserWidget::Init()
 		{
 			continue;
 		}
-		SlotWidget->SlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
+		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
 		SlotWidget->Init();
 		auto slotData = SlotWidget->GetSlotData();
 		if (!slotData)
@@ -65,7 +66,7 @@ void URPGInventoryUserWidget::Init()
 			InvenSlotData->SlotIndex = i;
 
 			NormalSlots.Add(SlotWidget);
-			SlotWidget->RefreshSlot();
+			//SlotWidget->RefreshSlot();
 		}
 	}
 

@@ -21,6 +21,10 @@ public:
 	class UTextBlock;
 	class UButton;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* TextBox;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UWidgetSwitcher* TextBoxSwitcher;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite , meta = (BindWidget))
 	UTextBlock* NameTextBox;

@@ -13,7 +13,7 @@ class UPORTFOLIO_RPG_API USlotData : public UObject
 public:
 	USlotData();
 public:
-	static  TWeakObjectPtr<UWorld> SlotWorld;
+	static TWeakObjectPtr<UWorld> SlotWorld;
 	static TWeakObjectPtr<class UPlayerInventorySubsystem> InventorySubsystem;
 	static void ClearStaticMember();
 public:
@@ -21,25 +21,24 @@ public:
 	int32 SlotIndex;
 
 public :
-	//데이터가 유효 체크
+	//check data is valid
 	virtual bool IsValid();
-	//데이터 셋팅하기
+	//Setting data
 	virtual void SetData();
-	//데이터 갱신
+	//Data refresh
 	virtual void RefreshData();
-	//데이터 초기화
+	//Data Clear
 	virtual void ClearData();
-	//슬롯 이미지 
+	//Get Image
 	virtual UTexture2D* GetSlotImg();
-	//갯수 리턴
+	//Get Count
 	virtual int32 GetCount();
 	
-	//더블클릭 사용시
+	//double click Event
 	virtual bool NormalUse();	
-	//다른 방법
+	
+
 	virtual bool QuickUse();
-	//애를들어 우클릭 + shift 등 조합키시 다른방법으로 사용
-	//갯수 지정하기 등..
 	virtual bool SpecialUse();
 
 

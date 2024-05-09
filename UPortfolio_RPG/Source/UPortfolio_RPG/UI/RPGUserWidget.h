@@ -21,11 +21,7 @@ public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Type")
 	ERPG_UI UI_Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartPos")
-	int x;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StartPos")
-	int y;
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void RefreshUI();
@@ -38,5 +34,9 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 	FDele_Dynamic_OneParam EndUIMove;
 
+public:
+	class UCanvasPanelSlot* GetCanvasPanelSlot();
 
+private:
+	class UCanvasPanelSlot* CanvasPaneSlot;
 };

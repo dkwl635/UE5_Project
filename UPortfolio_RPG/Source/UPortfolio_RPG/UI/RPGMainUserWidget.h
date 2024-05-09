@@ -19,22 +19,27 @@ private:
 	UButton* InventoryBtn;
 
 	
-private:
+
+	
+public	:
 
 	virtual void Init();
 	~URPGMainUserWidget();
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void ShowUI(UUserWidget* UserWidget);
+	void ShowUI(ERPG_UI Type);
+
+	void ShowUI(URPGUserWidget* UserWidget);
+
 	UFUNCTION(BlueprintCallable)
-	void HideUI(UUserWidget* UserWidget);
+	void HideUI(URPGUserWidget* UserWidget);
 	UFUNCTION(BlueprintCallable)
-	void ToggleUI(UUserWidget* UserWidget);
+	void ToggleUI(URPGUserWidget* UserWidget);
 	UFUNCTION(BlueprintCallable)
 	URPGUserWidget* GetRPGUI(ERPG_UI Type);
 	UFUNCTION(BlueprintCallable)
-	class UCanvasPanel* GetCanvasPanel(ERPG_UI Type);
+	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
 
 public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
@@ -49,6 +54,7 @@ public:
 private:
 
 	TMap<ERPG_UI, URPGUserWidget*> RPGUIMap;
-	TMap<ERPG_UI, UCanvasPanel*> RPGUICanvasMap;
+	TMap<ERPG_UI, UCanvasPanelSlot*> RPGUICanvasMap;
 
+	TWeakObjectPtr<UCanvasPanelSlot> TopPopupUI;
 };

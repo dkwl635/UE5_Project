@@ -17,7 +17,7 @@ void UInventorySlotData::SetData()
 	else 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) { ItemType = EITEMTYPE::GEAR; }
 
 	
-	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
+	//ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
 }
 
 int32 UInventorySlotData::GetCount()

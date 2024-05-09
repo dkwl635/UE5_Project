@@ -4,44 +4,49 @@
 #include "UI/RPGSlotUserWidget.h"
 #include "Slot/InventorySlotData.h"
 #include "Slot/QuickItemSlotData.h"
+#include "Slot/ShopSlotData.h"
 #include "Item/ItemData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "UI/Slot/SlotEnum.h"
 
-
-
-using enum ERPGSLOTTYPE;
 
 void URPGSlotUserWidget::Init()
 {
-	//int type = static_cast<int>(SlotType);	
-	switch (SlotType)
+	uint8 type = (uint8)RPGSlotType;
+	switch (type)
 	{
-	case ERPGSLOTTYPE::NONE:
+	case  (uint8)ERPGSLOTTYPE::NONE:
+	{
 		break;
-	case ERPGSLOTTYPE::INVENTORY_GEAR:
+	}
+	case  (uint8)ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
 		SlotData = NewObject<UInventorySlotData>();
 		break;
 	}
 	
-	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	case  (uint8)ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
 		SlotData = NewObject<UInventorySlotData>();
 		break;
 	}
-	case ERPGSLOTTYPE::QUICK_ITEM:
+	case  (uint8)ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		SlotData = NewObject<UQuickItemSlotData>();
 		break;
 	}
-
+	case  (uint8)ERPGSLOTTYPE::SHOP_ITEM:
+	{
+		SlotData = NewObject<UShopSlotData>();
+		break;
+	}
 	default:
 		break;
 	}
 	
 	ensure(SlotData);
 
-	SlotData->SlotType = SlotType;
+	SlotData->SlotType = RPGSlotType;
 	SlotData->SetData();
 	CountText->TextDelegate.BindDynamic(this, &ThisClass::GetCountText);
 	CountText->SynchronizeProperties();
@@ -54,46 +59,8 @@ URPGSlotUserWidget::~URPGSlotUserWidget()
 
 
 
-bool URPGSlotUserWidget::IsInValid()
+void URPGSlotUserWidget::RefreshUI()
 {
-	if (!GetSlotData()) { return false; }
-	return GetSlotData()->IsValid();
-
-}
-
-bool URPGSlotUserWidget::UseSlot()
-{
-	if (!SlotData) { return false; }
-
-	if (SlotData->NormalUse())
-	{
-		RefreshSlot();
-		return true;
-	}
-
-	return false;
-}
-
-void URPGSlotUserWidget::ClearSlot()
-{
-	SlotImg->SetVisibility(ESlateVisibility::Hidden);
-
-	if (SlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
-	{
-		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
-		if (QuickSlot)
-		{
-			QuickSlot->ClearSlot();
-		}
-	}
-
-	SlotData->ClearData();
-	CountText->SynchronizeProperties();
-}
-
-void URPGSlotUserWidget::RefreshSlot()
-{	
 	//½½·Ô¾È¿¡ ÀÖ´Â µ¥ÀÌÅÍ °»½Å
 	SlotData->RefreshData();
 	CountText->SynchronizeProperties();
@@ -116,15 +83,56 @@ void URPGSlotUserWidget::RefreshSlot()
 		SlotImg->SetBrushFromTexture(newImg);
 	}
 
-	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
-	if (QuickSlot)
+	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		QuickSlot->RefreshSlot();
+		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+		if (QuickSlot)
+		{
+			QuickSlot->RefreshUI();
+		}
 	}
 
-	
 }
+
+bool URPGSlotUserWidget::IsInValid()
+{
+	if (!GetSlotData()) { return false; }
+	return GetSlotData()->IsValid();
+
+}
+
+bool URPGSlotUserWidget::UseSlot()
+{
+	if (!SlotData) { return false; }
+
+	if (SlotData->NormalUse())
+	{
+		RefreshUI();
+		return true;
+	}
+
+	return false;
+}
+
+void URPGSlotUserWidget::ClearSlot()
+{
+	SlotImg->SetVisibility(ESlateVisibility::Collapsed);
+
+	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
+	{
+		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+		if (QuickSlot)
+		{
+			QuickSlot->ClearSlot();
+		}
+	}
+
+	SlotData->ClearData();
+	CountText->SynchronizeProperties();
+}
+
 
 FText URPGSlotUserWidget::GetCountText()
 {
@@ -137,6 +145,12 @@ FText URPGSlotUserWidget::GetCountText()
 	else
 	{
 		int32 Count = SlotData->GetCount();
+		if (Count == 1)
+		{
+			FText text = FText::FromString(TEXT(""));
+			return text;
+		}
+
 		FText text = FText::AsNumber(Count);
 		return text;
 	}
@@ -156,8 +170,8 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		return false;
 	}
 
-	ERPGSLOTTYPE StartSlotType = StartSlot->SlotType;
-	ERPGSLOTTYPE EndSlotType = this->SlotType;
+	ERPGSLOTTYPE StartSlotType = StartSlot->RPGSlotType;
+	ERPGSLOTTYPE EndSlotType = this->RPGSlotType;
 
 	UE_LOG(LogTemp, Warning, TEXT("Succens DragEnd"));
 	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
@@ -197,8 +211,8 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		}
 	
 	
-		this->RefreshSlot();
-		StartSlot->RefreshSlot();
+		this->RefreshUI();
+		StartSlot->RefreshUI();
 		
 
 	}
@@ -216,7 +230,7 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 		thisSlotData->OrginSlot = StartSlot;
 		//StartSlotData->QuickSlot = this;
-		this->RefreshSlot();
+		this->RefreshUI();
 	}
 	//Äü½½·Ô ³¢¸® ±³È¯
 	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
@@ -231,8 +245,8 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	
 
 		//thisSlotData->SetSlotData(StartSlot);
-		StartSlot->RefreshSlot();
-		this->RefreshSlot();
+		StartSlot->RefreshUI();
+		this->RefreshUI();
 	}
 
 
@@ -245,7 +259,7 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 	
 	UE_LOG(LogTemp, Warning, TEXT("DragFailed"));
 
-	ERPGSLOTTYPE StartSlotType = StartSlot->SlotType;
+	ERPGSLOTTYPE StartSlotType = StartSlot->RPGSlotType;
 	switch (StartSlotType)
 	{
 	case ERPGSLOTTYPE::NONE:
@@ -258,7 +272,7 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 	{
 		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
 		StartSlotData->OrginSlot = nullptr;
-		this->RefreshSlot();
+		this->RefreshUI();
 		break;
 	}		
 	default:

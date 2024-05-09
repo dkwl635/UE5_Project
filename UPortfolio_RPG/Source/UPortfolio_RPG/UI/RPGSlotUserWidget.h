@@ -22,9 +22,7 @@ public:
 	~URPGSlotUserWidget();
 	
 public:
-	//UFUNCTION(BlueprintCallable)
-	//void SetSlot();
-
+	virtual void RefreshUI();
 	UFUNCTION(BlueprintCAllable)
 	bool IsInValid();
 
@@ -34,18 +32,17 @@ public:
 	//ΩΩ∑‘ √ ±‚»≠
 	UFUNCTION(BlueprintCallable)
 	void ClearSlot();
-	//ΩΩ∑‘ ∞ªΩ≈
-	UFUNCTION(BlueprintCallable)
-	void RefreshSlot();
+
 
 	UFUNCTION(BlueprintCallable)
 	FText GetCountText();
 
 
+
 public :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
-	ERPGSLOTTYPE SlotType = ERPGSLOTTYPE::NONE;
+	ERPGSLOTTYPE RPGSlotType = ERPGSLOTTYPE::NONE;
 
 	UPROPERTY(BlueprintReadWrite , meta = (BindWidget))
 	UImage* SlotImg;

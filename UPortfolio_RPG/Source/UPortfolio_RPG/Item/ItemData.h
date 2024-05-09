@@ -80,4 +80,21 @@ public:
 	UPROPERTY(EditAnywhere)
 	int8 FBatlleItemType = 0;
 
+}; 
+
+USTRUCT()
+struct UPORTFOLIO_RPG_API FShopBuyItemData : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere)
+	FDataTableRowHandle ItemInfo;
+
+	UPROPERTY(EditAnywhere)
+	int32 Price = 0;
+
+	UPROPERTY(EditAnywhere)
+	int32 Count = 0;
+
 };

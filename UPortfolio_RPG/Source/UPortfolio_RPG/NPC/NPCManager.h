@@ -27,6 +27,9 @@ public:
 	void BeginOverlapPlayer(class ANPC* Target);
 	void EndOverlapPlayer(class ANPC* Target);
 
+private:
+	TWeakObjectPtr<class URPGMainUserWidget> PlayerUI;
+	class URPGMainUserWidget* GetPlayerUI();
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -47,8 +50,6 @@ public:
 	void LeaveNPC();
 
 public:
-
-	class URPGMainUserWidget* UserUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TWeakObjectPtr<class ANPC>  CurrentNPC;

@@ -5,6 +5,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/RPGMainUserWidget.h"
 #include "UI/UIEnum.h"
+#include "UI/PlayerUIComponent.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
+#include "UI/RPGShop.h"
 
 // Sets default values
 ANPCManager::ANPCManager()
@@ -19,10 +23,10 @@ void ANPCManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	NPCTalkBoxUserwidget =  Cast<UNPCTalkBoxUserwidget> (CreateWidget<UNPCTalkBoxUserwidget>(GetWorld(), NPCUserWidget));
+	NPCTalkBoxUserwidget = Cast<UNPCTalkBoxUserwidget>(CreateWidget<UNPCTalkBoxUserwidget>(GetWorld(), NPCUserWidget));
 	NPCTalkBoxUserwidget->NPCManager = this;
-	
-	UserUI = Cast<URPGMainUserWidget>(UGameplayStatics::GetActorOfClass(GetWorld(), URPGMainUserWidget::StaticClass()));
+	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
+
 
 }
 
@@ -49,6 +53,19 @@ void ANPCManager::EndOverlapPlayer(ANPC* Target)
 	}
 }
 
+URPGMainUserWidget* ANPCManager::GetPlayerUI()
+{
+	if (!PlayerUI.IsValid())
+	{
+		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	//	UPlayerUIComponent* Find = (UPlayerUIComponent*)(PlayerControll->GetPawn()->GetComponentByClass(UPlayerUIComponent::StaticClass()));
+		UPlayerUIComponent* Find = PlayerControll->GetPawn()->FindComponentByClass<UPlayerUIComponent>();
+		PlayerUI = Find->PlayerUI;
+	}
+
+	return PlayerUI.Get();
+}
+
 void ANPCManager::StartInteractiorNPC()
 {
 	if (bInteractior == true)
@@ -66,7 +83,7 @@ void ANPCManager::EndInteractiorNPC()
 	{
 		return;
 	}
-	NPCTalkBoxUserwidget->RemoveFromParent();
+	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
 	ReceiveEndInteractiorNPC();
 }
 
@@ -76,7 +93,16 @@ void ANPCManager::InteractiorNPC()
 	{
 		bInteractior = true;
 		CurrentNPC->StartInteraction();
-		NPCTalkBoxUserwidget->AddToViewport();
+
+		if (GetPlayerUI())
+		{
+			GetPlayerUI()->RPGUI->AddChildToCanvas(NPCTalkBoxUserwidget);
+			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(NPCTalkBoxUserwidget->Slot);
+			Slot->SetZOrder(NPCZOrder);		
+		}
+
+
+		NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 	else
@@ -95,10 +121,16 @@ void ANPCManager::LeaveNPC()
 
 void ANPCManager::OpenShopUI()
 {
-	auto UI =	 UserUI->GetRPGUI(ERPG_UI::SHOP);
-	if (UI)
+	if (CurrentNPC->ShopBuyData.IsEmpty())
 	{
-		UserUI->ShowUI(UI);
+		return;
+	}
+
+	if (GetPlayerUI())
+	{
+		URPGShop* ShopUI = Cast<URPGShop>( GetPlayerUI()->GetRPGUI(ERPG_UI::SHOP));
+		ShopUI->SetShopData(CurrentNPC->ShopBuyData);
+		GetPlayerUI()->ShowUI(ERPG_UI::SHOP);
 	}
 
 }

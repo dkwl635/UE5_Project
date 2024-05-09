@@ -16,20 +16,18 @@ void URPGMainUserWidget::Init()
     {
         UCanvasPanel* widget = Cast<UCanvasPanel>( RPGUI->GetChildAt(i));
         URPGUserWidget* UI =  Cast<URPGUserWidget>(widget->GetChildAt(0));
+        UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(widget->Slot);
         UI->Init();
         RPGUIMap.Add(UI->UI_Type, UI);
-        RPGUICanvasMap.Add(UI->UI_Type, widget);
+        RPGUICanvasMap.Add(UI->UI_Type, CanvasSlot);
         
     }
 
+    GetRPGUI(ERPG_UI::INVENTORY)->SetVisibility(ESlateVisibility::Collapsed);
+    GetRPGUI(ERPG_UI::SHOP)->SetVisibility(ESlateVisibility::Collapsed);
 
-    /*QuickSlotsUI->Init();
-    InventoryUI->Init();
-    ShopUI->Init();*/
-
-    //auto pos  = InventoryUI->
-    GetRPGUI(ERPG_UI::INVENTORY)->SetVisibility(ESlateVisibility::Hidden);
-    GetRPGUI(ERPG_UI::SHOP)->SetVisibility(ESlateVisibility::Hidden);
+    //ZOreder Setting
+    GetCanvasPanel(ERPG_UI::QUICKSLOTS)->SetZOrder(HUDZOrder);
 }
 
 URPGMainUserWidget::~URPGMainUserWidget()
@@ -38,36 +36,50 @@ URPGMainUserWidget::~URPGMainUserWidget()
     RPGUIMap.Empty();
 }
 
-void URPGMainUserWidget::ShowUI(UUserWidget* UserWidget)
+void URPGMainUserWidget::ShowUI(URPGUserWidget* UserWidget)
 {
     if (!UserWidget) { return; }
     if (!UserWidget->IsInViewport())
     {
-        // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+        
         //UserWidget->AddToViewport();
+        if (TopPopupUI.IsValid())
+        {
+            TopPopupUI.Get()->SetZOrder(PopupZOrder);
+        }
+       
+        UCanvasPanelSlot* Current = GetCanvasPanel(UserWidget->UI_Type);
+        Current->SetZOrder(TopZOrder);
+        TopPopupUI = Current;
         UserWidget->SetVisibility(ESlateVisibility::Visible);
+        UserWidget->RefreshUI();
     }
    
 
 }
 
-void URPGMainUserWidget::HideUI(UUserWidget* UserWidget)
+void URPGMainUserWidget::ShowUI(ERPG_UI Type)
+{
+    ShowUI(GetRPGUI(Type));
+}
+
+void URPGMainUserWidget::HideUI(URPGUserWidget* UserWidget)
 {
     if (!UserWidget) { return; }
     if (UserWidget->IsInViewport())
     {
-        UserWidget->RemoveFromParent();
+        UserWidget->SetVisibility(ESlateVisibility::Collapsed);
     }
  
 }
 
-void URPGMainUserWidget::ToggleUI(UUserWidget* UserWidget)
+void URPGMainUserWidget::ToggleUI(URPGUserWidget* UserWidget)
 {
     if (!UserWidget) { return; }
 
     if (!UserWidget->IsInViewport())
     {
-        // ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+        
         ShowUI(UserWidget);
     }
     else
@@ -86,7 +98,7 @@ URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)
     return nullptr;
 }
 
-UCanvasPanel* URPGMainUserWidget::GetCanvasPanel(ERPG_UI Type)
+UCanvasPanelSlot* URPGMainUserWidget::GetCanvasPanel(ERPG_UI Type)
 {
     if (RPGUICanvasMap.Contains(Type))
     {

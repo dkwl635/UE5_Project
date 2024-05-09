@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* TopMessage;
 
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	TArray<struct FShopBuyItemData> ShopBuyData;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

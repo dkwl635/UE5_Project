@@ -10,3 +10,8 @@ enum class ERPG_UI : uint8
 	QUICKSLOTS,
 	SHOP,
 };
+
+int TopZOrder = 5;
+int PopupZOrder = 4;
+int NPCZOrder = 2;
+int HUDZOrder = 1;
