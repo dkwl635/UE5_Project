@@ -30,6 +30,7 @@ ARedDust::ARedDust()
 	StaticMesh->SetRelativeLocation(FVector(250., 0., -88.));
 	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
+	StaticMesh->bHiddenInGame = true;
 }
 
 void ARedDust::BeginPlay()

@@ -28,6 +28,7 @@ ASpinningAttack::ASpinningAttack()
 	}
 	StaticMesh->SetRelativeScale3D(FVector(4.565000, 3.735000, 1.660000));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
+	StaticMesh->bHiddenInGame = true;
 }
 
 void ASpinningAttack::BeginPlay()
