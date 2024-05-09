@@ -36,9 +36,6 @@ void ARedDust::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (Montage)
-		SetSkillMontage(Montage);
-
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnAttack);
 }
 

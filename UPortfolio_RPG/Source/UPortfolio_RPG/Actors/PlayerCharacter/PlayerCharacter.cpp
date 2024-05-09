@@ -158,7 +158,7 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	{
 		UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 		ensure(Animation);
-		if (Animation->Montage_IsPlaying(nullptr)) { return; }
+		if (Animation->Montage_IsPlaying(nullptr)) { Animation->Montage_Stop(0.2f); }
 
 		bIsSpace = true;
 		GetController()->StopMovement();

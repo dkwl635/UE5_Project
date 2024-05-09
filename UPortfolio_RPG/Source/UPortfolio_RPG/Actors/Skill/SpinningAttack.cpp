@@ -34,9 +34,6 @@ void ASpinningAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(Montage)
-		SetSkillMontage(Montage);
-
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnAttack);
 }
 
@@ -57,6 +54,6 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if(Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Skill Hit!"));
+		UE_LOG(LogTemp, Warning, TEXT("SpinningAttack Hit!"));
 	}
 }
