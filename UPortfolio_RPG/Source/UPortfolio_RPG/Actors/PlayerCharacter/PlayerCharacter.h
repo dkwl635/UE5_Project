@@ -57,6 +57,8 @@ public:
 
 public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
+	FTimerHandle& GetTimerHandle() { return SpaceCoolTimer; }
+	float GetSpaceCoolTime() { return SpaceCoolTime; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -75,17 +77,14 @@ protected:
 	FDataTableRowHandle SkillDataTableRowHandle;
 
 public:
-	UPROPERTY()UAnimMontage* AttackMontage_A;
+	UPROPERTY()
+	UAnimMontage* AttackMontage_A;
 	UPROPERTY()
 	UAnimMontage* AttackMontage_B;
 	UPROPERTY()
 	UAnimMontage* AttackMontage_C;
 	UPROPERTY()
 	UAnimMontage* SpaceMontage;
-	UPROPERTY()
-	UAnimMontage* Skill_Q_Montage;
-	UPROPERTY()
-	UAnimMontage* Skill_W_Montage;
 
 	UAnimMontage* CurrentMontage;
 
@@ -99,7 +98,7 @@ protected:
 	float RemainingTime = 0.f;
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsSpace = false;
 	bool bIsDown = false;
 	bool bOnAttack = false;

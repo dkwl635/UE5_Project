@@ -149,10 +149,9 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
 	// 쿨타임 타이머
-	
 	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
 	if (bIsSpaceCool) { return; }
-	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);// 회피 5초쿨
+	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);
 	
 	if (!bIsSpace)
 	{
