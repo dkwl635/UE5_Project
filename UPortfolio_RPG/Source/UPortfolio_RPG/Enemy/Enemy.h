@@ -11,6 +11,9 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
 #include "Enemy/UI/StatusbarUserWidget.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Enemy.generated.h"
 
 USTRUCT()
@@ -36,6 +39,14 @@ struct UPORTFOLIO_RPG_API FEnemyDataTableRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	TSubclassOf<UAnimInstance> AnimClass;   //애니메이션
 
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UParticleSystem* ParticleAttackSystem;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	UParticleSystemComponent* ParticleAttackSystemComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	FTransform ParticleTransform;
 };
 
 UCLASS()
@@ -61,12 +72,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 
+// Datatable variable
 private:
 	UPROPERTY(EditAnywhere)
 	UCapsuleComponent* CapsuleComponent;
-
-	//UPROPERTY(EditAnywhere, Category = Collision)
-	//UBoxComponent* BoxComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* SkeletalMeshComponent;
@@ -74,36 +83,14 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = UI)
 	class UWidgetComponent* HPBarWidget;
 
-	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
-	FDataTableRowHandle DataTableRowHandle;
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystem* ParticleAttackSystem;
 
-	
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* ParticleAttackSystemComponent;
 
-
-public:										 
-	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
-	UFloatingPawnMovement* Movement;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	
-
-protected:
-	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
-
-public:
-	void Attack();
-	void AttackCheck();
-
-	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
-private:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool IsAttacking;
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	class UEnemyAnimInstance* EnemyAnim;
-
 
 	UPROPERTY()
 	UStatusComponent* EnemyState;
@@ -116,5 +103,34 @@ private:
 
 	UPROPERTY()
 	float MaxHP;
+
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
+	FDataTableRowHandle DataTableRowHandle;
+
+protected:
+	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
+
+
+public:										 
+	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
+	UFloatingPawnMovement* Movement;
+
+// attack and damage
+public:
+	void Attack();
+	void AttackCheck();
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+
+	// montage
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	// particle
+	void PlayAttackParticle();
+
+private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool IsAttacking; 
 
 };

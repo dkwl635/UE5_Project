@@ -4,6 +4,7 @@
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
 #include "Enemy/Animation/EnemyAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 //#include "PlayerController.h"
 
 // Sets default values
@@ -19,7 +20,8 @@ AEnemy::AEnemy()
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
     StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
     EnemyState = CreateDefaultSubobject<UStatusComponent>(TEXT("EnemyState"));
-
+    ParticleAttackSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleAttackSystemComponent"));
+    ParticleAttackSystem = nullptr;
 
     Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
@@ -27,6 +29,7 @@ AEnemy::AEnemy()
 
     SetRootComponent(CapsuleComponent);
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
+    ParticleAttackSystemComponent->SetupAttachment(GetRootComponent());
   //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
@@ -86,6 +89,14 @@ void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
 
     FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
     StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
+
+    ParticleAttackSystem = InData->ParticleAttackSystem;
+
+    if (ParticleAttackSystem)
+    {
+        ParticleAttackSystemComponent->SetTemplate(ParticleAttackSystem);
+    }
+    ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
     
 
 }
@@ -169,13 +180,10 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
         }
 
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Err"));
-    }
 
     if (EnemyState->GetEnemyHP() <= 0.f)
     {
+        EnemyAnim->SetDeadAnim();
         Destroy();
     }
 
@@ -187,6 +195,16 @@ void AEnemy::Attack()
     if (IsAttacking) return;
 
     EnemyAnim->PlayAttackMontage();
+
+    auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    if (PlayerCharacter)
+    {
+        ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
+        if (Player)
+        {
+         //   Player->TakeDamage(Enemy->GetDamage(), FDamageEvent(), Enemy->GetController(), Enemy);
+        }
+    }
     IsAttacking = true;
 }
 
@@ -199,4 +217,17 @@ void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     IsAttacking = false;
 }
+
+void AEnemy::PlayAttackParticle()
+{
+    if (ParticleAttackSystem)
+    {
+        UGameplayStatics::SpawnEmitterAttached(ParticleAttackSystem, CapsuleComponent, "Impact",
+            FVector( (SkeletalMeshComponent->GetRelativeLocation()+ParticleAttackSystemComponent->GetRelativeLocation())), 
+            ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
+
+        UE_LOG(LogTemp, Warning, TEXT("%f"), ParticleAttackSystemComponent->GetRelativeLocation().X );
+
+    }
+}//Impact
 
