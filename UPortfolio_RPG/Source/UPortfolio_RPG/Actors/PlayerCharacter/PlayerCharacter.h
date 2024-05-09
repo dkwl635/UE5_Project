@@ -93,7 +93,7 @@ protected:
 	FTimerHandle SpaceTimer;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "Space")
-	float SpaceCoolTime = 2.f;
+	float SpaceCoolTime = 5.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Space")
 	float RemainingTime = 0.f;
 
