@@ -3,6 +3,7 @@
 #include "UI/RPGSlotUserWidget.h"
 #include "Item/ItemData.h"
 #include "UI/Slot/ShopSlotData.h"
+#include "UI/RPGShop.h"
 
 void UShopBuySlot::Init()
 {
@@ -21,11 +22,20 @@ void UShopBuySlot::RefreshUI()
 
 
 
-void UShopBuySlot::SetShopBuySlot(FItemData* BuyItem, int32 Price, int32 Count)
+void UShopBuySlot::SetShopBuySlot(FItemData* BuyItem,FName RowName,int32 Price, int32 Count)
 {
 	BuyItemInfo = BuyItem;
 	BuySlotData.Get()->SetShopData(BuyItem , Count);
+	ItemRowName = RowName;
 	BuyPrice = Price;
 	BuyCount = Count;
 
+}
+
+void UShopBuySlot::BuyItem()
+{
+	if (ShopHelper.IsValid())
+	{
+		ShopHelper.Get()->BuyItem(this);
+	}
 }

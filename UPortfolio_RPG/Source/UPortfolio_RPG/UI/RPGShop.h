@@ -19,13 +19,13 @@ protected:
 
 public:
 	virtual void RefreshUI() override;
-
 	virtual void SetShopData(TArray<struct FShopBuyItemData> ShopList);
-
+	void BuyItem(class UShopBuySlot* ShopSlot);
+private:
+	TWeakObjectPtr<class URPGMainUserWidget> PlayerUI;
+	class URPGMainUserWidget* GetPlayerUI();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* BuyItemPanel;
-
-	
 	TArray<TWeakObjectPtr<class UShopBuySlot>> BuyShopSlotList;
 };

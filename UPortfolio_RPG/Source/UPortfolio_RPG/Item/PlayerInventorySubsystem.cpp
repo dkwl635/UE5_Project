@@ -27,13 +27,14 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 bool UPlayerInventorySubsystem::Init()
 {	
-	GearSlots.Empty();
+	/*GearSlots.Empty();
 	NormalSlots.Empty();
-	QuickItemSlots.Empty();
+	QuickItemSlots.Empty();*/
 
 
-	AddItem( TEXT("HP100"), 3);
-	AddItem( TEXT("HP200"), 3);
+	AddItem( TEXT("HP100"), 12);
+	AddItem( TEXT("HP500"), 3);
+	AddItem(TEXT("HP100"), 100);
 
 	return true;
 }
@@ -61,39 +62,27 @@ bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
 
 bool UPlayerInventorySubsystem::IsAddable(Inventory Inventory,FItemData* ItemData, int8 Count)
 {
-	//아이템 이름으로 키값지정
+	
 	FName ItemName = ItemData->ItemName;
-	//남은 아이템 갯수
 	int8 RemainingCount = Count;
-	//인벤토리 크기
-	int8 InvenSize = Inventory->Num();
-	//가방에 같은 아이템이 있는 가방인덱스
+	int8 InvenSize = MaxInvenSize;
 	int8 CheckInvenIndex = FindItemInInventory(Inventory,ItemName, 0);
-	//가방 전체를 돌때까지
+
 	while (CheckInvenIndex < InvenSize)
 	{
-		
-		//만약 전부 순회 했다면
 		if (CheckInvenIndex >= InvenSize)
 			break;
-		//남은 공간 계산
+
 		int EmptySize = (*Inventory)[CheckInvenIndex]->MaxBundleCount - (*Inventory)[CheckInvenIndex]->CurrentBundleCount;
-		//공간이 부족한지 체크
+
 		RemainingCount -= EmptySize;
-		//전부다 들어가면 성공
+	
 		if (RemainingCount <= 0)
 		{
 			return  true;
 		}
 
-		//같은 아이템이있는 위치 찾기
 		CheckInvenIndex = FindItemInInventory(Inventory,ItemName, CheckInvenIndex + 1);
-	}
-	
-	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
-	if (RemainingCount <= 0)
-	{
-		return  true;
 	}
 	
 	
@@ -101,17 +90,14 @@ bool UPlayerInventorySubsystem::IsAddable(Inventory Inventory,FItemData* ItemDat
 
 	while (EmptyIndex < InvenSize)
 	{
-
-		//남은공간에 넣고 남은제고 확인
 		RemainingCount -= ItemData->MaxBundleCount;
 		if (RemainingCount <= 0)
 		{
 			return  true;
 		}
-		EmptyIndex = FindEmptyInventory(Inventory,EmptyIndex);
+		EmptyIndex = FindEmptyInventory(Inventory,EmptyIndex+1);
 	}
 
-	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
 	if (RemainingCount <= 0)
 	{
 		return  true;
@@ -119,10 +105,10 @@ bool UPlayerInventorySubsystem::IsAddable(Inventory Inventory,FItemData* ItemDat
 
 	return false;
 }
-//같은 아이템이 가방에 있는지 그리고 최대치가 남아있다면
+
 int8 UPlayerInventorySubsystem::FindItemInInventory(Inventory Inventory, const FName& ItemName, int8 StartIndex = 0)
 {
-	int8 Size = Inventory->Num();
+	int8 Size = MaxInvenSize;
 	for (int8 i = StartIndex; i < Size; i++)
 	{
 		TSharedPtr<FItemData> ItemData = (*Inventory)[i];
@@ -136,14 +122,12 @@ int8 UPlayerInventorySubsystem::FindItemInInventory(Inventory Inventory, const F
 			continue;
 		}
 	}
-
 	return Size;
-
 }
 
 int8 UPlayerInventorySubsystem::FindEmptyInventory(Inventory Inventory , int8 StartIndex = 0)
 {
-	int8 Size = Inventory->Num();
+	int8 Size = MaxInvenSize;
 	for (int8 i = StartIndex; i < Size; i++)
 	{
 		if ( (*Inventory)[i]  == nullptr)
@@ -151,32 +135,22 @@ int8 UPlayerInventorySubsystem::FindEmptyInventory(Inventory Inventory , int8 St
 			return i;
 		}
 	}
-
 	return Size;
 }
 
 bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemData* ItemData, int8 Count)
-{
-	//아이템 이름으로 키값지정
+{	
 	FName ItemName = ItemData->ItemName;
-	//남은 아이템 갯수
-	int8 RemainingCount = Count;
-	//인벤토리 크기
-	int8 InvenSize = Inventory->Num();
-	//가방에 같은 아이템이 있는 가방인덱스
+	int8 RemainingCount = Count;	
+	int8 InvenSize = MaxInvenSize;
 	int8 CheckInvenIndex = FindItemInInventory(Inventory,ItemName);
-	//가방 전체를 돌때까지
 	while (CheckInvenIndex < InvenSize)
 	{
-		//만약 전부 순회 했다면
 		if (CheckInvenIndex >= InvenSize)
 			break;
-		//남은 공간 계산
 		int8 EmptySize = (*Inventory)[CheckInvenIndex]->MaxBundleCount - (*Inventory)[CheckInvenIndex]->CurrentBundleCount;
-		//남은 공간이 있다면
 		if (EmptySize > 0)
 		{
-			//얼마나 넣을꺼진
 			int8 AddCount = 0;
 			if (EmptySize > RemainingCount)
 			{
@@ -190,29 +164,16 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 			}
 			(*Inventory)[CheckInvenIndex]->CurrentBundleCount += AddCount;
 		}
-		else
-		{
-			continue;
-		}
-	
-		//전부다 들어가면 성공
 		if (RemainingCount <= 0)
 		{
 			return  true;
 		}
+		CheckInvenIndex = FindItemInInventory(Inventory, ItemName);
 	}
 
-	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
-	if (RemainingCount <= 0)
-	{
-		return  true;
-	}
-
-	//이제 아예 빈공간을 찾고 남은 재고 확인
 	int8 EmptyIndex = FindEmptyInventory(Inventory);
 	while (EmptyIndex < InvenSize)
 	{
-		//얼마나 넣을꺼진
 		int8 AddCount = 0;
 		if (ItemData->MaxBundleCount > RemainingCount)
 		{
@@ -224,7 +185,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 			AddCount = ItemData->MaxBundleCount;
 			RemainingCount -= AddCount;
 		}
-	
+		//Create New Item
 		TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*ItemData);
 		NewItemData->CurrentBundleCount = AddCount;
 		(*Inventory)[EmptyIndex] = NewItemData;
@@ -236,15 +197,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 		EmptyIndex = FindEmptyInventory(Inventory);
 	}
 
-	//만약 전부 들어갔다면 (이건 없어도 될꺼 같기도)
-	if (RemainingCount <= 0)
-	{
-		return  true;
-	}
-
-	//만약 여기서 실패하면 문제 있는거
-	//이미 자리확인하고 왔으니
-	ensure(false);
+	//ensure(false);
 	return false;
 }
 
@@ -265,7 +218,6 @@ void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex 
 		return;
 	}
 
-	
 	int NewCount = (data->CurrentBundleCount - Count);
 	if (NewCount <= 0)
 	{
@@ -298,15 +250,66 @@ TWeakPtr<FItemData> UPlayerInventorySubsystem::GetItemInfo(EITEMTYPE ItemType, i
 	return (*Inventory)[InventoryIndex];
 }
 
-void UPlayerInventorySubsystem::SwapItem(EITEMTYPE ItemType, int8 index1, int8 index2)
+void UPlayerInventorySubsystem::SwapItem(EITEMTYPE ItemType, int8 Index1, int8 Index2)
 {
 	Inventory Inventory = GetInventory(ItemType);
 
-	TSharedPtr<FItemData>& thisItemData = (*Inventory)[index1];
-	TSharedPtr<FItemData>& StartItemData = (*Inventory)[index2];
+	TSharedPtr<FItemData>& thisItemData = (*Inventory)[Index1];
+	TSharedPtr<FItemData>& StartItemData = (*Inventory)[Index2];
+
+	if (thisItemData != nullptr && StartItemData != nullptr)
+	{
+		if (thisItemData->Unique_ID == StartItemData->Unique_ID)
+		{
+			if(!CombineItem(ItemType, Index1, Index2) )
+			{
+				Swap(thisItemData, StartItemData);
+			}
+		}
+		else
+		{
+			Swap(thisItemData, StartItemData);
+		}
+	}
+	else
+	{
+		Swap(thisItemData, StartItemData);
+	}
+}
+
+bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int8 Index2)
+{
+	Inventory Inventory = GetInventory(ItemType);
+
+	TSharedPtr<FItemData>& ItemData1 = (*Inventory)[Index1];
+	TSharedPtr<FItemData>& ItemData2 = (*Inventory)[Index2];
+
+	if (ItemData1->Unique_ID == ItemData2->Unique_ID)
+	{
+		if (ItemData1->CurrentBundleCount == ItemData1->MaxBundleCount)
+		{
+			return false;
+		}
+		if (ItemData1->CurrentBundleCount < ItemData1->MaxBundleCount)
+		{
+			int8 temp = ItemData1->CurrentBundleCount + ItemData2->CurrentBundleCount;
+			if (temp <= ItemData1->MaxBundleCount)
+			{
+				ItemData1->CurrentBundleCount = temp;
+				ItemData2 = nullptr;
+			}
+			else
+			{
+				ItemData1->CurrentBundleCount = ItemData1->MaxBundleCount;
+				ItemData2->CurrentBundleCount = temp - ItemData1->MaxBundleCount;
+			}
+		
+		}
+
+	}
 
 
-	Swap(thisItemData, StartItemData);
+	return true;
 }
 
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)

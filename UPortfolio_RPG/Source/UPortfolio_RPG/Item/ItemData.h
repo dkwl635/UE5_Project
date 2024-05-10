@@ -16,6 +16,9 @@ struct UPORTFOLIO_RPG_API FItemData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	int Unique_ID = 0;
+
 	UPROPERTY()
 	int8 CurrentBundleCount = 0;
 
@@ -34,8 +37,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	FText ItemDesc;
 
+
+	UPROPERTY(EditAnywhere)
+	int32 SellPrice = 0;
+
 	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle StatusData ;
+
+
+
 };
 
 

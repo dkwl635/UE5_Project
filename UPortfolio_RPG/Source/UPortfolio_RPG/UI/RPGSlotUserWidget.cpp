@@ -193,7 +193,9 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UInventorySlotData* ThisSlotData = (UInventorySlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
-		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);
+
+
+		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);		
 
 		URPGSlotUserWidget* QuickSlot1 = PlayerInven->CheckQuickSlotItem(StartSlot);
 		URPGSlotUserWidget* QuickSlot2 = PlayerInven->CheckQuickSlotItem(this);
@@ -202,12 +204,17 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();	
 			UQuickItemSlotData* QuickSlotData2 = (UQuickItemSlotData*)QuickSlot2->GetSlotData();
 			Swap(QuickSlotData1->OrginSlot , QuickSlotData2->OrginSlot);
+			QuickSlot1->RefreshUI();
+			QuickSlot2->RefreshUI();
 			
 		}
 		else if (QuickSlot1)
 		{
 			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();
+			ThisSlotData->RefreshData();
+			StartSlotData->RefreshData();
 			QuickSlotData1->OrginSlot = this;
+			QuickSlot1->RefreshUI();
 		}
 	
 	
