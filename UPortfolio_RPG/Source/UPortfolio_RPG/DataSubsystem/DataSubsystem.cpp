@@ -28,7 +28,7 @@ UDataSubsystem::UDataSubsystem()
 
 	//Enemy
 	{
-		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/LJY/DT_Enemy.DT_Enemy'") };
+		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/LJY/DT_Enemy2.DT_Enemy2'") };
 		ensure(Asset.Object);
 		DT_Enemy = Asset.Object;
 		if (Asset.Object)
@@ -77,6 +77,8 @@ void UDataSubsystem::Init()
 
 	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
 		bInit = true;
+
+
 }
 
 FItemData* UDataSubsystem::FindItem(const FName& InKey)
@@ -84,7 +86,6 @@ FItemData* UDataSubsystem::FindItem(const FName& InKey)
 	FItemData* Row = DT_Item->FindRow<FItemData>(InKey, TEXT(""));
 	ensure(Row);
 	return Row;
-
 }
 
 FPotionData* UDataSubsystem::FindPotionData(const FName& InKey)
@@ -96,8 +97,11 @@ FPotionData* UDataSubsystem::FindPotionData(const FName& InKey)
 
 FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 {
-	FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
-	ensure(Row);
+		FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
+		ensure(Row);
+	
+		UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy"));
+	
 	return Row;
 }
 

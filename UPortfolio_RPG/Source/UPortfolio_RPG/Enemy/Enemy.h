@@ -8,15 +8,15 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
 #include "Components/StatusComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/ProgressBar.h"
 #include "Enemy/UI/StatusbarUserWidget.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "DataSubsystem/DataSubsystem.h"
+#include "Animation/EnemyAnimInstance.h"
 #include "Enemy.generated.h"
 
-USTRUCT()
+/*USTRUCT()
 struct UPORTFOLIO_RPG_API FEnemyDataTableRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -47,7 +47,7 @@ struct UPORTFOLIO_RPG_API FEnemyDataTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	FTransform ParticleTransform;
-};
+};*/
 
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
@@ -58,9 +58,9 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 	~AEnemy();
-	virtual void SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle);
-	virtual void SetEnemyData(const FEnemyDataTableRow* InData);
-
+//	virtual void SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle);
+	//virtual void SetEnemyData(const FEnemyData* InData);
+//	virtual void SetEnemyData(const FEnemyDataTableRow* InData);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -90,7 +90,7 @@ private:
 	UParticleSystemComponent* ParticleAttackSystemComponent;
 
 	UPROPERTY(EditAnywhere)
-	class UEnemyAnimInstance* EnemyAnim;
+	UEnemyAnimInstance* EnemyAnim;
 
 	UPROPERTY()
 	UStatusComponent* EnemyState;
@@ -104,11 +104,11 @@ private:
 	UPROPERTY()
 	float MaxHP;
 
-	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
-	FDataTableRowHandle DataTableRowHandle;
+//	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
+//	FDataTableRowHandle DataTableRowHandle;
 
 protected:
-	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
+//	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
 
 
 public:										 
@@ -123,8 +123,8 @@ public:
 
 
 	// montage
-	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	//UFUNCTION()
+	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	// particle
 	void PlayAttackParticle();
@@ -132,5 +132,15 @@ public:
 private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool IsAttacking; 
+
+
+public:
+	//void SetEnemy(const FName& InKey);
+	UDataSubsystem* DataSubsystem;
+
+
+	bool Init();
+	void SetEnemyDataSubsystem(const FName& InKey);
+	bool AddEnemy(const FName& InKey);
 
 };
