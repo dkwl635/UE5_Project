@@ -176,3 +176,16 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 	NewRotation.Roll = CurrentRotation.Roll;
 	SetActorRotation(NewRotation);
 }
+
+
+// add LJY
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float CurrentHP = StatusComponent->GetHP();
+	float NewHP = CurrentHP - StatusComponent->GetEnemyAttackDamage();
+	StatusComponent->SetHP(NewHP);
+	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
+
+	return Damage;
+}

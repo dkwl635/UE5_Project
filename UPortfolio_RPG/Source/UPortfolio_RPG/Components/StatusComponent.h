@@ -7,12 +7,12 @@
 #include "StatusComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UPORTFOLIO_RPG_API UStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UStatusComponent();
 
@@ -20,7 +20,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -41,19 +41,22 @@ protected:
 	float MP = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackDamage = 100.f;
-		
+
 	bool bSuperArmor;
 	bool bSuperStance;
 
 
 
-//EnemyState
+	//add LJY EnemyState
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Enemy_HP = 0.f;
+	float Enemy_HP = 0.f;  //datatable init, not zero
+	float Enemy_AttackDamage = 10.f;
 
 public:
 	float GetEnemyHP() { return Enemy_HP; }
 	void SetEnemyHP(float InHP) { Enemy_HP = InHP; }
+	float GetEnemyAttackDamage() { return Enemy_AttackDamage; }
+	void SetEnemyAttackDamage(float Damage) { Enemy_AttackDamage = Damage; }
 
 };

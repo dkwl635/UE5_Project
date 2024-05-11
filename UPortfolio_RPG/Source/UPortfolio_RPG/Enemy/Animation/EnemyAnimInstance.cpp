@@ -35,20 +35,17 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
-	//if (!Montage_IsPlaying(AttackMontage))
-	{
-		//Montage_Play(AttackMontage, 1.0f);
-	}
+	Montage_Play(AttackMontage, 1.0f);
 }
 
 void UEnemyAnimInstance::SetAttackAnim()
 {
-//	IssAttack = true;
+	IssAttack = true;
 }
 
 void UEnemyAnimInstance::SetAttackEndAnim()
 {
-//	IssAttack = false;
+	IssAttack = false;
 }
 
 void UEnemyAnimInstance::SetDeadAnim()

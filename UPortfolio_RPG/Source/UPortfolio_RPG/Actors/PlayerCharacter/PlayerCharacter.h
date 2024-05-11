@@ -79,4 +79,10 @@ public:
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+
+
+// add LJY
+public:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 };

@@ -123,8 +123,8 @@ public:
 
 
 	// montage
-	//UFUNCTION()
-	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	// particle
 	void PlayAttackParticle();

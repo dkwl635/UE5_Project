@@ -181,9 +181,6 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
         EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
         if (EnemyStatusUserWidget)
         {
-
-            UE_LOG(LogTemp, Warning, TEXT("NewHP : %f"), NewHP);
-            UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
             EnemyStatusUserWidget->SetHP(NewHP, MaxHP);
         }
         else
@@ -196,8 +193,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyState->GetEnemyHP() <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
-        //Delay(2.f);
-     //   Destroy();
+        Destroy();
     }
 
     return Damage;
@@ -207,7 +203,7 @@ void AEnemy::Attack()
 {
     if (IsAttacking) return;
 
-    EnemyAnim->SetAttackAnim();
+    EnemyAnim->PlayAttackMontage();
 
     auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     if (PlayerCharacter)
@@ -215,11 +211,10 @@ void AEnemy::Attack()
         ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
         if (Player)
         {
-         //   Player->TakeDamage(Enemy->GetDamage(), FDamageEvent(), Enemy->GetController(), Enemy);
+            UGameplayStatics::ApplyDamage(Player, EnemyState->GetEnemyAttackDamage(), GetController(), this, UDamageType::StaticClass());
         }
     }
     IsAttacking = true;
-    EnemyAnim->SetAttackEndAnim();
 }
 
 void AEnemy::AttackCheck()
@@ -227,10 +222,10 @@ void AEnemy::AttackCheck()
 
 }
 
-//void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-//{
-//    IsAttacking = false;
-//}
+void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    IsAttacking = false;
+}
 
 void AEnemy::PlayAttackParticle()
 {
@@ -248,7 +243,7 @@ bool AEnemy::Init()
 {
     DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
 
-    AddEnemy(TEXT("Prime"));
+    AddEnemy(TEXT("Lane"));
     return true;
 }
 void AEnemy::SetEnemyDataSubsystem(const FName& InKey)
@@ -321,7 +316,7 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
         if (EnemyAnim != nullptr)
         {
-            //   EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+               EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
         }
         else
         {
