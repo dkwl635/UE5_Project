@@ -51,10 +51,14 @@ void URPGMainUserWidget::ShowUI(URPGUserWidget* UserWidget)
         UCanvasPanelSlot* Current = GetCanvasPanel(UserWidget->UI_Type);
         Current->SetZOrder(TopZOrder);
         TopPopupUI = Current;
-        UserWidget->SetVisibility(ESlateVisibility::Visible);
-        UserWidget->RefreshUI();
+        if (UserWidget->GetVisibility() == ESlateVisibility::Collapsed)
+        {
+            UserWidget->SetVisibility(ESlateVisibility::Visible);
+            UserWidget->ShowInitUI();
+            UserWidget->RefreshUI();
+       }
+ 
     }
-   
 
 }
 
@@ -68,6 +72,7 @@ void URPGMainUserWidget::HideUI(URPGUserWidget* UserWidget)
     if (!UserWidget) { return; }
     if (UserWidget->IsInViewport())
     {
+        UserWidget->HideSetUI();
         UserWidget->SetVisibility(ESlateVisibility::Collapsed);
     }
  
@@ -106,6 +111,14 @@ UCanvasPanelSlot* URPGMainUserWidget::GetCanvasPanel(ERPG_UI Type)
     }
 
     return nullptr;
+}
+
+URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
+{
+    auto UI = GetRPGUI(Type);
+    UI->RefreshUI();
+
+    return UI;
 }
 
 

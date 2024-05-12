@@ -12,6 +12,16 @@ void URPGUserWidget::Init()
 {
 }
 
+void URPGUserWidget::ShowInitUI()
+{
+}
+
+void URPGUserWidget::HideSetUI()
+{
+}
+
+
+
 UCanvasPanelSlot* URPGUserWidget::GetCanvasPanelSlot()
 {
     if (!CanvasPaneSlot)

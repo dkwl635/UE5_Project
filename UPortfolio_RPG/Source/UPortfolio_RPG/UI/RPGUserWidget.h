@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Init();
 	
+	UFUNCTION(BlueprintCallable)
+	virtual void ShowInitUI();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void HideSetUI();
+
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 	FDele_Dynamic_OneParam StartUIMove;
 

@@ -41,6 +41,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
 
+	UFUNCTION(BlueprintCallable)
+	URPGUserWidget* RPGUIRefresh(ERPG_UI Type);
+
+
 public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
 	class UCanvasPanel* RPGUI;
@@ -50,9 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bInteraction;
 
-	
 private:
-
 	TMap<ERPG_UI, URPGUserWidget*> RPGUIMap;
 	TMap<ERPG_UI, UCanvasPanelSlot*> RPGUICanvasMap;
 

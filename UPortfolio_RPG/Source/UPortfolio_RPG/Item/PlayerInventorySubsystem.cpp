@@ -2,9 +2,8 @@
 #include "PlayerInventorySubsystem.h"
 #include "DataSubsystem/DataSubsystem.h"
 #include "Item.h"
-
 #include "UI/Slot/QuickItemSlotData.h"
-
+#include "UI/Slot/InventorySlotData.h"
 
 
 UPlayerInventorySubsystem::UPlayerInventorySubsystem()
@@ -168,7 +167,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 		{
 			return  true;
 		}
-		CheckInvenIndex = FindItemInInventory(Inventory, ItemName);
+		CheckInvenIndex = FindItemInInventory(Inventory, ItemName , CheckInvenIndex+1);
 	}
 
 	int8 EmptyIndex = FindEmptyInventory(Inventory);
@@ -194,7 +193,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 		{
 			return  true;
 		}
-		EmptyIndex = FindEmptyInventory(Inventory);
+		EmptyIndex = FindEmptyInventory(Inventory , EmptyIndex+1);
 	}
 
 	//ensure(false);
@@ -232,6 +231,31 @@ void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex 
 	UseItem(data, Count);
 	GEngine->ForceGarbageCollection(true);
 	
+}
+
+void UPlayerInventorySubsystem::RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1)
+{
+	Inventory Inventory = GetInventory(ItemType);
+
+	if (!Inventory || Count <= 0)
+	{
+		return;
+	}
+
+	(*Inventory)[InventoryIndex] = nullptr;
+	GEngine->ForceGarbageCollection(true);
+}
+
+void UPlayerInventorySubsystem::RemoveItem(URPGSlotUserWidget* Slot, int8 Count = 1)
+{
+	UInventorySlotData* data = (UInventorySlotData*)Slot->GetSlotData();
+	Inventory Inventory = GetInventory(EITEMTYPE::BATTLEITEM);
+	RemoveItem(data->ItemData.Pin()->ItemType, data->SlotIndex, Count);
+	if (URPGSlotUserWidget* QuickSlot = CheckQuickSlotItem(Slot))
+	{
+		QuickSlot->RefreshUI();
+	}
+	data->RefreshData();
 }
 
 void UPlayerInventorySubsystem::UseItem(FItemData* ItemData, int8 Count)

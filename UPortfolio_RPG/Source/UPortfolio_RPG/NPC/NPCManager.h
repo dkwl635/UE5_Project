@@ -21,7 +21,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 
 public:
 	void BeginOverlapPlayer(class ANPC* Target);
@@ -37,7 +37,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EndInteractiorNPC();
-
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ReceiveStartInteractiorNPC();

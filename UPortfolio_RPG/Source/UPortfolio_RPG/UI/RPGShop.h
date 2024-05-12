@@ -19,6 +19,8 @@ protected:
 
 public:
 	virtual void RefreshUI() override;
+	virtual void ShowInitUI() override;
+	virtual void HideSetUI() override;
 	virtual void SetShopData(TArray<struct FShopBuyItemData> ShopList);
 	void BuyItem(class UShopBuySlot* ShopSlot);
 private:
@@ -27,5 +29,29 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* BuyItemPanel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UWidgetSwitcher* ShopSwitcher;
+
+	UPROPERTY(EditAnywhere , BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* SellPriceText;
+
 	TArray<TWeakObjectPtr<class UShopBuySlot>> BuyShopSlotList;
+
+public:
+	int SellSlotMaxCount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UUniformGridPanel* SellItemList;
+	TArray<TWeakObjectPtr<class URPGSlotUserWidget>> SellShopSlotList;
+	TArray<TWeakObjectPtr<class UShopSellSlotData>> SellShopSlotDataList;
+;
+bool CheckSellItem(class URPGSlotUserWidget* OrginSlot);
+
+	UFUNCTION(BlueprintCallable)
+	void SellItem();
+
+	void RefreshSellPrice();
+
+	void SetSellPrice();
+
 };

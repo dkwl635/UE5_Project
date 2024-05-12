@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 #include "NPC/NPCManager.h"
 #include "NPC/NPC.h"
 #include "NPC/NPCTalkBoxUserwidget.h"
@@ -9,12 +9,12 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
 #include "UI/RPGShop.h"
+#include "UI/UIManager.h"
 
 // Sets default values
 ANPCManager::ANPCManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = false;
 
 }
 
@@ -27,13 +27,6 @@ void ANPCManager::BeginPlay()
 	NPCTalkBoxUserwidget->NPCManager = this;
 	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
 
-
-}
-
-// Called every frame
-void ANPCManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
 }
 
@@ -60,7 +53,9 @@ URPGMainUserWidget* ANPCManager::GetPlayerUI()
 		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	//	UPlayerUIComponent* Find = (UPlayerUIComponent*)(PlayerControll->GetPawn()->GetComponentByClass(UPlayerUIComponent::StaticClass()));
 		UPlayerUIComponent* Find = PlayerControll->GetPawn()->FindComponentByClass<UPlayerUIComponent>();
-		PlayerUI = Find->PlayerUI;
+		PlayerUI = AUIManager::UIManager->PlayerUI;
+		
+		//PlayerUI = Find->PlayerUI;
 	}
 
 	return PlayerUI.Get();
@@ -131,7 +126,11 @@ void ANPCManager::OpenShopUI()
 		URPGShop* ShopUI = Cast<URPGShop>( GetPlayerUI()->GetRPGUI(ERPG_UI::SHOP));
 		ShopUI->SetShopData(CurrentNPC->ShopBuyData);
 		GetPlayerUI()->ShowUI(ERPG_UI::SHOP);
+		GetPlayerUI()->ShowUI(ERPG_UI::INVENTORY);
+
+		//EndInteractiorNPC();
 	}
 
 }
+
 

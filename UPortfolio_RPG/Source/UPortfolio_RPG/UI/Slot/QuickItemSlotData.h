@@ -25,7 +25,7 @@ public:
 	
 public :
 
-	//¿øº» ½½·Ô
+	
 	TWeakObjectPtr<class URPGSlotUserWidget> OrginSlot;
 
 };

@@ -17,7 +17,7 @@ class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
 	GENERATED_BODY()
 	
 public:
-	//한번만 호출되는
+
 	void Init() override;
 	~URPGSlotUserWidget();
 	
@@ -29,15 +29,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool UseSlot();
 
-	//슬롯 초기화
 	UFUNCTION(BlueprintCallable)
 	void ClearSlot();
 
-
 	UFUNCTION(BlueprintCallable)
 	FText GetCountText();
-
-
 
 public :
 
@@ -60,6 +56,8 @@ public :
 
 public :
 
+	TWeakObjectPtr<class UPlayerInventorySubsystem> GetPlayerInvenSubsytem();
+	
 public:
 	UPROPERTY()
 	USlotData* SlotData;

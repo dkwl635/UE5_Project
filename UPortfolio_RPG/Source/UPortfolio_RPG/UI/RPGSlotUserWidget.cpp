@@ -5,9 +5,13 @@
 #include "Slot/InventorySlotData.h"
 #include "Slot/QuickItemSlotData.h"
 #include "Slot/ShopSlotData.h"
+#include "Slot/ShopSellSlotData.h"
 #include "Item/ItemData.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/Slot/SlotEnum.h"
+#include "UI/UIManager.h"
+#include "UI/RPGShop.h"
+#include "UI/RPGMainUserWidget.h"
 
 
 void URPGSlotUserWidget::Init()
@@ -15,31 +19,17 @@ void URPGSlotUserWidget::Init()
 	uint8 type = (uint8)RPGSlotType;
 	switch (type)
 	{
-	case  (uint8)ERPGSLOTTYPE::NONE:
-	{
-		break;
-	}
+	case  (uint8)ERPGSLOTTYPE::NONE: { break; }
 	case  (uint8)ERPGSLOTTYPE::INVENTORY_GEAR:
-	{
-		SlotData = NewObject<UInventorySlotData>();
-		break;
-	}
-	
+	{ SlotData = NewObject<UInventorySlotData>(); break; }
 	case  (uint8)ERPGSLOTTYPE::INVENTORY_NORMARL:
-	{
-		SlotData = NewObject<UInventorySlotData>();
-		break;
-	}
+	{ SlotData = NewObject<UInventorySlotData>(); break; }
 	case  (uint8)ERPGSLOTTYPE::QUICK_ITEM:
-	{
-		SlotData = NewObject<UQuickItemSlotData>();
-		break;
-	}
+	{ SlotData = NewObject<UQuickItemSlotData>(); break; }
 	case  (uint8)ERPGSLOTTYPE::SHOP_ITEM:
-	{
-		SlotData = NewObject<UShopSlotData>();
-		break;
-	}
+	{ SlotData = NewObject<UShopSlotData>();	break; }
+	case  (uint8)ERPGSLOTTYPE::SHOP_SELLITEM:
+	{ SlotData = NewObject<UShopSellSlotData>(); break; }
 	default:
 		break;
 	}
@@ -85,8 +75,8 @@ void URPGSlotUserWidget::RefreshUI()
 
 	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+		//UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		URPGSlotUserWidget* QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this);
 		if (QuickSlot)
 		{
 			QuickSlot->RefreshUI();
@@ -121,8 +111,8 @@ void URPGSlotUserWidget::ClearSlot()
 
 	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
-		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(this);
+		//UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+		URPGSlotUserWidget* QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this);
 		if (QuickSlot)
 		{
 			QuickSlot->ClearSlot();
@@ -158,6 +148,18 @@ FText URPGSlotUserWidget::GetCountText()
 
 
 
+
+TWeakObjectPtr<UPlayerInventorySubsystem> URPGSlotUserWidget::GetPlayerInvenSubsytem()
+{
+	static 	UPlayerInventorySubsystem* PlayerInvenSubsytem;
+	if (PlayerInvenSubsytem == nullptr)
+	{
+		PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	}
+
+	return PlayerInvenSubsytem;
+}
+
 USlotData* URPGSlotUserWidget::GetSlotData()
 {
 	return SlotData;
@@ -174,12 +176,17 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	ERPGSLOTTYPE EndSlotType = this->RPGSlotType;
 
 	UE_LOG(LogTemp, Warning, TEXT("Succens DragEnd"));
-	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* PlayerInven = GetPlayerInvenSubsytem().Get();
 	//(무기 가방 -> 무기 가방) || (기타 가방 -> 기타 가방)
 	if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		|| (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 		)
 	{
+		if (AUIManager::UIManager->isShopOpen)
+		{
+			return false;
+		}
+
 		EITEMTYPE ItemType = EITEMTYPE::None;
 		if (StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		{
@@ -226,6 +233,11 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	//아이템 창고-> 퀵 슬롯
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
+		if (AUIManager::UIManager->isShopOpen)
+		{
+			return false;
+		}
+
 		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::QUICK_ITEM"));
 		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot);
 		if (QuickSlot != nullptr)
@@ -242,6 +254,11 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 	//퀵슬롯 끼리 교환
 	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
+		if (AUIManager::UIManager->isShopOpen)
+		{
+			return false;
+		}
+
 		UE_LOG(LogTemp, Warning, TEXT("QUICK_ITEM && QUICK_ITEM"));
 		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
 		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
@@ -255,7 +272,24 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		StartSlot->RefreshUI();
 		this->RefreshUI();
 	}
+	else if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL || StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
+		&& EndSlotType == ERPGSLOTTYPE::SHOP_SELLITEM)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::SHOP_SELLITEM"));
 
+		URPGShop* RPGShop = (URPGShop*)AUIManager::UIManager->PlayerUI->GetRPGUI(ERPG_UI::SHOP);
+		if (!RPGShop->CheckSellItem(StartSlot))
+		{
+			return false;
+		}
+		UShopSellSlotData* thisSlotData = (UShopSellSlotData*)GetSlotData();
+		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
+		thisSlotData->OrginSlot = StartSlot;
+		//StartSlotData->QuickSlot = this;
+		this->RefreshUI();
+
+
+	}
 
 
 	return true;
@@ -263,7 +297,6 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 
 void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 {
-	
 	UE_LOG(LogTemp, Warning, TEXT("DragFailed"));
 
 	ERPGSLOTTYPE StartSlotType = StartSlot->RPGSlotType;

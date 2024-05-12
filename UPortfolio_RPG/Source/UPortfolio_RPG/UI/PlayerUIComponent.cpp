@@ -14,6 +14,8 @@ UPlayerUIComponent::UPlayerUIComponent()
 void UPlayerUIComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	return;
 	if (PlayerUserWidget)
 	{
 		auto Widget = CreateWidget<UUserWidget>(GetWorld(), PlayerUserWidget);

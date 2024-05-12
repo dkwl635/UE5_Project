@@ -38,11 +38,12 @@ public :
 	bool Init();
 	bool AddItem(const FName& InKey, int8 Count);	
 	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
+	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
+	void RemoveItem(URPGSlotUserWidget* Slot, int8 Count);
 	void UseItem(FItemData* ItemData, int8 Count);
 	TWeakPtr<FItemData> GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex);
 	void SwapItem(EITEMTYPE ItemType , int8 Index1, int8 Index2);
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
-
 private:
 	bool IsAddable(Inventory Inventory, FItemData* ItemData, int8 Count);
 	int8 FindItemInInventory(Inventory Inventory, const FName& InKey, int8 StartIndex);
@@ -78,4 +79,9 @@ public:
 
 	 class UDataSubsystem* DataSubsystem;
 	 UItem* ItemClass;
+
+public:
+	bool bOpenShop = false;
+
+
 };

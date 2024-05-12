@@ -16,7 +16,6 @@ class UPORTFOLIO_RPG_API UShopBuySlot : public URPGUserWidget
 
 public:
 	virtual void RefreshUI();
-
 	virtual void Init();
 
 public:
