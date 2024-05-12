@@ -6,14 +6,6 @@
 
 ASpinningAttack::ASpinningAttack()
 {
-	this->Sk_Name = TEXT("SpinningAttack");
-	this->Sk_Desc = FText::FromString(TEXT(""));
-	this->Sk_CoolTime = 12.f;
-	this->Sk_Damage = 50.f;
-	this->Sk_ManaUsage = 50.f;
-	this->bSuperArmor = false;
-	this->bSuperStance = true;
-
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(StaticMesh);
 	{
@@ -24,11 +16,11 @@ ASpinningAttack::ASpinningAttack()
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/SpinningAttack_Montage.SpinningAttack_Montage'"));
 		ensure(Asset.Object);
-		Montage = Asset.Object;
+		this->Montage = Asset.Object;
 	}
 	StaticMesh->SetRelativeScale3D(FVector(4.565000, 3.735000, 1.660000));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
-	StaticMesh->bHiddenInGame = true;
+	StaticMesh->bHiddenInGame = false;
 }
 
 void ASpinningAttack::BeginPlay()

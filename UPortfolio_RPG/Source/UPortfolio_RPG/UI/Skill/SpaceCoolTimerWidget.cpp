@@ -14,7 +14,7 @@ void USpaceCoolTimerWidget::SetProgressBar()
 	if (!Player) return;
 
 	FTimerHandle CoolTimer = Player->GetTimerHandle();
-	float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimer);
+	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimer);
 	float MaxTime = Player->GetSpaceCoolTime();
 
 	if (MaxTime > 0.f)

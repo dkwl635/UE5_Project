@@ -12,6 +12,7 @@
 #include "Components/SkillComponent.h"
 #include "Actors/Skill/SkillBase.h"
 #include "Components/CapsuleComponent.h"
+#include "UI/Skill/Skill_MainWidget.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
 
 // Sets default values
@@ -124,7 +125,7 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[0]));
 	if (Skill)
 	{
-		UAnimMontage* Montage = Skill->GetSkillMontage();
+		UAnimMontage* Montage = Skill->Montage;
 		Animation->Montage_Play(Montage, 1.2f);
 		Skill->Destroy();
 	}
@@ -140,7 +141,7 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[1]));
 	if (Skill)
 	{
-		UAnimMontage* Montage = Skill->GetSkillMontage();
+		UAnimMontage* Montage = Skill->Montage;
 		Animation->Montage_Play(Montage, 1.2f);
 		Skill->Destroy();
 	}

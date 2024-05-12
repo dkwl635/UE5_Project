@@ -40,7 +40,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
@@ -57,6 +57,7 @@ public:
 
 public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
+	USkillComponent* GetSkillComponent() { return SkillComponent; }
 	FTimerHandle& GetTimerHandle() { return SpaceCoolTimer; }
 	float GetSpaceCoolTime() { return SpaceCoolTime; }
 
@@ -104,6 +105,7 @@ public:
 	bool bOnAttack = false;
 
 protected:
+	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
 private:

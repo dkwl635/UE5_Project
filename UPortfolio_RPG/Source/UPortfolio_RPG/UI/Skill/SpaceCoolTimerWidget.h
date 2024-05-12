@@ -16,8 +16,9 @@ class UPORTFOLIO_RPG_API USpaceCoolTimerWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	UFUNCTION(BlueprintCallable)
+public:
 	void SetProgressBar();
+	float RemainingTime;
 
 protected:
 	UPROPERTY(meta=(BindWidget))

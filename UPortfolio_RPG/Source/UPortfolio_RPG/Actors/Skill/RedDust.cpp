@@ -6,14 +6,6 @@
 
 ARedDust::ARedDust()
 {
-	this->Sk_Name = TEXT("SpinningAttack");
-	this->Sk_Desc = FText::FromString(TEXT("대검을 크게 올려치며 붉은 기운을 일으킨다. 자신의 공격력이 8초 간 6% 증가하며, 공격 적중 시 407의 피해를 준다."));
-	this->Sk_CoolTime = 24.f;
-	this->Sk_Damage = 407.f;
-	this->Sk_ManaUsage = 101.f;
-	this->bSuperArmor = false;
-	this->bSuperStance = false;
-
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	SetRootComponent(StaticMesh);
 	{
@@ -24,13 +16,12 @@ ARedDust::ARedDust()
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/RedDust_Montage.RedDust_Montage'"));
 		ensure(Asset.Object);
-		Montage = Asset.Object;
+		this->Montage = Asset.Object;
 	}
-
 	StaticMesh->SetRelativeLocation(FVector(250., 0., -88.));
 	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
-	StaticMesh->bHiddenInGame = true;
+	StaticMesh->bHiddenInGame = false;
 }
 
 void ARedDust::BeginPlay()

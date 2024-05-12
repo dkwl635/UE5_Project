@@ -6,6 +6,8 @@
 #include "Actors/Skill/SkillBase.h"
 #include "RedDust.generated.h"
 
+struct FSkillInfoDataTableRow;
+
 UCLASS()
 class UPORTFOLIO_RPG_API ARedDust : public ASkillBase
 {
@@ -16,6 +18,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
 
 protected:
 	UFUNCTION()

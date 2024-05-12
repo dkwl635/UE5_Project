@@ -22,7 +22,9 @@ void USkillComponent::SetSkillData(const FSkillDataTableRow* InData)
 	const int32 Num = InData->Skills.Num();
 	Skills.Reserve(Num);
 	for(int32 i=0;i<Num;++i)
+	{
 		Skills.Add(InData->Skills[i]);
+	}
 }
 
 // Called when the game starts
