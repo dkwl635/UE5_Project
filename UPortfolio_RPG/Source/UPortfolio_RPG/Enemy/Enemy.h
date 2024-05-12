@@ -16,39 +16,6 @@
 #include "Animation/EnemyAnimInstance.h"
 #include "Enemy.generated.h"
 
-/*USTRUCT()
-struct UPORTFOLIO_RPG_API FEnemyDataTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float CapsuleRadius;              //캡슐 컴포넌트 반지름
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float CapsuleHalfHeight;          //캡슐 컴포넌트 반높이
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	USkeletalMesh* SkeletalMesh;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	FTransform SkeletalMeshTransform;   //enemy 상대적 위치
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float EnemyHP;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	TSubclassOf<UAnimInstance> AnimClass;   //애니메이션
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	UParticleSystem* ParticleAttackSystem;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	UParticleSystemComponent* ParticleAttackSystemComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	FTransform ParticleTransform;
-};*/
-
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
 {
@@ -58,9 +25,7 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 	~AEnemy();
-//	virtual void SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle);
-	//virtual void SetEnemyData(const FEnemyData* InData);
-//	virtual void SetEnemyData(const FEnemyDataTableRow* InData);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -104,13 +69,6 @@ private:
 	UPROPERTY()
 	float MaxHP;
 
-//	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.EnemyDataTableRow"))
-//	FDataTableRowHandle DataTableRowHandle;
-
-protected:
-//	const FEnemyDataTableRow* EnemyDataTableRow = nullptr;
-
-
 public:										 
 	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
 	UFloatingPawnMovement* Movement;
@@ -135,12 +93,15 @@ private:
 
 
 public:
-	//void SetEnemy(const FName& InKey);
 	UDataSubsystem* DataSubsystem;
 
-
 	bool Init();
-	void SetEnemyDataSubsystem(const FName& InKey);
 	bool AddEnemy(const FName& InKey);
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
+
+	UPROPERTY()
+	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Dusk"), TEXT("Black") };
 
 };

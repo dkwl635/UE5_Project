@@ -3,17 +3,11 @@
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
-#include "Enemy/Animation/EnemyAnimInstance.h"
 #include "Kismet/GameplayStatics.h"
-
-//#include "PlayerController.h"
-
 
 // Sets default values
 AEnemy::AEnemy()
 {
-  //  DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
-
     IsAttacking = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
@@ -50,7 +44,6 @@ AEnemy::AEnemy()
         StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
 
-
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -60,74 +53,16 @@ AEnemy::~AEnemy()
 {
 }
 
-/*void AEnemy::SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle)
-{
-    DataTableRowHandle = InDataTableRowHandle;
-    if (DataTableRowHandle.IsNull()) { return; }
-    if (DataTableRowHandle.RowName == NAME_None) { return; }
-    EnemyDataTableRow = DataTableRowHandle.GetRow<FEnemyDataTableRow>(TEXT(""));
-    SetEnemyData(EnemyDataTableRow);
-    
-    /*const FEnemyData* InData = DataTableRowHandle.GetRow<FEnemyData>(TEXT(""));
-    if (!ensure(InData))
-    {
-        UE_LOG(LogTemp, Error, TEXT("InData is nullptr!"));
-        return;
-    }
-    SetEnemyData(InData);
-}
-
-void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
-//void AEnemy::SetEnemyData(const FEnemyData* InData)
-{
-    ensure(InData);
-    if (!ensure(InData))
-    {
-        UE_LOG(LogTemp, Error, TEXT("InData is nullptr!"));
-        return;
-    }
-
-    CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
-    CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
-
-    SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
-    SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
-    SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
-
-    EnemyState->SetEnemyHP(InData->EnemyHP);
-    MaxHP = InData->EnemyHP;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP());
-    UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
-
-    FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
-    StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
-
-    ParticleAttackSystem = InData->ParticleAttackSystem;
-
-    if (ParticleAttackSystem)
-    {
-        ParticleAttackSystemComponent->SetTemplate(ParticleAttackSystem);
-    }
-    ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
-    
-
-}*/
-
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-   // SetEnemyDataSubsystem("Prime");
     Init();
-    UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy_First"));
 }
 
 void AEnemy::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
-    //Init();
- //   SetEnemyData(DataTableRowHandle);
-//    SetEnemyData(const FName& InKey);
 }
 
 // Called every frame
@@ -159,19 +94,15 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
-   
-
-   // EnemyAnim->OnAttackHitCheck.AddUObject(this, &AEnemy::AttackCheck);
 }
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-    // 적의 상태 객체에서 HP를 가져와서 데미지를 적용합니다.
     float CurrentHP = EnemyState->GetEnemyHP();
     float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+
     EnemyState->SetEnemyHP(NewHP);
     UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP()); 
 
@@ -234,51 +165,16 @@ void AEnemy::PlayAttackParticle()
         UGameplayStatics::SpawnEmitterAttached(ParticleAttackSystem, CapsuleComponent, "Impact",
             FVector( (SkeletalMeshComponent->GetRelativeLocation()+ParticleAttackSystemComponent->GetRelativeLocation())), 
             ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
-
-        UE_LOG(LogTemp, Warning, TEXT("%f"), ParticleAttackSystemComponent->GetRelativeLocation().X );
-
     }
 }
 bool AEnemy::Init()
 {
     DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
 
-    AddEnemy(TEXT("Lane"));
+    AddEnemy(EnemyTypes[FMath::RandRange(0, EnemyTypes.Num()-1)]);
     return true;
 }
-void AEnemy::SetEnemyDataSubsystem(const FName& InKey)
-{
-    FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
-    if (!InData)
-    {
-        check(false);
-    }
-    else
-    {
-        CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
-        CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
 
-        SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
-        SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
-        SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
-
-        EnemyState->SetEnemyHP(InData->EnemyHP);
-        MaxHP = InData->EnemyHP;
-        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP());
-        UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
-
-        FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
-        StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
-
-        ParticleAttackSystem = InData->ParticleAttackSystem;
-
-        if (ParticleAttackSystem)
-        {
-            ParticleAttackSystemComponent->SetTemplate(ParticleAttackSystem);
-        }
-        ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
-    }
-}
 bool AEnemy::AddEnemy(const FName& InKey)
 {
     FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
@@ -320,7 +216,7 @@ bool AEnemy::AddEnemy(const FName& InKey)
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("MaxHP"));
+            UE_LOG(LogTemp, Warning, TEXT("Anim Cast Error!!"));
         }
 
         return true;
