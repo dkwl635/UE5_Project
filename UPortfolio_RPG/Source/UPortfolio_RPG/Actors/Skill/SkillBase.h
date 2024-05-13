@@ -11,6 +11,9 @@ class UPORTFOLIO_RPG_API ASkillBase : public AActor
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void ActiveSkill();
+
 protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
 

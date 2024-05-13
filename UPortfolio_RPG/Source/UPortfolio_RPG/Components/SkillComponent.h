@@ -34,12 +34,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:
-	TSubclassOf<ASkillBase> GetSkill(int32 InIndex) { return Skills[InIndex]; }
-
 protected:
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<ASkillBase>> Skills;
+	TArray<ASkillBase*> Skills;
 
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
 };

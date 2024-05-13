@@ -3,26 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/ProgressBar.h"
-#include "Components/TextBlock.h"
+#include "UI/Skill/CoolTimerUserWidget.h"
 #include "SpaceCoolTimerWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class UPORTFOLIO_RPG_API USpaceCoolTimerWidget : public UUserWidget
+class UPORTFOLIO_RPG_API USpaceCoolTimerWidget : public UCoolTimerUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	void SetProgressBar();
-	float RemainingTime;
-
-protected:
-	UPROPERTY(meta=(BindWidget))
-	UProgressBar* ProgressBar;
-	UPROPERTY(meta=(BindWidget))
-	UTextBlock* TextBlock;
+	virtual void SetProgressBar() override;
+	
 };

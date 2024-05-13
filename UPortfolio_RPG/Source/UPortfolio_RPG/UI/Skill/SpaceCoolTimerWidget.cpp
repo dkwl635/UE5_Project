@@ -7,6 +7,8 @@
 
 void USpaceCoolTimerWidget::SetProgressBar()
 {
+	Super::SetProgressBar();
+
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (!PlayerController) return;
 
@@ -15,7 +17,7 @@ void USpaceCoolTimerWidget::SetProgressBar()
 
 	FTimerHandle CoolTimer = Player->GetTimerHandle();
 	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimer);
-	float MaxTime = Player->GetSpaceCoolTime();
+	MaxTime = Player->GetSpaceCoolTime();
 
 	if (MaxTime > 0.f)
 	{

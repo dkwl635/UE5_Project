@@ -19,12 +19,24 @@ void USkillComponent::SetSkillData(const FSkillDataTableRow* InData)
 	ensure(InData);
 	if (!InData) { return; }
 
-	const int32 Num = InData->Skills.Num();
-	Skills.Reserve(Num);
-	for(int32 i=0;i<Num;++i)
+	for (auto* Skill : Skills)
 	{
-		Skills.Add(InData->Skills[i]);
+		if (Skill)
+			Skill->ConditionalBeginDestroy();
 	}
+	Skills.Empty();
+
+    for (TSubclassOf<ASkillBase> SkillClass : InData->Skills)
+    {
+        if (*SkillClass != nullptr)
+        {
+            ASkillBase* NewSkill = NewObject<ASkillBase>(GetOwner(), SkillClass);
+            if (NewSkill != nullptr)
+            {
+                Skills.Add(NewSkill);
+            }
+        }
+    }
 }
 
 // Called when the game starts

@@ -114,7 +114,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
+#include "UI/Skill/CoolTimerUserWidget.h"
 void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
@@ -122,12 +122,11 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
 	LookAtMouseCursor(HitPoint);
-	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[0]));
+	ASkillBase* Skill = GetSkillComponent()->Skills[0];
 	if (Skill)
 	{
 		UAnimMontage* Montage = Skill->Montage;
 		Animation->Montage_Play(Montage, 1.2f);
-		Skill->Destroy();
 	}
 }
 
@@ -137,13 +136,12 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
-	LookAtMouseCursor(HitPoint);
-	ASkillBase* Skill = Cast<ASkillBase>(GetWorld()->SpawnActor(SkillComponent->Skills[1]));
+	LookAtMouseCursor(HitPoint);	
+	ASkillBase* Skill = GetSkillComponent()->Skills[1];
 	if (Skill)
 	{
 		UAnimMontage* Montage = Skill->Montage;
 		Animation->Montage_Play(Montage, 1.2f);
-		Skill->Destroy();
 	}
 }
 
