@@ -8,21 +8,25 @@
 #include "Components/Image.h"
 #include "SkillSlot.generated.h"
 
+class ASkillBase;
+
 UCLASS()
 class UPORTFOLIO_RPG_API USkillSlot : public UCoolTimerUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetImage(UTexture2D* InTexture);
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+	virtual void SetProgressBar() override;
+	void SetCachedSkill(int32 Index);
 
+	UTextBlock* GetKeyPadTextBlock() { return ShowKeyPadTextBlock; }
 
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UCanvasPanel* Canvas;
-	UPROPERTY(meta = (BindWidget))
-	UImage* Sk_Icon;
-
-	FTimerHandle CoolTimer;
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UTextBlock* ShowKeyPadTextBlock;
+	
+	ASkillBase* CachedSkill;
 };

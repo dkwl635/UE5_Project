@@ -29,7 +29,8 @@ public:
 	// Sets default values for this component's properties
 	USkillComponent();
 	void SetSkillData(const FSkillDataTableRow* InData);
-	
+	TArray<ASkillBase*> GetSkills() { return Skills; }
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -6,6 +6,8 @@
 #include "Subsystems/LocalPlayerSubsystem.h"
 #include "CoolTimeSubsystem.generated.h"
 
+class ASkillBase;
+
 UCLASS()
 class UPORTFOLIO_RPG_API UCoolTimeSubsystem : public ULocalPlayerSubsystem
 {
@@ -17,10 +19,16 @@ public:
 	void SetSpaceTimer();
 	float GetSpaceRemainingTime();
 
+public:
+	bool IsSkillCool(ASkillBase* Skill);
+	void SetSkillTimer(ASkillBase* Skill);
+	float GetSkillRemainingTime(ASkillBase* Skill);
 
 private:
 	FTimerHandle SpaceTimer;
-
+	FTimerHandle Skill_Q_Timer;
+	FTimerHandle Skill_W_Timer;
+	
 private:
 	float SpaceCoolTime = 5.f;
 

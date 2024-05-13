@@ -14,6 +14,8 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/Skill/Skill_MainWidget.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Subsystem/CoolTimeSubsystem.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -126,8 +128,22 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
-	LookAtMouseCursor(HitPoint);
 	ASkillBase* Skill = GetSkillComponent()->Skills[0];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (Manager->IsSkillCool(Skill))
+		{
+			return;
+		}
+		else
+		{
+			Manager->SetSkillTimer(Skill);
+		}
+	}
+
+	LookAtMouseCursor(HitPoint);
 	if(Skill)
 		Skill->ActiveSkill(Animation);
 }
@@ -137,9 +153,22 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+	ASkillBase* Skill = GetSkillComponent()->Skills[1];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (Manager->IsSkillCool(Skill))
+		{
+			return;
+		}
+		else
+		{
+			Manager->SetSkillTimer(Skill);
+		}
+	}
 
 	LookAtMouseCursor(HitPoint);	
-	ASkillBase* Skill = GetSkillComponent()->Skills[1];
 	if (Skill)
 		Skill->ActiveSkill(Animation);
 }

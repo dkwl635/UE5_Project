@@ -15,7 +15,7 @@ class UPORTFOLIO_RPG_API USkillInterfaceUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	USkillInterfaceUserWidget(const FObjectInitializer& ObjectInitializer);
+	virtual void NativeConstruct() override;
 	void Init();
 
 protected:

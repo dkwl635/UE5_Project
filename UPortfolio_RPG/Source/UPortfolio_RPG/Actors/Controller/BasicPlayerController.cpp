@@ -105,7 +105,6 @@ void ABasicPlayerController::OnSkill_W()
 	StopMovement();
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
 	PlayerCharacter->OnSkill_W(Hit.Location);
 }
 
