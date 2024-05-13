@@ -107,6 +107,14 @@ protected:
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
 	const FStatusDataTableRow* StatusDataTableRow = nullptr;
+
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+
+// add LJY
+public:
+	virtual float TakeDamage(
+		float DamageAmount, struct FDamageEvent const& DamageEvent, 
+		class AController* EventInstigator, AActor* DamageCauser) override;
+
 };

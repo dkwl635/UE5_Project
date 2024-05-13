@@ -19,18 +19,19 @@ bool UBTDecorator_Attack::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 		return false;
 
 	// 액터기반
-	/*auto Target = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(AEnemyAIController::TargetKey));
+	auto Target = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(AEnemyAIController::TargetActorKey));
 	if (nullptr == Target)
 		return false;
 
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= 200.0f);
-	return bResult;*/
+//	UE_LOG(LogTemp, Warning, TEXT("bResult: %d"), bResult);
+	return bResult;
 
-	FVector TargetVector = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AEnemyAIController::TargetKey);
+	/*FVector TargetVector = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AEnemyAIController::TargetKey);
 	{
 		FVector ControllingPawnLocation = ControllingPawn->GetActorLocation();
 		float DistanceSquared = FVector::DistSquared(TargetVector, ControllingPawnLocation);
 		bResult = (DistanceSquared <= 200.0f * 200.0f); 
 	}
-	return bResult;
+	return bResult;*/
 }

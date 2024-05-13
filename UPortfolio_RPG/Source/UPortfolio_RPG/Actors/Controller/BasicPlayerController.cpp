@@ -118,7 +118,6 @@ void ABasicPlayerController::OnSpace()
 		CoolTimeManager->SetSpaceTimer();
 		PlayerCharacter->OnSpace(Hit.Location);
 	}
-
 }
 
 void ABasicPlayerController::OnOpenSkillUI()

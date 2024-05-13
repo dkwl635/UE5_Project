@@ -55,4 +55,5 @@ protected:
 		
 	bool bSuperArmor;
 	bool bSuperStance;
+
 };

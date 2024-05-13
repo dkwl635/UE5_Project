@@ -11,7 +11,6 @@
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
 #include "Actors/Skill/SkillBase.h"
-#include "Components/CapsuleComponent.h"
 #include "UI/Skill/Skill_MainWidget.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
 #include "Actors/Controller/BasicPlayerController.h"
@@ -21,7 +20,7 @@
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	{
 		SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -205,7 +204,6 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 }
 
 #include "Engine/DamageEvents.h"
-#include "Enemy/Enemy.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
 	float Radius = 80.f;
@@ -241,4 +239,16 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 	NewRotation.Pitch = CurrentRotation.Pitch;
 	NewRotation.Roll = CurrentRotation.Roll;
 	SetActorRotation(NewRotation);
+}
+
+// add LJY
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float CurrentHP = StatusComponent->GetHP();
+	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
+	StatusComponent->SetHP(NewHP);
+	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
+
+	return Damage;
 }
