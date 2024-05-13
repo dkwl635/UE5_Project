@@ -23,6 +23,11 @@ ARedDust::ARedDust()
 		ensure(Asset.Object);
 		this->Sk_Image = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UTexture2D> Asset(TEXT("/Script/Engine.Texture2D'/Game/KSH/Character/Skill/Icon/RedDustDark.RedDustDark'"));
+		ensure(Asset.Object);
+		this->Sk_Image_Cool = Asset.Object;
+	}
 	StaticMesh->SetRelativeLocation(FVector(250., 0., -88.));
 	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));

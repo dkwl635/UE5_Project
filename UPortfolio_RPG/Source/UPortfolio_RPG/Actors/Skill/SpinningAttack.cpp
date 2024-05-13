@@ -23,6 +23,11 @@ ASpinningAttack::ASpinningAttack()
 		ensure(Asset.Object);
 		this->Sk_Image = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UTexture2D> Asset(TEXT("/Script/Engine.Texture2D'/Game/KSH/Character/Skill/Icon/TempestSlashDark.TempestSlashDark'"));
+		ensure(Asset.Object);
+		this->Sk_Image_Cool = Asset.Object;
+	}
 	StaticMesh->SetRelativeScale3D(FVector(4.565000, 3.735000, 1.660000));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;

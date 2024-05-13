@@ -67,15 +67,11 @@ void USkillSlot::SetCachedSkill(int32 Index)
 		FProgressBarStyle Style = ProgressBar->GetWidgetStyle();
 		FSlateBrush BackgroundBrush;
 		BackgroundBrush.SetResourceObject(CachedSkill->Sk_Image);
-		//BackgroundBrush.ImageSize = FVector2D(YourWidth, YourHeight);
 		Style.BackgroundImage = BackgroundBrush;
 
 		// 채우기 이미지 설정
 		FSlateBrush FillBrush;
-		FillBrush.SetResourceObject(CachedSkill->Sk_Image); // YourFillTexture는 채우기로 사용할 UTexture2D* 또는 다른 리소스
-		//FillBrush.ImageSize = FVector2D(YourWidth, YourHeight); // 필요한 이미지 크기 설정
-		FillBrush.DrawAs = ESlateBrushDrawType::Image;
-		FillBrush.TintColor = FSlateColor(FColor(0.427083, 0.427083, 0.427083, 1));
+		FillBrush.SetResourceObject(CachedSkill->Sk_Image_Cool);
 		Style.FillImage = FillBrush;
 
 		// 변경된 스타일 적용

@@ -33,6 +33,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Sk_Image;
 	UPROPERTY(EditAnywhere)
+	UTexture2D* Sk_Image_Cool;
+	UPROPERTY(EditAnywhere)
 	UAnimMontage* Montage;
 	
 	bool bSuperArmor = false;	// 피면
