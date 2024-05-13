@@ -13,6 +13,11 @@ void ASkillBase::ActiveSkill(UAnimInstance* AnimInstance)
 		UE_LOG(LogTemp, Warning, TEXT("Not Enough Mana"));
 		return;
 	}
+	else
+	{
+		float MP = Player->GetStatusComponent()->GetMP() - Sk_ManaUsage;
+		Player->GetStatusComponent()->SetMP(MP);
+	}
 	if(Montage)
 		AnimInstance->Montage_Play(Montage, 1.2f);
 }

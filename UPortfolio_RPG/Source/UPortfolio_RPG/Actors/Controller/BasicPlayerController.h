@@ -9,6 +9,7 @@
 class UNiagaraSystem;
 struct FInputActionValue;
 class APlayerCharacter;
+class UCoolTimeSubsystem;
 
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
@@ -24,6 +25,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+
+public:
+	UCoolTimeSubsystem* GetCoolTimeManager() const;
 
 protected:
 	void OnSetDestinationTriggered();

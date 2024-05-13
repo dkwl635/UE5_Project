@@ -2,22 +2,23 @@
 
 
 #include "UI/Skill/SpaceCoolTimerWidget.h"
-#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Subsystem/CoolTimeSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 void USpaceCoolTimerWidget::SetProgressBar()
 {
 	Super::SetProgressBar();
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	ABasicPlayerController* PlayerController =
+		Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!PlayerController) return;
 
-	APlayerCharacter* Player = Cast<APlayerCharacter>(PlayerController->GetCharacter());
-	if (!Player) return;
+	UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+	if (!Manager) return;
+	RemainingTime = Manager->GetSpaceRemainingTime();
 
-	FTimerHandle CoolTimer = Player->GetTimerHandle();
-	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimer);
-	MaxTime = Player->GetSpaceCoolTime();
+	MaxTime = Manager->GetSpaceCool();
 
 	if (MaxTime > 0.f)
 	{

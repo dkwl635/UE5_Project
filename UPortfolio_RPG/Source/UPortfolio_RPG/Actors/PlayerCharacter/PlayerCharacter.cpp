@@ -111,7 +111,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(SpaceCoolTimer);
 }
 
 // Called to bind functionality to input
@@ -147,11 +146,6 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
-	// 쿨타임 타이머
-	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
-	if (bIsSpaceCool) { return; }
-	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);
-	
 	if (!bIsSpace)
 	{
 		UAnimInstance* Animation = GetMesh()->GetAnimInstance();

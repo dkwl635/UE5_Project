@@ -17,7 +17,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetImage(UTexture2D* InTexture);
 
-	virtual void SetProgressBar() override;
 
 protected:
 	UPROPERTY(meta=(BindWidget))

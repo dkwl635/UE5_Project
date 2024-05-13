@@ -9,6 +9,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "InputActionValue.h"
 #include "Data/InputDataConfig.h"
+#include "Subsystem/CoolTimeSubsystem.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
@@ -49,6 +50,14 @@ void ABasicPlayerController::SetupInputComponent()
 
 }
 
+UCoolTimeSubsystem* ABasicPlayerController::GetCoolTimeManager() const
+{
+	if (GetLocalPlayer() == nullptr)
+		return nullptr;
+
+	return GetLocalPlayer()->GetSubsystem<UCoolTimeSubsystem>();
+}
+
 void ABasicPlayerController::OnSetDestinationTriggered()
 {
 	FHitResult Hit;
@@ -87,6 +96,7 @@ void ABasicPlayerController::OnSkill_Q()
 	StopMovement();
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
 	PlayerCharacter->OnSkill_Q(Hit.Location);
 }
 
@@ -95,6 +105,7 @@ void ABasicPlayerController::OnSkill_W()
 	StopMovement();
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
 	PlayerCharacter->OnSkill_W(Hit.Location);
 }
 
@@ -102,7 +113,13 @@ void ABasicPlayerController::OnSpace()
 {
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	PlayerCharacter->OnSpace(Hit.Location);
+	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
+	if (!CoolTimeManager->IsSpaceCool())
+	{
+		CoolTimeManager->SetSpaceTimer();
+		PlayerCharacter->OnSpace(Hit.Location);
+	}
+
 }
 
 void ABasicPlayerController::OnOpenSkillUI()

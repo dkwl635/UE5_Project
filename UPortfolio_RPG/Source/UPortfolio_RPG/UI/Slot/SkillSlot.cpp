@@ -16,16 +16,3 @@ void USkillSlot::SetImage(UTexture2D* InTexture)
 		Sk_Icon->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.f));
 	}
 }
-
-void USkillSlot::SetProgressBar()
-{
-	Super::SetProgressBar();
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (!PlayerController) return;
-
-	APlayerCharacter* Player = Cast<APlayerCharacter>(PlayerController->GetCharacter());
-	if (!Player) return;
-
-	RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimer);
-}

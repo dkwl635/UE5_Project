@@ -59,8 +59,6 @@ public:
 public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 	USkillComponent* GetSkillComponent() { return SkillComponent; }
-	FTimerHandle& GetTimerHandle() { return SpaceCoolTimer; }
-	float GetSpaceCoolTime() { return SpaceCoolTime; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -93,11 +91,8 @@ public:
 	UAnimMontage* CurrentMontage;
 
 protected:
-	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "Space")
-	float SpaceCoolTime = 5.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Space")
 	float RemainingTime = 0.f;
 
