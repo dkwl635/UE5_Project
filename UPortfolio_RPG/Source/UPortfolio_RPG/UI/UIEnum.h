@@ -9,6 +9,7 @@ enum class ERPG_UI : uint8
 	INVENTORY,
 	QUICKSLOTS,
 	SHOP,
+	EQUIPMENT,
 };
 
 int TopZOrder = 5;

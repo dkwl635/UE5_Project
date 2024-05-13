@@ -3,6 +3,7 @@
 
 #include "UI/UIManager.h"
 #include "UI/RPGMainUserWidget.h"
+#include "Item/ItemData.h"
 TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
 // Sets default values
 AUIManager::AUIManager()
@@ -32,6 +33,21 @@ void AUIManager::BeginPlay()
 		PlayerUI->Init();
 		PlayerUI->AddToViewport();
 	}
+}
+
+void AUIManager::PlayerGoodsUIRefresh()
+{
+	PlayerUI->PlayerGoodsRefresh();
+}
+
+void AUIManager::ShowItemBox(FVector2D SpawnPos, FItemData* Data)
+{
+	PlayerUI->ShowItemInfoBox(SpawnPos ,Data);
+}
+
+void AUIManager::HideItemBox()
+{
+	PlayerUI->HideItemInfoBox();
 }
 
 //// Called every frame

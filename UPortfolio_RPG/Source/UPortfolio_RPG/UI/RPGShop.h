@@ -13,7 +13,7 @@ UCLASS()
 class UPORTFOLIO_RPG_API URPGShop : public URPGUserWidget
 {
 	GENERATED_BODY()
-	
+
 protected:
 	virtual void Init() override;
 
@@ -22,6 +22,7 @@ public:
 	virtual void ShowInitUI() override;
 	virtual void HideSetUI() override;
 	virtual void SetShopData(TArray<struct FShopBuyItemData> ShopList);
+public:
 	void BuyItem(class UShopBuySlot* ShopSlot);
 private:
 	TWeakObjectPtr<class URPGMainUserWidget> PlayerUI;
@@ -33,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UWidgetSwitcher* ShopSwitcher;
 
-	UPROPERTY(EditAnywhere , BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* SellPriceText;
 
 	TArray<TWeakObjectPtr<class UShopBuySlot>> BuyShopSlotList;
@@ -44,13 +45,16 @@ public:
 	class UUniformGridPanel* SellItemList;
 	TArray<TWeakObjectPtr<class URPGSlotUserWidget>> SellShopSlotList;
 	TArray<TWeakObjectPtr<class UShopSellSlotData>> SellShopSlotDataList;
-;
-bool CheckSellItem(class URPGSlotUserWidget* OrginSlot);
+
+private:
+	int32 SellItemPrice;
+public:
+	bool CheckSellItem(class URPGSlotUserWidget* OrginSlot);
 
 	UFUNCTION(BlueprintCallable)
 	void SellItem();
 
-	void RefreshSellPrice();
+	void ClearSellPrice();
 
 	void SetSellPrice();
 

@@ -27,3 +27,8 @@ UTexture2D* UShopSlotData::GetSlotImg()
 {
 	return ItemData->ItemImage;
 }
+
+FItemData* UShopSlotData::GetItemData()
+{
+	return ItemData;
+}

@@ -29,7 +29,17 @@ bool UShopSellSlotData::IsValid()
 
 void UShopSellSlotData::ClearData()
 {
+	TWeakObjectPtr<URPGSlotUserWidget>  temp;
+	if (IsValid())
+	{
+		temp = OrginSlot;
+	}
 	OrginSlot = nullptr;
+	
+	if (temp.Get())
+	{
+		temp->RefreshUI();
+	}
 }
 
 UTexture2D* UShopSellSlotData::GetSlotImg()

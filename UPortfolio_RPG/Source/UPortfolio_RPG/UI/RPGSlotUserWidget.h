@@ -11,6 +11,7 @@
 
 
 
+
 UCLASS(Blueprintable, BlueprintType)
 class UPORTFOLIO_RPG_API URPGSlotUserWidget : public URPGUserWidget
 {
@@ -71,6 +72,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DragFailed(URPGSlotUserWidget* StarDataData);
 	
+	UFUNCTION(BlueprintCallable)
+	void ShowItemInfo();
+	UFUNCTION(BlueprintCallable)
+	void HideItemInfo();
+
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 	FDele_Dynamic_OneParam ClickSlotEvent;
 };

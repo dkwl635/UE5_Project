@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
+#include  "ItemEnum.h"
 #include "UI/RPGSlotUserWidget.h"
 #include "PlayerInventorySubsystem.generated.h"
 
@@ -15,21 +16,33 @@ class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsyst
 	GENERATED_BODY()
 
 public:
-	typedef  TArray<TSharedPtr<FItemData>>* Inventory;
+	typedef  TArray<TSharedPtr<struct FItemData>>* Inventory;
 
-public:
+private:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	int32 PlayerCoin = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	int32 PlayerGold = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	int32 EnchantStone = 0;
+public:
+	int32 GetPlayerCoin();
+	int32 GetPlayerGold();
+	int32 GetEnchantStone();
+
+	void SetPlayerCoin(int32 Value);
+	void SetPlayerGold(int32 Value);
+	void SetPlayerEnchantStone(int32 Value);
 
 private:
 	const int8 MaxInvenSize = 30;
 	TArray<TSharedPtr<FItemData>> GearInventory;
 	TArray<TSharedPtr<FItemData>> NormalInventory;
+public:
+	TArray<TSharedPtr<FItemData>> EquipmentInventory;
+
+
 public : 
 	UPlayerInventorySubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -44,6 +57,10 @@ public :
 	TWeakPtr<FItemData> GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex);
 	void SwapItem(EITEMTYPE ItemType , int8 Index1, int8 Index2);
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
+
+	FItemData* ChangeGear(EGEARTYPE GearType , int8 Index1);
+
+
 private:
 	bool IsAddable(Inventory Inventory, FItemData* ItemData, int8 Count);
 	int8 FindItemInInventory(Inventory Inventory, const FName& InKey, int8 StartIndex);
@@ -56,16 +73,9 @@ public:
 	UUserWidget* DragSlot;
 
 private:
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<URPGSlotUserWidget>> GearSlots;
-	UPROPERTY()
-	TArray<TWeakObjectPtr<URPGSlotUserWidget>> NormalSlots;
 	UPROPERTY()
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
-		
-
-
+	TMap<EGEARTYPE, TSharedPtr<FItemData>> PlayerEquipmentData;
 
 public:
 
@@ -74,11 +84,11 @@ public:
 	void QuickSlotRefresh(int8 QuickSlotIndex);
 	URPGSlotUserWidget* CheckQuickSlotItem(URPGSlotUserWidget* Slot);
 
-	
+
 public:
 
 	 class UDataSubsystem* DataSubsystem;
-	 UItem* ItemClass;
+	class UItem* ItemClass;
 
 public:
 	bool bOpenShop = false;

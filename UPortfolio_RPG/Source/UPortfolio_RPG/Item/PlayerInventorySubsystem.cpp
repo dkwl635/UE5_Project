@@ -4,7 +4,40 @@
 #include "Item.h"
 #include "UI/Slot/QuickItemSlotData.h"
 #include "UI/Slot/InventorySlotData.h"
+#include "UI/UIManager.h"
 
+int32 UPlayerInventorySubsystem::GetPlayerCoin()
+{
+	return PlayerCoin;
+}
+
+int32 UPlayerInventorySubsystem::GetPlayerGold()
+{
+	return PlayerGold;
+}
+
+int32 UPlayerInventorySubsystem::GetEnchantStone()
+{
+	return EnchantStone;
+}
+
+void UPlayerInventorySubsystem::SetPlayerCoin(int32 Value)
+{
+	PlayerCoin = Value;
+	AUIManager::UIManager->PlayerGoodsUIRefresh();
+}
+
+void UPlayerInventorySubsystem::SetPlayerGold(int32 Value)
+{
+	PlayerGold = Value;
+	AUIManager::UIManager->PlayerGoodsUIRefresh();
+}
+
+void UPlayerInventorySubsystem::SetPlayerEnchantStone(int32 Value)
+{
+	EnchantStone = Value;
+	AUIManager::UIManager->PlayerGoodsUIRefresh();
+}
 
 UPlayerInventorySubsystem::UPlayerInventorySubsystem()
 {
@@ -19,9 +52,13 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	NormalInventory.SetNum(MaxInvenSize, false);
 	GearInventory.SetNum(MaxInvenSize, false);
+	EquipmentInventory.SetNum(7, false);
 
 	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
+
+	PlayerGold = 10000;
+	PlayerCoin = 10000;
 }
 
 bool UPlayerInventorySubsystem::Init()
@@ -34,6 +71,11 @@ bool UPlayerInventorySubsystem::Init()
 	AddItem( TEXT("HP100"), 12);
 	AddItem( TEXT("HP500"), 3);
 	AddItem(TEXT("HP100"), 100);
+
+
+	FItemData* Data = DataSubsystem->FindItem(TEXT("HP100"));
+	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
+	EquipmentInventory[1] = NewItemData;
 
 	return true;
 }
@@ -336,6 +378,19 @@ bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int
 	return true;
 }
 
+FItemData* UPlayerInventorySubsystem::ChangeGear(EGEARTYPE GearType,int8 Index)
+{
+	FItemData* OrginData = (EquipmentInventory[(int)GearType]).Get();
+	
+	TSharedPtr<FItemData>& NewGear =  GearInventory[Index];
+	TSharedPtr<FItemData>& OldGear = EquipmentInventory[(int)GearType];
+
+	Swap(NewGear, OldGear);
+
+
+	return OrginData;
+}
+
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)
 {
 	if (ItemType == EITEMTYPE::GEAR)
@@ -357,12 +412,12 @@ void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserW
 		break;
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
-		GearSlots.Add(slot);
+		
 		break;
 		}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
-		NormalSlots.Add(slot);
+		
 		break;
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
@@ -391,6 +446,5 @@ URPGSlotUserWidget* UPlayerInventorySubsystem::CheckQuickSlotItem(URPGSlotUserWi
 
 	return nullptr;
 }
-
 
 

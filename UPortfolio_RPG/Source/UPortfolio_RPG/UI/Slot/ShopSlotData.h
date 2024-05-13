@@ -23,6 +23,8 @@ public:
 	void ClearData() override;
 	UTexture2D* GetSlotImg() override;
 
+	struct FItemData* GetItemData();
+
 private:
 
 	//Buy Item Info

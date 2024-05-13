@@ -54,6 +54,7 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 	bool bHitSuccessful = false;
 	bHitSuccessful = GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
+
 	if (bHitSuccessful)
 	{
 		CachedDestination = Hit.Location;

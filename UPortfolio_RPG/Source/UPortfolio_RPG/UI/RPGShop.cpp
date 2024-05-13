@@ -64,9 +64,8 @@ void URPGShop::ShowInitUI()
 	{
 		auto content = SellShopSlotList[i];
 		content->ClearSlot();
-
 	}
-	RefreshSellPrice();
+	ClearSellPrice();
 	ShopSwitcher->SetActiveWidgetIndex(0);
 }
 
@@ -105,6 +104,14 @@ void URPGShop::BuyItem(UShopBuySlot* ShopSlot)
 {
 		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 
+		int32 PlayerCoin = PlayerInven->GetPlayerCoin();
+		if (PlayerCoin < ShopSlot->BuyPrice)
+		{
+			return;
+		}
+		PlayerCoin -= ShopSlot->BuyPrice;
+		PlayerInven->SetPlayerCoin(PlayerCoin);
+		
 		bool bBuy = PlayerInven->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
 
 		GetPlayerUI()->GetRPGUI(ERPG_UI::INVENTORY)->RefreshUI();
@@ -145,6 +152,10 @@ bool URPGShop::CheckSellItem(URPGSlotUserWidget* OrginSlot)
 void URPGShop::SellItem()
 {
 	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	
+	int32 PlayerCurrentCoin = PlayerInven->GetPlayerCoin() + SellItemPrice;
+	PlayerInven->SetPlayerCoin(PlayerCurrentCoin);
+	
 	int SellCount = SellShopSlotDataList.Num();
 	for (int i = 0; i < SellCount; i++)
 	{
@@ -159,14 +170,15 @@ void URPGShop::SellItem()
 	}
 	
 	GetPlayerUI()->GetRPGUI(ERPG_UI::INVENTORY)->RefreshUI();
-	SellPriceText->SetText(FText::AsNumber(0));
+	ClearSellPrice();
 }
 
-void URPGShop::RefreshSellPrice()
+void URPGShop::ClearSellPrice()
 {
-	SellPriceText->SetText(FText::AsNumber(0));
-
+	SellItemPrice = 0;
+	SellPriceText->SetText(FText::AsNumber(SellItemPrice));
 }
+
 
 void URPGShop::SetSellPrice()
 {
@@ -189,6 +201,7 @@ void URPGShop::SetSellPrice()
 		}
 	}
 	SellPriceText->SetText(FText::AsNumber(NewPrice));
+	SellItemPrice = NewPrice;
 }
 
 

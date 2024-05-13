@@ -18,13 +18,16 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryBtn;
 
-	
-
-	
+	TWeakObjectPtr<class UPlayerInventorySubsystem> PlayerInven;
+	TWeakObjectPtr<class UPlayerInventorySubsystem> GetPlayerInven();
 public	:
 
 	virtual void Init();
 	~URPGMainUserWidget();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D ViewSize;
+
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -57,6 +60,24 @@ public:
 private:
 	TMap<ERPG_UI, URPGUserWidget*> RPGUIMap;
 	TMap<ERPG_UI, UCanvasPanelSlot*> RPGUICanvasMap;
-
 	TWeakObjectPtr<UCanvasPanelSlot> TopPopupUI;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* GoldTextBlock;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* CoinTextBlock;
+public:
+	void	PlayerGoodsRefresh();
+
+public :
+	UPROPERTY(meta = (BindWidget))
+	class UCanvasPanel* ItemBoxPanel;
+	class UCanvasPanelSlot* ItemBoxPanelSlot;
+	class UItemInfoUserWdiget* ItemBox;
+
+	void ShowItemInfoBox(FVector2D SppawnPos, FItemData* Data);
+	void HideItemInfoBox();
+
+	FVector2D GetShowItemPos(FVector2D SppawnPos);
 };

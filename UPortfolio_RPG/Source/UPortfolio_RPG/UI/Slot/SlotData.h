@@ -33,14 +33,13 @@ public :
 	virtual UTexture2D* GetSlotImg();
 	//Get Count
 	virtual int32 GetCount();
-	
 	//double click Event
 	virtual bool NormalUse();	
-	
+//virtual bool QuickUse();
+//virtual bool SpecialUse();
 
-	virtual bool QuickUse();
-	virtual bool SpecialUse();
-
+	//ShowItem
+	virtual  struct FItemData* GetItemData();
 
 
 };

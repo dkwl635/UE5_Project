@@ -24,12 +24,10 @@ public:
 	void RefreshData() override;
 	void ClearData() override;
 	UTexture2D* GetSlotImg() override;
-	//임시로 가지고 있는 아이템 정보
 
 	TWeakPtr<struct  FItemData> ItemData;
-
-	//서로 상호작용이되는 
-	//원본 슬롯
 	EITEMTYPE ItemType = EITEMTYPE::None;
-	//TWeakObjectPtr<class URPGSlotUserWidget> QuickSlot;
+
+	 struct FItemData* GetItemData() override;
+
 };

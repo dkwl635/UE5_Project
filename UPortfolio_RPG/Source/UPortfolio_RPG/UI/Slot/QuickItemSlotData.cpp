@@ -60,4 +60,15 @@ int32 UQuickItemSlotData::GetCount()
 	
 }
 
+FItemData* UQuickItemSlotData::GetItemData()
+{
+	if (!OrginSlot.IsValid())
+	{
+
+		return nullptr;
+	}
+
+	return OrginSlot->GetSlotData()->GetItemData();
+}
+
 

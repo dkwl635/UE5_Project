@@ -22,6 +22,7 @@ public :
 	ERPG_UI UI_Type;
 
 
+
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void RefreshUI();

@@ -2,16 +2,20 @@
 
 
 #include "UI/RPGSlotUserWidget.h"
+#include "UI/EquipmentSlot.h"
 #include "Slot/InventorySlotData.h"
 #include "Slot/QuickItemSlotData.h"
 #include "Slot/ShopSlotData.h"
 #include "Slot/ShopSellSlotData.h"
+#include "Slot/EquipmentSlotData.h"
 #include "Item/ItemData.h"
+#include "Item/ItemEnum.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/Slot/SlotEnum.h"
 #include "UI/UIManager.h"
 #include "UI/RPGShop.h"
 #include "UI/RPGMainUserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 
 void URPGSlotUserWidget::Init()
@@ -30,6 +34,8 @@ void URPGSlotUserWidget::Init()
 	{ SlotData = NewObject<UShopSlotData>();	break; }
 	case  (uint8)ERPGSLOTTYPE::SHOP_SELLITEM:
 	{ SlotData = NewObject<UShopSellSlotData>(); break; }
+	case  (uint8)ERPGSLOTTYPE::EQUIPMENT_GEAR:
+	{ SlotData = NewObject<UEquipmentSlotData>(); break; }
 	default:
 		break;
 	}
@@ -72,6 +78,8 @@ void URPGSlotUserWidget::RefreshUI()
 		SlotImg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		SlotImg->SetBrushFromTexture(newImg);
 	}
+	SlotImg->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f));
+
 
 	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
@@ -82,6 +90,23 @@ void URPGSlotUserWidget::RefreshUI()
 			QuickSlot->RefreshUI();
 		}
 	}
+
+	if (AUIManager::UIManager->isShopOpen)
+	{
+		URPGShop* RPGShop = (URPGShop*)AUIManager::UIManager->PlayerUI->GetRPGUI(ERPG_UI::SHOP);
+		if (!RPGShop->CheckSellItem(this))
+		{
+			//Saturation
+			//ColorAndOpacity
+			SlotImg->SetColorAndOpacity(FLinearColor(0.2f,0.2f,0.2f));
+
+		}
+		else
+		{
+			SlotImg->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f));
+		}
+	}
+
 
 }
 
@@ -151,12 +176,12 @@ FText URPGSlotUserWidget::GetCountText()
 
 TWeakObjectPtr<UPlayerInventorySubsystem> URPGSlotUserWidget::GetPlayerInvenSubsytem()
 {
-	static 	UPlayerInventorySubsystem* PlayerInvenSubsytem;
-	if (PlayerInvenSubsytem == nullptr)
-	{
-		PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	}
-
+	//static 	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInvenSubsytem;
+	//if (!PlayerInvenSubsytem.IsValid())
+	//{
+	//	PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	//}
+	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	return PlayerInvenSubsytem;
 }
 
@@ -200,8 +225,6 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UInventorySlotData* ThisSlotData = (UInventorySlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
-
-
 		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);		
 
 		URPGSlotUserWidget* QuickSlot1 = PlayerInven->CheckQuickSlotItem(StartSlot);
@@ -238,7 +261,7 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 			return false;
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("ERPGSLOTTYPE::QUICK_ITEM"));
+		
 		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot);
 		if (QuickSlot != nullptr)
 		{
@@ -287,10 +310,32 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		thisSlotData->OrginSlot = StartSlot;
 		//StartSlotData->QuickSlot = this;
 		this->RefreshUI();
-
+		StartSlot->RefreshUI();
 
 	}
+	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::EQUIPMENT_GEAR)
+	{
+		if (AUIManager::UIManager->isShopOpen)
+		{
+			return false;
+		}
 
+		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
+		//FItemData* StartItemData = 
+
+		UEquipmentSlot* EqSlot = (UEquipmentSlot*)this;
+
+		EGEARTYPE StartType = EGEARTYPE::WEAPON;
+		EGEARTYPE EndType = EqSlot->EGearType;
+
+		if (StartType != EndType){return false;}
+
+		auto tempData = PlayerInven->ChangeGear(StartType, StartSlotData->SlotIndex);
+
+		
+		StartSlot->RefreshUI();
+		this->RefreshUI();
+	}
 
 	return true;
 }
@@ -319,4 +364,27 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 		break;
 	}
 
+}
+
+void URPGSlotUserWidget::ShowItemInfo()
+{
+	if (!SlotData->IsValid())
+	{
+		return;
+	}
+
+	FItemData* Data = SlotData->GetItemData();
+	if (!Data)
+	{
+		return;
+	}
+	
+	FVector2D mousePos =	UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+	AUIManager::UIManager->ShowItemBox(mousePos,  Data);
+
+}
+
+void URPGSlotUserWidget::HideItemInfo()
+{
+	AUIManager::UIManager->HideItemBox();
 }

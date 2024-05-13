@@ -70,11 +70,13 @@ struct UPORTFOLIO_RPG_API FGearData : public FTableRowBase
 
 public:
 	
+	UPROPERTY(EditAnyWhere)
+	EGEARTYPE EGearType = EGEARTYPE::None;
+
 	UPROPERTY(EditAnywhere)
 	int16 GearValue = 0;
 
-	UPROPERTY(EditAnyWhere)
-	EGEARTYPE EGearType = EGEARTYPE::None;
+	
 };
 
 

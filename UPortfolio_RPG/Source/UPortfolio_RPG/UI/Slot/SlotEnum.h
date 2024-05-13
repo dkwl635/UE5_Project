@@ -14,4 +14,5 @@ enum class  ERPGSLOTTYPE : uint8
 	SHOP_ITEM, //
 	SHOP_SELLITEM,
 
+	EQUIPMENT_GEAR
 };
