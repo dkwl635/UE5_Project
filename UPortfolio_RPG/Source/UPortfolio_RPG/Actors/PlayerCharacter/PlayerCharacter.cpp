@@ -183,7 +183,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	float CurrentHP = StatusComponent->GetHP();
-	float NewHP = CurrentHP - StatusComponent->GetEnemyAttackDamage();
+	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
 	StatusComponent->SetHP(NewHP);
 	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
 

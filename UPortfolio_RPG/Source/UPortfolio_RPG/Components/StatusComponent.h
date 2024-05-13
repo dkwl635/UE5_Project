@@ -45,18 +45,4 @@ protected:
 	bool bSuperArmor;
 	bool bSuperStance;
 
-
-
-	//add LJY EnemyState
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Enemy_HP = 0.f;  //datatable init, not zero
-	float Enemy_AttackDamage = 10.f;
-
-public:
-	float GetEnemyHP() { return Enemy_HP; }
-	void SetEnemyHP(float InHP) { Enemy_HP = InHP; }
-	float GetEnemyAttackDamage() { return Enemy_AttackDamage; }
-	void SetEnemyAttackDamage(float Damage) { Enemy_AttackDamage = Damage; }
-
 };

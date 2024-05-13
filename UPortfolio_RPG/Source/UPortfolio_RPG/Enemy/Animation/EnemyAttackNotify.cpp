@@ -13,5 +13,6 @@ void UEnemyAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
     {
         // 파티클을 실행하는 함수를 호출합니다.
         Enemy->PlayAttackParticle();
+        Enemy->AttackCheck();
     }
 }
