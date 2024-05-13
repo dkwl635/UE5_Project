@@ -6,13 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "SkillBase.generated.h"
 
+class UAnimInstance;
+
 UCLASS()
 class UPORTFOLIO_RPG_API ASkillBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void ActiveSkill();
+	virtual void ActiveSkill(UAnimInstance* AnimInstance);
 
 protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);

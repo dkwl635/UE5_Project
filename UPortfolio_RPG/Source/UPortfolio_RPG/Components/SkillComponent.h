@@ -38,5 +38,4 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<ASkillBase*> Skills;
 
-	const FSkillDataTableRow* SkillDataTableRow = nullptr;
 };

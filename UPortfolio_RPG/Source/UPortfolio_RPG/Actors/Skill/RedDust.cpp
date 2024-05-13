@@ -23,7 +23,11 @@ ARedDust::ARedDust()
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;
 
-
+	Sk_Name = TEXT("Red Dust");
+	Sk_Desc = FText::FromString(TEXT("검을 올려쳐 공격한다."));
+	Sk_CoolTime = 3.f;
+	Sk_Damage = 10.f;
+	Sk_ManaUsage = 5.f;
 }
 
 void ARedDust::BeginPlay()
@@ -31,6 +35,12 @@ void ARedDust::BeginPlay()
 	Super::BeginPlay();
 
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnAttack);
+}
+
+void ARedDust::ActiveSkill(UAnimInstance* AnimInstance)
+{
+	Super::ActiveSkill(AnimInstance);
+
 }
 
 float ARedDust::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

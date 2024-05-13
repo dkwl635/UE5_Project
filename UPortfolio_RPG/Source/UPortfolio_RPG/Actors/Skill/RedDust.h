@@ -17,6 +17,8 @@ public:
 	ARedDust();
 
 	virtual void BeginPlay() override;
+
+	virtual void ActiveSkill(UAnimInstance* AnimInstance) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
 

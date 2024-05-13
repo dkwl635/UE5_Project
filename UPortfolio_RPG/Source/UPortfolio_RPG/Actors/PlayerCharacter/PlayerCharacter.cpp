@@ -87,6 +87,12 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!StatusDataTableRowHandle.IsNull() && StatusDataTableRowHandle.RowName != NAME_None)
+	{
+		StatusDataTableRow = StatusDataTableRowHandle.GetRow<FStatusDataTableRow>(TEXT(""));
+
+		StatusComponent->SetStatusData(StatusDataTableRow);
+	}
 	if (!SkillDataTableRowHandle.IsNull() && SkillDataTableRowHandle.RowName != NAME_None)
 	{
 		SkillDataTableRow = SkillDataTableRowHandle.GetRow<FSkillDataTableRow>(TEXT(""));
@@ -123,11 +129,8 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 
 	LookAtMouseCursor(HitPoint);
 	ASkillBase* Skill = GetSkillComponent()->Skills[0];
-	if (Skill)
-	{
-		UAnimMontage* Montage = Skill->Montage;
-		Animation->Montage_Play(Montage, 1.2f);
-	}
+	if(Skill)
+		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
@@ -139,10 +142,7 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	LookAtMouseCursor(HitPoint);	
 	ASkillBase* Skill = GetSkillComponent()->Skills[1];
 	if (Skill)
-	{
-		UAnimMontage* Montage = Skill->Montage;
-		Animation->Montage_Play(Montage, 1.2f);
-	}
+		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)

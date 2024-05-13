@@ -10,6 +10,7 @@ struct FInputActionValue;
 class UStatusComponent;
 class USkillComponent;
 struct FSkillDataTableRow;
+struct FStatusDataTableRow;
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
@@ -76,6 +77,8 @@ protected:
 	FDataTableRowHandle AnimDataTableRowHandle;
 	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.SkillDataTableRow"))
 	FDataTableRowHandle SkillDataTableRowHandle;
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.StatusDataTableRow"))
+	FDataTableRowHandle StatusDataTableRowHandle;
 
 public:
 	UPROPERTY()
@@ -108,6 +111,7 @@ protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
+	const FStatusDataTableRow* StatusDataTableRow = nullptr;
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
 };
