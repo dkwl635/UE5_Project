@@ -21,8 +21,3 @@ void ASkillBase::ActiveSkill(UAnimInstance* AnimInstance)
 	if(Montage)
 		AnimInstance->Montage_Play(Montage, 1.2f);
 }
-
-float ASkillBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}

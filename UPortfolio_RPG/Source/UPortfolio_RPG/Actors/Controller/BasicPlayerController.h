@@ -21,8 +21,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UTexture2D* MouseCursorImage;
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

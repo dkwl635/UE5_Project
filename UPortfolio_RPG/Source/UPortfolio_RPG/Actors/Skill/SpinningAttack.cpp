@@ -59,11 +59,6 @@ void ASpinningAttack::BeginPlay()
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnAttack);
 }
 
-float ASpinningAttack::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
 void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
