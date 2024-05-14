@@ -14,7 +14,7 @@ public:
 
 public:
 	UQuickItemSlotData();
-	// USlotDataÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// USlotDataï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	bool IsValid() override;
 	UTexture2D* GetSlotImg() override;
 	bool NormalUse() override;
@@ -25,7 +25,7 @@ public:
 	
 public :
 
-	//¿øº» ½½·Ô
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	TWeakObjectPtr<class URPGSlotUserWidget> OrginSlot;
 
 };

@@ -14,6 +14,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 void UPlayerAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+
 	APawn* Pawn = TryGetPawnOwner();
 	if (::IsValid(Pawn))
 	{
@@ -27,7 +28,9 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (!Character)
 		return;
-	APlayerCharacter* Player = Cast<APlayerCharacter>(Character);
-	Speed = Player->GetVelocity().Length();
-	bIsSpace = Player->bIsSpace;
+	if(APlayerCharacter* Player = Cast<APlayerCharacter>(Character))
+	{
+		Speed = Player->GetVelocity().Length();
+		bIsSpace = Player->bIsSpace;
+	}
 }

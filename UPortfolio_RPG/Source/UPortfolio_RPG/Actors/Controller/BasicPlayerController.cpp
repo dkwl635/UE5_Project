@@ -9,6 +9,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "InputActionValue.h"
 #include "Data/InputDataConfig.h"
+#include "Subsystem/CoolTimeSubsystem.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
@@ -42,10 +43,19 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Canceled, this, &ABasicPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnDefaultAttack);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_Q);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_W);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
 	}
 
+}
+
+UCoolTimeSubsystem* ABasicPlayerController::GetCoolTimeManager() const
+{
+	if (GetLocalPlayer() == nullptr)
+		return nullptr;
+
+	return GetLocalPlayer()->GetSubsystem<UCoolTimeSubsystem>();
 }
 
 void ABasicPlayerController::OnSetDestinationTriggered()
@@ -81,17 +91,33 @@ void ABasicPlayerController::OnDefaultAttack()
 	PlayerCharacter->OnDefaultAttack(Hit.Location);
 }
 
-void ABasicPlayerController::OnSkill_Q(const FInputActionValue& InputActionValue)
+void ABasicPlayerController::OnSkill_Q()
 {
 	StopMovement();
-	PlayerCharacter;
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
+	PlayerCharacter->OnSkill_Q(Hit.Location);
+}
+
+void ABasicPlayerController::OnSkill_W()
+{
+	StopMovement();
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	PlayerCharacter->OnSkill_W(Hit.Location);
 }
 
 void ABasicPlayerController::OnSpace()
 {
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	PlayerCharacter->OnSpace(Hit.Location);
+	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
+	if (!CoolTimeManager->IsSpaceCool())
+	{
+		CoolTimeManager->SetSpaceTimer();
+		PlayerCharacter->OnSpace(Hit.Location);
+	}
 }
 
 void ABasicPlayerController::OnOpenSkillUI()

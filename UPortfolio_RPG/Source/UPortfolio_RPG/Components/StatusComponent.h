@@ -6,13 +6,25 @@
 #include "Components/ActorComponent.h"
 #include "StatusComponent.generated.h"
 
+USTRUCT()
+struct UPORTFOLIO_RPG_API FStatusDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+	UPROPERTY(EditAnywhere)
+	float HP;
+	UPROPERTY(EditAnywhere)
+	float MP;
+	UPROPERTY(EditAnywhere)
+	float AttackDamage;
+};
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UPORTFOLIO_RPG_API UStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
+public:	
 	// Sets default values for this component's properties
 	UStatusComponent();
 
@@ -20,9 +32,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:	
+	void SetStatusData(const FStatusDataTableRow* InData);
 
 public:
 	float GetHP() { return HP; }
@@ -35,13 +46,13 @@ public:
 	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float HP = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MP = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackDamage = 100.f;
-
+	UPROPERTY(EditAnywhere)
+	float HP;
+	UPROPERTY(EditAnywhere)
+	float MP;
+	UPROPERTY(EditAnywhere)
+	float AttackDamage;
+		
 	bool bSuperArmor;
 	bool bSuperStance;
 
