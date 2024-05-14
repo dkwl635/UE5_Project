@@ -9,7 +9,7 @@
 AEnemy::AEnemy()
 {
     IsAttacking = false;
-    IsDeading = false;
+    IsDead = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
@@ -38,7 +38,7 @@ AEnemy::AEnemy()
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar'"));
     if (UI_HUD.Succeeded())
     {
         
@@ -72,23 +72,19 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
+    if (PlayerController && !IsDead)
     {
-        // �÷��̾� ĳ������ ��ġ ��������
+        
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
 
-        // ������ ��ġ ��������
         FVector MonsterLocation = GetActorLocation();
 
-        // �÷��̾ ���ϴ� ���� ���
         FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
-        DirectionToPlayer.Z = 0.f; // Z �� ���� �����Ͽ� ���� �������θ� ȸ���ϵ��� ��
+        DirectionToPlayer.Z = 0.f; 
 
-        // ��ǥ ȸ���� ���
         FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
-        MonsterRotation.Yaw -= 90.0f; //�÷��̾�� ������� �´� ȸ�� ���� �־������
+        MonsterRotation.Yaw -= 90.0f; 
 
-        // ��ǥ ȸ���� ����
         SetActorRotation(MonsterRotation);
     }
 }
@@ -126,7 +122,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyHP <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
-        IsDeading = true;
+        IsDead = true;
     }
 
     return Damage;

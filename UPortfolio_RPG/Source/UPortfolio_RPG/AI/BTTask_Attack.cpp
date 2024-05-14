@@ -27,7 +27,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	auto Enemy = Cast<AEnemy>(OwnerComp.GetAIOwner()->GetPawn());
-	if (!Enemy->IsAttacking && !Enemy->IsDeading)
+	if (!Enemy->IsAttacking && !Enemy->IsDead)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
