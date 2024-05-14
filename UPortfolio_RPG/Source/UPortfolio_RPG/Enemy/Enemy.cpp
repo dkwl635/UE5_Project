@@ -9,6 +9,7 @@
 AEnemy::AEnemy()
 {
     IsAttacking = false;
+    IsDeading = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
@@ -102,7 +103,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     float CurrentHP = EnemyHP;
-    float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+    float NewHP = CurrentHP - DamageAmount;
 
     EnemyHP = NewHP;
     UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 
@@ -125,6 +126,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyHP <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
+        IsDeading = true;
     }
 
     return Damage;
@@ -209,7 +211,6 @@ bool AEnemy::AddEnemy(const FName& InKey)
         MaxHP = InData->EnemyHP;
 
         EnemyAttackDamage = InData->EnemyAttackDamage;
-
 
         UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP);
         UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
