@@ -102,7 +102,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     float CurrentHP = EnemyHP;
-    float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+    float NewHP = CurrentHP - Damage;
 
     EnemyHP = NewHP;
     UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 

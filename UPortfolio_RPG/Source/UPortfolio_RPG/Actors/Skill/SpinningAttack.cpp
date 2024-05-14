@@ -3,6 +3,11 @@
 
 #include "Actors/Skill/SpinningAttack.h"
 #include "Enemy/Enemy.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Components/StatusComponent.h"
+#include "Engine/DamageEvents.h"
 
 ASpinningAttack::ASpinningAttack()
 {
@@ -48,8 +53,6 @@ void ASpinningAttack::BeginPlay()
 
 float ASpinningAttack::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Owner = DamageCauser;
-
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -60,9 +63,15 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
+	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
+	float Damage = Sk_Damage + Player->GetStatusComponent()->GetAttackDamage();
+	
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if(Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SpinningAttack Hit!"));
+		UE_LOG(LogTemp, Warning, TEXT("RedDust Hit!"));
+		FDamageEvent DamageEvent;
+		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
 	}
 }

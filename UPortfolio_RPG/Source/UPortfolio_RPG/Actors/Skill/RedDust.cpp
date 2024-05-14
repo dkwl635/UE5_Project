@@ -3,6 +3,11 @@
 
 #include "Actors/Skill/RedDust.h"
 #include "Enemy/Enemy.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Components/StatusComponent.h"
+#include "Engine/DamageEvents.h"
 
 ARedDust::ARedDust()
 {
@@ -62,9 +67,15 @@ float ARedDust::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 
 void ARedDust::OnAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
+	float Damage = Sk_Damage + Player->GetStatusComponent()->GetAttackDamage();
+
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if (Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Red Dust Hit!"));
+		UE_LOG(LogTemp, Warning, TEXT("RedDust Hit!"));
+		FDamageEvent DamageEvent;
+		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
 	}
 }

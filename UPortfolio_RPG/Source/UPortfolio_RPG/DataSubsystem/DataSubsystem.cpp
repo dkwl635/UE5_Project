@@ -99,7 +99,7 @@ FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 {
 		FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
 		ensure(Row);
-	
+
 		UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy"));
 	
 	return Row;
