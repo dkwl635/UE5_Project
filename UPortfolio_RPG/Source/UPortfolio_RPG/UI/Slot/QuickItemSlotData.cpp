@@ -1,5 +1,7 @@
 #include "UI/Slot/QuickItemSlotData.h"
 #include "UI/RPGSlotUserWidget.h"
+#include "Item/ItemData.h"
+#include "Item/PlayerInventorySubsystem.h"
 
 UQuickItemSlotData::UQuickItemSlotData()
 {
@@ -7,7 +9,7 @@ UQuickItemSlotData::UQuickItemSlotData()
 
 bool UQuickItemSlotData::IsValid()
 {
-	if (!OrginSlot.IsValid())
+	if (!TempData.IsValid())
 	{
 		return false;
 	}
@@ -19,39 +21,42 @@ UTexture2D* UQuickItemSlotData::GetSlotImg()
 {
 	if (!IsValid()) { return nullptr; }
 
-	return OrginSlot->GetSlotData()->GetSlotImg();
+	return TempData.Pin()->ItemImage;
 }
 
 bool UQuickItemSlotData::NormalUse()
 {
 	if (!IsValid()) { return false; }
 	
-	OrginSlot->UseSlot();
-	
+	PlayerInventorySubsystem->UseItem(TempData.Pin()->ItemType , InventoryItemIndex , 1);	
 	return true;
 }
 
 void UQuickItemSlotData::ClearData()
 {
-	OrginSlot = nullptr;
+	TempData = nullptr;
+	InventoryItemIndex = -1;
 }
 
 void UQuickItemSlotData::RefreshData()
 {
-	if (OrginSlot.IsValid())
+	InventoryItemIndex = PlayerInventorySubsystem->GetQuickSlotFromIndex(QuickSlotIndex);
+	if (InventoryItemIndex != -1)
 	{
-		if (!OrginSlot->GetSlotData()->IsValid())
-		{
-			OrginSlot = nullptr;
-		}
+		TempData = PlayerInventorySubsystem->GetItemInfo(EITEMTYPE::POTION, InventoryItemIndex);
 	}
+	else
+	{
+		TempData = nullptr;
+	}
+	
 }
 
 int32 UQuickItemSlotData::GetCount()
 {
-	if (OrginSlot->GetSlotData())
+	if (IsValid())
 	{
-		return OrginSlot->GetSlotData()->GetCount();
+		return TempData.Pin()->CurrentBundleCount;
 	}
 	else
 	{
@@ -62,13 +67,7 @@ int32 UQuickItemSlotData::GetCount()
 
 FItemData* UQuickItemSlotData::GetItemData()
 {
-	if (!OrginSlot.IsValid())
-	{
-
-		return nullptr;
-	}
-
-	return OrginSlot->GetSlotData()->GetItemData();
+	return TempData.Pin().Get();
 }
 
 

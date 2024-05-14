@@ -22,6 +22,9 @@ public:
 	void Init() override;
 	~URPGSlotUserWidget();
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SlotIndex")
+	int SlotIndex = -1;
+
 public:
 	virtual void RefreshUI();
 	UFUNCTION(BlueprintCAllable)

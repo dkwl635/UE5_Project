@@ -53,29 +53,21 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	PlayerInventorySubsystem = this;
-	UE_LOG(LogTemp, Warning, TEXT("UPlayerInventorySubsystem :: Initialize"));
 
-	NormalInventory.SetNum(MaxInvenSize, false);
-	GearInventory.SetNum(MaxInvenSize, false);
-	EquipmentInventory.SetNum(7, false);
+	NormalInventory.Init(nullptr, MaxInvenSize);
+	GearInventory.Init(nullptr, MaxInvenSize);
+	EquipmentInventory.Init(nullptr,7);
+	QuickItemSlotsPointer.Init(-1, 8);
+
 
 	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
 
 	PlayerGold = 10000;
 	PlayerCoin = 10000;
-}
-
-bool UPlayerInventorySubsystem::Init()
-{	
-	/*GearSlots.Empty();
-	NormalSlots.Empty();
-	QuickItemSlots.Empty();*/
-
-
-	AddItem( TEXT("HP100"), 12);
-	AddItem( TEXT("HP500"), 3);
 	
+	AddItem(TEXT("HP100"), 12);
+	AddItem(TEXT("HP500"), 3);
 	AddItem(TEXT("Sword_0"), 1);
 	AddItem(TEXT("Sword_1"), 1);
 	AddItem(TEXT("Sword_1"), 1);
@@ -84,9 +76,12 @@ bool UPlayerInventorySubsystem::Init()
 	AddItem(TEXT("Pants_0"), 1);
 	AddItem(TEXT("Shoes_1"), 1);
 	AddItem(TEXT("Gloves_1"), 1);
+}
 
-
+bool UPlayerInventorySubsystem::Init()
+{	
 	
+
 
 	return true;
 }
@@ -280,12 +275,19 @@ void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex 
 	{
 		(*Inventory)[InventoryIndex] = nullptr;
 		UE_LOG(LogTemp, Warning, TEXT("UseItem 00"));
+
+		if (int QuickSlotIndex = CheckQuickSlotItem(InventoryIndex) != -1)
+		{
+			QuickItemSlotsPointer[QuickSlotIndex] = -1;
+		}
+
 	}
 	else
 	{
 		data->CurrentBundleCount = NewCount;
 	}
 
+	RefreshUI(ERPG_UI::QUICKSLOTS);
 	UseItem(data, Count);
 	GEngine->ForceGarbageCollection(true);
 	
@@ -309,9 +311,11 @@ void UPlayerInventorySubsystem::RemoveItem(URPGSlotUserWidget* Slot, int8 Count 
 	UInventorySlotData* data = (UInventorySlotData*)Slot->GetSlotData();
 	Inventory Inventory = GetInventory(EITEMTYPE::BATTLEITEM);
 	RemoveItem(data->ItemData.Pin()->ItemType, data->SlotIndex, Count);
-	if (URPGSlotUserWidget* QuickSlot = CheckQuickSlotItem(Slot))
+	
+	if (int QuickSlot = CheckQuickSlotItem(Slot->SlotIndex) != -1)
 	{
-		QuickSlot->RefreshUI();
+		QuickSlotClear(QuickSlot);
+		AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
 	}
 	data->RefreshData();
 }
@@ -442,6 +446,12 @@ int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
 	return 1;
 }
 
+void UPlayerInventorySubsystem::SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex)
+{
+	QuickItemSlotsPointer[QuickSlotIndex] = ItemIndex;
+	//AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
+}
+
 void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserWidget* slot)
 {
 	switch (SlotType)
@@ -468,21 +478,27 @@ void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserW
 	}
 }
 
-void UPlayerInventorySubsystem::QuickSlotRefresh(int8 QuickSlotIndex)
+int UPlayerInventorySubsystem::GetQuickSlotFromIndex(int QuickSlotIndex)
 {
-
+	return QuickItemSlotsPointer[QuickSlotIndex];
 }
 
-URPGSlotUserWidget* UPlayerInventorySubsystem::CheckQuickSlotItem(URPGSlotUserWidget* Slot)
+void UPlayerInventorySubsystem::QuickSlotClear(int8 QuickSlotIndex)
 {
-	for (int8 i = 0; i < QuickItemSlots.Num(); i++)
+	QuickItemSlotsPointer[QuickSlotIndex] = -1;
+}
+
+int UPlayerInventorySubsystem::CheckQuickSlotItem(int ItemIndex)
+{
+	for (int8 i = 0; i < QuickItemSlotsPointer.Num(); i++)
 	{
-		UQuickItemSlotData* data = (UQuickItemSlotData*)QuickItemSlots[i].Get()->GetSlotData();
-		if (data->OrginSlot == Slot)
-			return QuickItemSlots[i].Get();
+		if (QuickItemSlotsPointer[i] == ItemIndex)
+		{
+			return i;
+		}
 	}
 
-	return nullptr;
+	return -1;
 }
 
 

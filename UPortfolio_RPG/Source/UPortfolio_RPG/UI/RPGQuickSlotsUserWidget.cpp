@@ -22,9 +22,9 @@ void URPGQuickSlotsUserWidget::Init()
 
 		SlotWidget->Init();
 		UQuickItemSlotData* data = (UQuickItemSlotData*)SlotWidget->GetSlotData();
-		data->Helper = this;
 		
-
+		SlotWidget->SlotIndex = i;
+		data->QuickSlotIndex = i;
 		SlotWidget->RefreshUI();
 		QuickSlotsIndex.Add(i, SlotWidget);
 	
@@ -35,6 +35,14 @@ void URPGQuickSlotsUserWidget::Init()
 	}
 
 
+}
+
+void URPGQuickSlotsUserWidget::RefreshUI()
+{
+	for (int i = 0; i < QuickSlotsIndex.Num(); i++)
+	{
+		QuickSlotsIndex[i]->RefreshUI();
+	}
 }
 
 

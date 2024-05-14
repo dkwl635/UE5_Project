@@ -18,13 +18,14 @@ class UPORTFOLIO_RPG_API URPGQuickSlotsUserWidget : public URPGUserWidget
 	GENERATED_BODY()
 	
 public:
-	virtual void Init();
+	 void Init() override;
+	 void RefreshUI() override;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UCanvasPanel* CanvasPanel;
 
 
-	//ex) 1¹ø Äü½½·ÔÀÇ ½½·ÎUI¿¬°á
+	
 	TMap<int8, URPGSlotUserWidget*> QuickSlotsIndex;
 
 

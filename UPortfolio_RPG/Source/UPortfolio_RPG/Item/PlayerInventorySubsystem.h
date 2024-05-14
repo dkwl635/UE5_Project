@@ -54,7 +54,6 @@ public :
 	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
 	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
 	void RemoveItem(URPGSlotUserWidget* Slot, int8 Count);
-	void UseItem(FItemData* ItemData, int8 Count);
 	TWeakPtr<FItemData> GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex);
 	void SwapItem(EITEMTYPE ItemType , int8 Index1, int8 Index2);
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
@@ -63,6 +62,7 @@ public :
 	bool DeEquipment(EGEARTYPE GearType);
 
 private:
+	void UseItem(FItemData* ItemData, int8 Count);
 	bool IsAddable(Inventory Inventory, FItemData* ItemData, int8 Count);
 	int8 FindItemInInventory(Inventory Inventory, const FName& InKey, int8 StartIndex);
 	int8 FindEmptyInventory(Inventory Inventory, int8 StartIndex);
@@ -78,6 +78,8 @@ public:
 private:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
+
+	TArray<int> QuickItemSlotsPointer;
 	
 public:
 	int32 GetPlayerAddAttack();
@@ -86,14 +88,15 @@ public:
 
 public:
 
+	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);
 	void AttachSlot(ERPGSLOTTYPE SlotType, URPGSlotUserWidget* Slot);
+	int GetQuickSlotFromIndex(int QuickSlotIndex);
+	int CheckQuickSlotItem(int ItemIndex);
 	
-	void QuickSlotRefresh(int8 QuickSlotIndex);
-	URPGSlotUserWidget* CheckQuickSlotItem(URPGSlotUserWidget* Slot);
+	void QuickSlotClear(int8 QuickSlotIndex);
 
 
 public:
-
 	 class UDataSubsystem* DataSubsystem;
 	class UItem* ItemClass;
 

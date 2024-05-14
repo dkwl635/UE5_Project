@@ -27,7 +27,7 @@ void URPGInventoryUserWidget::Init()
 			continue;
 		}
 		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
-	
+		SlotWidget->SlotIndex = i;
 		SlotWidget->Init();
 		auto slotData = SlotWidget->GetSlotData();
 		if (!slotData)
@@ -54,6 +54,7 @@ void URPGInventoryUserWidget::Init()
 			continue;
 		}
 		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
+		SlotWidget->SlotIndex = i;
 		SlotWidget->Init();
 		auto slotData = SlotWidget->GetSlotData();
 		if (!slotData)

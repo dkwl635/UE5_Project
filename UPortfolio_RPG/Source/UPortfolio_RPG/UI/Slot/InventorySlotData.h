@@ -3,6 +3,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SlotData.h"
+#include "Item/ItemEnum.h"
 #include "InventorySlotData.generated.h"
 
 /**
@@ -27,7 +28,7 @@ public:
 	UTexture2D* GetSlotImg() override;
 
 	TWeakPtr<struct  FItemData> ItemData;
-	EITEMTYPE ItemType = EITEMTYPE::None;
+	EITEMTYPE ItemType;
 
 	 struct FItemData* GetItemData() override;
 

@@ -84,10 +84,10 @@ void URPGSlotUserWidget::RefreshUI()
 	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
 		//UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-		URPGSlotUserWidget* QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this);
-		if (QuickSlot)
+		int QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this->SlotIndex);
+		if (QuickSlot != -1)
 		{
-			QuickSlot->RefreshUI();
+			AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
 		}
 	}
 
@@ -137,10 +137,10 @@ void URPGSlotUserWidget::ClearSlot()
 	if (RPGSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 	{
 		//UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-		URPGSlotUserWidget* QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this);
-		if (QuickSlot)
+		int QuickSlot = GetPlayerInvenSubsytem()->CheckQuickSlotItem(this->SlotIndex);
+		if (QuickSlot != -1)
 		{
-			QuickSlot->ClearSlot();
+			AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
 		}
 	}
 
@@ -226,27 +226,25 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
 
 		PlayerInven->SwapItem(ItemType, ThisSlotData->SlotIndex, StartSlotData->SlotIndex);		
+		ThisSlotData->RefreshData();
+		StartSlotData->RefreshData();
 
-		URPGSlotUserWidget* QuickSlot1 = PlayerInven->CheckQuickSlotItem(StartSlot);
-		URPGSlotUserWidget* QuickSlot2 = PlayerInven->CheckQuickSlotItem(this);
-		if (QuickSlot1 && QuickSlot2)
+		if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL)
 		{
-			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();	
-			UQuickItemSlotData* QuickSlotData2 = (UQuickItemSlotData*)QuickSlot2->GetSlotData();
-			Swap(QuickSlotData1->OrginSlot , QuickSlotData2->OrginSlot);
-			QuickSlot1->RefreshUI();
-			QuickSlot2->RefreshUI();
-			
+			int QuickSlot1 = PlayerInven->CheckQuickSlotItem(StartSlot->SlotIndex);
+			int QuickSlot2 = PlayerInven->CheckQuickSlotItem(this->SlotIndex);
+			if (QuickSlot1 != -1 && QuickSlot2 != -1)
+			{
+				PlayerInventorySubsystem->SetAttachQuickSlot(QuickSlot1 , this->SlotIndex);
+				PlayerInventorySubsystem->SetAttachQuickSlot(QuickSlot2, StartSlot->SlotIndex);
+			}
+			else if (QuickSlot1 != -1)
+			{			
+				PlayerInventorySubsystem->SetAttachQuickSlot(QuickSlot1, this->SlotIndex);
+			}
+			AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
 		}
-		else if (QuickSlot1)
-		{
-			UQuickItemSlotData* QuickSlotData1 = (UQuickItemSlotData*)QuickSlot1->GetSlotData();
-			ThisSlotData->RefreshData();
-			StartSlotData->RefreshData();
-			QuickSlotData1->OrginSlot = this;
-			QuickSlot1->RefreshUI();
-		}
-	
+		
 	
 		this->RefreshUI();
 		StartSlot->RefreshUI();
@@ -261,16 +259,16 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 			return false;
 		}
 
-		
-		URPGSlotUserWidget* QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot);
-		if (QuickSlot != nullptr)
+	
+		int QuickSlot = PlayerInven->CheckQuickSlotItem(StartSlot->SlotIndex);
+		if (QuickSlot != -1)
 		{
 			return false;
 		}
-
-		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
+		PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex,StartSlot->SlotIndex);
+	/*	UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
 		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
-		thisSlotData->OrginSlot = StartSlot;
+		thisSlotData->InventoryItemIndex = StartSlotData->SlotIndex;*/
 		//StartSlotData->QuickSlot = this;
 		this->RefreshUI();
 	}
@@ -286,10 +284,9 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		UQuickItemSlotData* thisSlotData = (UQuickItemSlotData*)GetSlotData();
 		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
 
-		auto temp = thisSlotData->OrginSlot;
-		thisSlotData->OrginSlot = StartSlotData->OrginSlot;
-		StartSlotData->OrginSlot = temp;
-	
+		auto temp = thisSlotData->InventoryItemIndex;
+		thisSlotData->InventoryItemIndex = StartSlotData->InventoryItemIndex;
+		StartSlotData->InventoryItemIndex = temp;
 
 		//thisSlotData->SetSlotData(StartSlot);
 		StartSlot->RefreshUI();
@@ -366,8 +363,7 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 		break;
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		UQuickItemSlotData* StartSlotData = (UQuickItemSlotData*)StartSlot->GetSlotData();
-		StartSlotData->OrginSlot = nullptr;
+		PlayerInventorySubsystem->QuickSlotClear(this->SlotIndex);
 		this->RefreshUI();
 		break;
 	}	
