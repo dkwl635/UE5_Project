@@ -16,10 +16,16 @@ class UPORTFOLIO_RPG_API UPlayerStatusBarUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void SetHPBar();
+	void SetMPBar();
+
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UProgressBar* ProgressBar;
 	UPROPERTY(meta=(BindWidget))
-	UTextBlock* TextBlock;
+	UTextBlock* MaxStatusTextBlock;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* CurrentStatusTextBlock;
 
 };

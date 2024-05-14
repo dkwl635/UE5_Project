@@ -28,6 +28,14 @@ void USkill_MainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 			SpaceCoolTimer->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
+	if (HPBar)
+	{
+		HPBar->SetHPBar();
+	}
+	if (MPBar)
+	{
+		MPBar->SetMPBar();
+	}
 }
 
 void USkill_MainWidget::SetUIInfo()

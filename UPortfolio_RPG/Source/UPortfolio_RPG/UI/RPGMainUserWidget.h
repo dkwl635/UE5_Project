@@ -76,7 +76,7 @@ public :
 	class UCanvasPanelSlot* ItemBoxPanelSlot;
 	class UItemInfoUserWdiget* ItemBox;
 
-	void ShowItemInfoBox(FVector2D SppawnPos, FItemData* Data);
+	void ShowItemInfoBox(FVector2D SppawnPos, struct FItemData* Data);
 	void HideItemInfoBox();
 
 	FVector2D GetShowItemPos(FVector2D SppawnPos);

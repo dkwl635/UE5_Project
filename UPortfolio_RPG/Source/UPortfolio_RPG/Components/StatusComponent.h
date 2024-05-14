@@ -12,9 +12,9 @@ struct UPORTFOLIO_RPG_API FStatusDataTableRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	float HP;
+	float MaxHP;
 	UPROPERTY(EditAnywhere)
-	float MP;
+	float MaxMP;
 	UPROPERTY(EditAnywhere)
 	float AttackDamage;
 };
@@ -36,10 +36,14 @@ public:
 	void SetStatusData(const FStatusDataTableRow* InData);
 
 public:
-	float GetHP() { return HP; }
-	void SetHP(float InHP) { HP = InHP; }
-	float GetMP() { return MP; }
-	void SetMP(float InMP) { MP = InMP; }
+	float GetMaxHP() { return MaxHP; }
+	float GetCurrentHP() { return CurrentHP; }
+	void SetMaxHP(float InHP) { MaxHP = InHP; }
+	void SetCurrentHP(float InHP) { CurrentHP = InHP; }
+	float GetMaxMP() { return MaxMP; }
+	float GetCurrentMP() { return CurrentMP; }
+	void SetMaxMP(float InMP) { MaxMP = InMP; }
+	void SetCurrentMP(float InMP) { CurrentMP = InMP; }
 	float GetAttackDamage() { return AttackDamage; }
 	void SetAttackDamage(float Damage) { AttackDamage = Damage; }
 	void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
@@ -47,9 +51,13 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-	float HP;
+	float MaxHP;
 	UPROPERTY(EditAnywhere)
-	float MP;
+	float CurrentHP;
+	UPROPERTY(EditAnywhere)
+	float MaxMP;
+	UPROPERTY(EditAnywhere)
+	float CurrentMP;
 	UPROPERTY(EditAnywhere)
 	float AttackDamage;
 		

@@ -245,10 +245,10 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	float CurrentHP = StatusComponent->GetHP();
+	float CurrentHP = StatusComponent->GetCurrentHP();
 	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
-	StatusComponent->SetHP(NewHP);
-	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
+	StatusComponent->SetCurrentHP(NewHP);
+	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetCurrentHP());
 
 	return Damage;
 }
