@@ -10,7 +10,6 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 {
 	Speed = 0.;
 	bIsSpace = false;
-	HP = 1.f;
 }
 
 void UPlayerAnimInstance::NativeBeginPlay()

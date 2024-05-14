@@ -26,6 +26,8 @@ public:
 	double Speed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsSpace;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float HP;
 
 private:
 	ACharacter* Character;
