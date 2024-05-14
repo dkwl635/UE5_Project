@@ -70,7 +70,7 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if(Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RedDust Hit!"));
+		UE_LOG(LogTemp, Warning, TEXT("Spinning Attack Hit!"));
 		FDamageEvent DamageEvent;
 		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
 	}

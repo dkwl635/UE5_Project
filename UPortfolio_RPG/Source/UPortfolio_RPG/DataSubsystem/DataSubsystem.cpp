@@ -104,4 +104,3 @@ FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 	
 	return Row;
 }
-
