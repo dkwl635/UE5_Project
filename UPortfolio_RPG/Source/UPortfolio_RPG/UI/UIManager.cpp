@@ -4,6 +4,8 @@
 #include "UI/UIManager.h"
 #include "UI/RPGMainUserWidget.h"
 #include "Item/ItemData.h"
+
+
 TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
 // Sets default values
 AUIManager::AUIManager()
@@ -48,6 +50,11 @@ void AUIManager::ShowItemBox(FVector2D SpawnPos, FItemData* Data)
 void AUIManager::HideItemBox()
 {
 	PlayerUI->HideItemInfoBox();
+}
+
+void AUIManager::RefreshUI(ERPG_UI UIType)
+{
+	PlayerUI->RPGUIRefresh(UIType);
 }
 
 //// Called every frame

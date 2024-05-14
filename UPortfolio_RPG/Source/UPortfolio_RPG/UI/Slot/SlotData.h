@@ -12,10 +12,7 @@ class UPORTFOLIO_RPG_API USlotData : public UObject
 
 public:
 	USlotData();
-public:
-	static TWeakObjectPtr<UWorld> SlotWorld;
-	static TWeakObjectPtr<class UPlayerInventorySubsystem> InventorySubsystem;
-	static void ClearStaticMember();
+
 public:
 	ERPGSLOTTYPE SlotType;
 	int32 SlotIndex;

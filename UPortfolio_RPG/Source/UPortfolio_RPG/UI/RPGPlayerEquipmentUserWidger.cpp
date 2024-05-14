@@ -17,16 +17,22 @@ void URPGPlayerEquipmentUserWidger::Init()
 
 
 	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	
 	UEquipmentSlotData* Data = (UEquipmentSlotData*)WeaponSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[1]);
+	auto m = &(PlayerInvenSubsytem.Get()->EquipmentInventory[1]);
 	Data = (UEquipmentSlotData*)HeadSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[2]);
+
 	Data = (UEquipmentSlotData*)ArmorSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[3]);
+	
 	Data = (UEquipmentSlotData*)PantsSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[4]);
+	
 	Data = (UEquipmentSlotData*)GlovesSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[5]);
+	
 	Data = (UEquipmentSlotData*)ShoesSlot->GetSlotData();
 	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[6]);
 }

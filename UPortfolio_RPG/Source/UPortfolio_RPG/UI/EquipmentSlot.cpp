@@ -11,7 +11,7 @@
 
 		if (data)
 		{
-			return data->GearData.Pin().Get();
+			return data->GearData;
 		}
 		
 	 }

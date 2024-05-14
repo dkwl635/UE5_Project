@@ -4,6 +4,9 @@
 #include "UI/Slot/EquipmentSlotData.h"
 #include "UI/RPGSlotUserWidget.h"
 #include "Item/ItemData.h"
+#include "DataSubsystem/DataSubsystem.h"
+#include "Item/PlayerInventorySubsystem.h"
+
 
 UEquipmentSlotData::UEquipmentSlotData()
 {
@@ -31,19 +34,24 @@ void UEquipmentSlotData::SetData()
 	//TODO
 	if (IsValid())
 	{
-		//	FName RowName = OrginSlot.Get()->GetSlotData()->GetItemData()->StatusData.RowName;
+		RefreshData();
 	}
 	
 }
 
 void UEquipmentSlotData::RefreshData()
 {
+	if (IsValid())
+	{
+		GearData = DataSubsystem->FindGearData(GetItemData()->StatusData.RowName);
+	}
+
+	
 }
 
 void UEquipmentSlotData::ClearData()
 {
-
-	PlayerInventory = nullptr;
+	//PlayerInventory = nullptr;
 	GearData = nullptr;
 }
 
@@ -61,6 +69,11 @@ int32 UEquipmentSlotData::GetCount()
 
 bool UEquipmentSlotData::NormalUse()
 {
+	if (PlayerInventorySubsystem->DeEquipment(GearData->EGearType))
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -73,5 +86,5 @@ FItemData* UEquipmentSlotData::GetItemData()
 
 FGearData* UEquipmentSlotData::GetGearData()
 {
-	return GearData.Pin().Get();
+	return GearData;
 }

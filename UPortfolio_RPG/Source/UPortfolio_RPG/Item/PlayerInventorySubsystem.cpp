@@ -44,10 +44,15 @@ UPlayerInventorySubsystem::UPlayerInventorySubsystem()
 
 }
 
+UPlayerInventorySubsystem::~UPlayerInventorySubsystem()
+{
+	PlayerInventorySubsystem = nullptr;
+}
+
 void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
+	PlayerInventorySubsystem = this;
 	UE_LOG(LogTemp, Warning, TEXT("UPlayerInventorySubsystem :: Initialize"));
 
 	NormalInventory.SetNum(MaxInvenSize, false);
@@ -70,12 +75,18 @@ bool UPlayerInventorySubsystem::Init()
 
 	AddItem( TEXT("HP100"), 12);
 	AddItem( TEXT("HP500"), 3);
-	AddItem(TEXT("HP100"), 100);
+	
+	AddItem(TEXT("Sword_0"), 1);
+	AddItem(TEXT("Sword_1"), 1);
+	AddItem(TEXT("Sword_1"), 1);
+	AddItem(TEXT("Head_0"), 1);
+	AddItem(TEXT("Armor_0"), 1);
+	AddItem(TEXT("Pants_0"), 1);
+	AddItem(TEXT("Shoes_1"), 1);
+	AddItem(TEXT("Gloves_1"), 1);
 
 
-	FItemData* Data = DataSubsystem->FindItem(TEXT("HP100"));
-	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
-	EquipmentInventory[1] = NewItemData;
+	
 
 	return true;
 }
@@ -242,6 +253,11 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 	return false;
 }
 
+void UPlayerInventorySubsystem::RefreshUI(ERPG_UI UIType)
+{
+	AUIManager::UIManager->RefreshUI(UIType);
+}
+
 
 
 void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex , int8 Count = 1)
@@ -391,6 +407,18 @@ FItemData* UPlayerInventorySubsystem::ChangeGear(EGEARTYPE GearType,int8 Index)
 	return OrginData;
 }
 
+bool UPlayerInventorySubsystem::DeEquipment(EGEARTYPE GearType)
+{
+	TSharedPtr<FItemData>& OldGear = EquipmentInventory[(int)GearType];
+
+	int InvenIndex = FindEmptyInventory(GetInventory(EITEMTYPE::GEAR) ,  0);
+	if (InvenIndex >= MaxInvenSize) { return false; }
+
+	ChangeGear(GearType, InvenIndex);
+	RefreshUI(ERPG_UI::INVENTORY);
+	return  true;
+}
+
 TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE ItemType)
 {
 	if (ItemType == EITEMTYPE::GEAR)
@@ -402,6 +430,16 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 		return &NormalInventory;
 	}
 
+}
+
+int32 UPlayerInventorySubsystem::GetPlayerAddAttack()
+{
+	return 1;
+}
+
+int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
+{
+	return 1;
 }
 
 void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlotUserWidget* slot)

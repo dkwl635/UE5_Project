@@ -38,4 +38,5 @@ public:
 	void PlayerGoodsUIRefresh();
 	void ShowItemBox(FVector2D SpawnPos , struct  FItemData* Data);
 	void HideItemBox();
+	void RefreshUI(ERPG_UI UIType);
 };

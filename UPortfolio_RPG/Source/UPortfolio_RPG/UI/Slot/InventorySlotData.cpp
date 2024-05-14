@@ -5,9 +5,18 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/ItemData.h"
 #include "UI/UIManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "DataSubsystem/DataSubsystem.h"
+
+
 
 UInventorySlotData::UInventorySlotData()
 {
+}
+
+UPlayerInventorySubsystem* UInventorySlotData::GetInvenSubsystem()
+{
+	return PlayerInventorySubsystem;
 }
 
 bool UInventorySlotData::IsValid()
@@ -40,7 +49,7 @@ int32 UInventorySlotData::GetCount()
 
 void UInventorySlotData::RefreshData()
 {
-	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
+	ItemData = GetInvenSubsystem()->GetItemInfo(ItemType, SlotIndex);
 	if (!ItemData.IsValid()) 
 	{ 
 		ClearData();
@@ -75,15 +84,18 @@ bool UInventorySlotData::NormalUse()
 {
 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) 
 	{ 
-	
+		EGEARTYPE GearType = DataSubsystem->FindGearData(ItemData.Pin()->StatusData.RowName)->EGearType;
+		GetInvenSubsystem()->ChangeGear(GearType, SlotIndex);
+		AUIManager::UIManager->RefreshUI(ERPG_UI::EQUIPMENT);
+		return true;
 	}
 	else
 	{
 		if (!IsValid()) { return false; }
-		if (!InventorySubsystem.Get()) { return false; }
+		if (!GetInvenSubsystem()) { return false; }
 		if (AUIManager::UIManager->isShopOpen) { return false; }
 
-		InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
+		GetInvenSubsystem()->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
 
 		RefreshData();
 		return true;

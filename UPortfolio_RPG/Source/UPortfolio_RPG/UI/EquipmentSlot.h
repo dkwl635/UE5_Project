@@ -19,6 +19,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GEAR")
 	EGEARTYPE EGearType = EGEARTYPE::None;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GEAR")
+	class UImage* GearTypeBG;
 
 	struct FGearData* GetGearData();
 

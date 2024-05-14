@@ -45,6 +45,7 @@ public:
 
 public : 
 	UPlayerInventorySubsystem();
+	~UPlayerInventorySubsystem();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
 	UFUNCTION(BlueprintCallable)
@@ -59,7 +60,7 @@ public :
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
 
 	FItemData* ChangeGear(EGEARTYPE GearType , int8 Index1);
-
+	bool DeEquipment(EGEARTYPE GearType);
 
 private:
 	bool IsAddable(Inventory Inventory, FItemData* ItemData, int8 Count);
@@ -69,13 +70,19 @@ private:
 	bool MoveItemToInventory(Inventory Inventory, FItemData* ItemData, int8 Count);
 
 public:
+	void RefreshUI(ERPG_UI UIType);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* DragSlot;
 
 private:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
-	TMap<EGEARTYPE, TSharedPtr<FItemData>> PlayerEquipmentData;
+	
+public:
+	int32 GetPlayerAddAttack();
+	int32 GetPlayerAddMaxHp();
+	
 
 public:
 
@@ -95,3 +102,5 @@ public:
 
 
 };
+
+extern UPlayerInventorySubsystem* PlayerInventorySubsystem = nullptr;

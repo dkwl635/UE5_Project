@@ -15,6 +15,7 @@ class UPORTFOLIO_RPG_API UInventorySlotData : public USlotData
 
 public:
 	UInventorySlotData();
+	class UPlayerInventorySubsystem* GetInvenSubsystem();
 
 	// USlotData을(를) 통해 상속됨
 	void SetData() override;

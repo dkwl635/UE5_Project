@@ -133,6 +133,11 @@ UCanvasPanelSlot* URPGMainUserWidget::GetCanvasPanel(ERPG_UI Type)
 URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 {
     auto UI = GetRPGUI(Type);
+    if (UI->GetVisibility() == ESlateVisibility::Collapsed)
+    {
+        return nullptr;
+    }
+
     UI->RefreshUI();
 
     return UI;

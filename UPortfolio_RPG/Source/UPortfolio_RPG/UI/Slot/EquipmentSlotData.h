@@ -37,6 +37,6 @@ public:
 	//ShowItem
 	struct FItemData* GetItemData();
 
-	TWeakPtr<struct FGearData> GearData;
+	struct FGearData* GearData;
 	struct FGearData* GetGearData();
 };

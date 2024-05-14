@@ -3,17 +3,16 @@
 
 #include "UI/Slot/SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "GameFramework/Actor.h"
 
-TWeakObjectPtr<UWorld> USlotData::SlotWorld = nullptr;
-TWeakObjectPtr<UPlayerInventorySubsystem> USlotData::InventorySubsystem = nullptr;
-void USlotData::ClearStaticMember()
-{
-    SlotWorld = nullptr;
-    InventorySubsystem = nullptr;
-}
+
+
+
 USlotData::USlotData()
 {
 }
+
+
 
 bool USlotData::IsValid()
 {

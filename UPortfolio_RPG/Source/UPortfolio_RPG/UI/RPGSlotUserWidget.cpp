@@ -16,7 +16,7 @@
 #include "UI/RPGShop.h"
 #include "UI/RPGMainUserWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-
+#include "DataSubsystem/DataSubsystem.h"
 
 void URPGSlotUserWidget::Init()
 {
@@ -313,24 +313,35 @@ bool URPGSlotUserWidget::DragEnd(URPGSlotUserWidget* StartSlot)
 		StartSlot->RefreshUI();
 
 	}
-	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::EQUIPMENT_GEAR)
+	else if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR && EndSlotType == ERPGSLOTTYPE::EQUIPMENT_GEAR)
+		||(StartSlotType == ERPGSLOTTYPE::EQUIPMENT_GEAR && EndSlotType == ERPGSLOTTYPE::INVENTORY_GEAR))
 	{
 		if (AUIManager::UIManager->isShopOpen)
 		{
 			return false;
 		}
+		UInventorySlotData* InvenSlot = nullptr;
+		UEquipmentSlot* EqSlot = nullptr;
+		if (StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
+		{
+			InvenSlot = (UInventorySlotData*)StartSlot->GetSlotData();
+			EqSlot = (UEquipmentSlot*)this;
 
-		UInventorySlotData* StartSlotData = (UInventorySlotData*)StartSlot->GetSlotData();
-		//FItemData* StartItemData = 
+		}
+		else if (StartSlotType == ERPGSLOTTYPE::EQUIPMENT_GEAR)
+		{
+			InvenSlot = (UInventorySlotData*)this->GetSlotData();
+			EqSlot = (UEquipmentSlot*)StartSlot;
+		}
 
-		UEquipmentSlot* EqSlot = (UEquipmentSlot*)this;
+		FItemData* InvenItemData = InvenSlot->GetItemData();
+		FGearData* StartGearItem = DataSubsystem->FindGearData(InvenItemData->StatusData.RowName);
 
-		EGEARTYPE StartType = EGEARTYPE::WEAPON;
+		EGEARTYPE StartType = StartGearItem->EGearType;
 		EGEARTYPE EndType = EqSlot->EGearType;
-
 		if (StartType != EndType){return false;}
 
-		auto tempData = PlayerInven->ChangeGear(StartType, StartSlotData->SlotIndex);
+		auto tempData = PlayerInven->ChangeGear(StartType, InvenSlot->SlotIndex);
 
 		
 		StartSlot->RefreshUI();
@@ -359,7 +370,14 @@ void URPGSlotUserWidget::DragFailed(URPGSlotUserWidget* StartSlot)
 		StartSlotData->OrginSlot = nullptr;
 		this->RefreshUI();
 		break;
-	}		
+	}	
+	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
+	{
+		EGEARTYPE GearType =((UEquipmentSlot*)this)->EGearType;
+		PlayerInventorySubsystem->DeEquipment(GearType);
+		this->RefreshUI();
+		break;
+	}
 	default:
 		break;
 	}
