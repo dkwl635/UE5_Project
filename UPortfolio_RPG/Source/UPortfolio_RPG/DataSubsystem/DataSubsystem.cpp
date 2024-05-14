@@ -63,11 +63,11 @@ void UDataSubsystem::Init()
 
 	//�κ��� ���Ӹ�忡 ������ ����ؾ� ��
 	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	if (Inven->Init())
+	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	/*if (Inven->Init())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
-	}
+	}*/
 
 	{
 		USlotData::SlotWorld = GetWorld();

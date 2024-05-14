@@ -7,6 +7,7 @@
 #include "SkillComponent.generated.h"
 
 class ASkillBase;
+class APlayerCharacter;
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FSkillDataTableRow : public FTableRowBase
@@ -14,17 +15,7 @@ struct UPORTFOLIO_RPG_API FSkillDataTableRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	FName SkillName;
-	UPROPERTY(EditAnywhere)
-	float CoolTime;
-	UPROPERTY(EditAnywhere)
-	float Damage;
-	UPROPERTY(EditAnywhere)
-	float ManaUsage;
-	UPROPERTY(EditAnywhere)
-	UTexture2D* SkillImage;
-	UPROPERTY(EditAnywhere)
-	FText SkillDesc;
+	TArray<TSubclassOf<ASkillBase>> Skills;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -32,18 +23,20 @@ class UPORTFOLIO_RPG_API USkillComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	friend APlayerCharacter;
+
 public:	
 	// Sets default values for this component's properties
 	USkillComponent();
+	void SetSkillData(const FSkillDataTableRow* InData);
+	TArray<ASkillBase*> GetSkills() { return Skills; }
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 protected:
-	TArray<TSubclassOf<ASkillBase>> Skills;
+	UPROPERTY(EditAnywhere)
+	TArray<ASkillBase*> Skills;
+
 };

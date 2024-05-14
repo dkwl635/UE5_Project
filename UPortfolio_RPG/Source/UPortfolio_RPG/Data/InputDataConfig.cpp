@@ -25,9 +25,15 @@ UInputDataConfig::UInputDataConfig()
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
-		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill.IA_Skill'") };
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill_Q.IA_Skill_Q'") };
 		check(Asset.Succeeded());
 		Skill_Q = Asset.Object;
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill_W.IA_Skill_W'") };
+		check(Asset.Succeeded());
+		Skill_W = Asset.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
