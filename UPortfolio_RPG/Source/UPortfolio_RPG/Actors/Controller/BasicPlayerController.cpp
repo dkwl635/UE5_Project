@@ -14,6 +14,9 @@
 
 ABasicPlayerController::ABasicPlayerController()
 {
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Cursor(TEXT("/Script/Niagara.NiagaraSystem'/Game/KSH/Character/MouseCursor/FX_Cursor.FX_Cursor'"));
+	ensure(Cursor.Object);
+	FXCursor = Cursor.Object;
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
@@ -102,7 +105,6 @@ void ABasicPlayerController::OnSkill_Q()
 {
 	if (!PlayerCharacter->bIsDead)
 	{
-		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 		UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
@@ -114,7 +116,6 @@ void ABasicPlayerController::OnSkill_W()
 {
 	if (!PlayerCharacter->bIsDead)
 	{
-		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 		PlayerCharacter->OnSkill_W(Hit.Location);

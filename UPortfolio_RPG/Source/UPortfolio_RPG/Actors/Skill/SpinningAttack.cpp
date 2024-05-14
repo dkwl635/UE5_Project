@@ -19,6 +19,11 @@ ASpinningAttack::ASpinningAttack()
 		StaticMesh->SetStaticMesh(Asset.Object);
 	}
 	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/M_Crunch_Impact_02.M_Crunch_Impact_02'"));
+		ensure(Asset.Object);
+		StaticMesh->SetMaterial(0, Asset.Object);
+	}
+	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/SpinningAttack_Montage.SpinningAttack_Montage'"));
 		ensure(Asset.Object);
 		this->Montage = Asset.Object;
@@ -33,14 +38,17 @@ ASpinningAttack::ASpinningAttack()
 		ensure(Asset.Object);
 		this->Sk_Image_Cool = Asset.Object;
 	}
-	StaticMesh->SetRelativeScale3D(FVector(4.565000, 3.735000, 1.660000));
+	
+	StaticMesh->SetRelativeLocation(FVector(0., 0., -44.));
+	StaticMesh->SetRelativeRotation(FRotator(0., 0., 0.));
+	StaticMesh->SetRelativeScale3D(FVector(5.750000, 5.000000, 1.660000));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;
 
 	Sk_Name = TEXT("Spinning Attack");
 	Sk_Desc = FText::FromString(TEXT("검을 크게 휘둘러 공격한다."));
 	Sk_CoolTime = 3.f;
-	Sk_Damage = 10.f;
+	Sk_Damage = 30.f;
 	Sk_ManaUsage = 5.f;
 }
 

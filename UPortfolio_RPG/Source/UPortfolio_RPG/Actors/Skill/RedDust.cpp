@@ -19,6 +19,11 @@ ARedDust::ARedDust()
 		StaticMesh->SetStaticMesh(Asset.Object);
 	}
 	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/M_Crunch_Impact_02.M_Crunch_Impact_02'"));
+		ensure(Asset.Object);
+		StaticMesh->SetMaterial(0, Asset.Object);
+	}
+	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/RedDust_Montage.RedDust_Montage'"));
 		ensure(Asset.Object);
 		this->Montage = Asset.Object;
@@ -41,7 +46,7 @@ ARedDust::ARedDust()
 	Sk_Name = TEXT("Red Dust");
 	Sk_Desc = FText::FromString(TEXT("검을 올려쳐 공격한다."));
 	Sk_CoolTime = 3.f;
-	Sk_Damage = 10.f;
+	Sk_Damage = 50.f;
 	Sk_ManaUsage = 5.f;
 }
 

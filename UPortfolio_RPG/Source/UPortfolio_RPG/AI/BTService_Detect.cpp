@@ -45,13 +45,13 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>()) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetActorKey, HitResult.GetActor()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
-		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
+		//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
 	}
 	else
 	{
 		// �÷��̾ �������� ������ ���� ���� ����
 		OwnerComp.GetBlackboardComponent()->ClearValue(AEnemyAIController::TargetActorKey);
-		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
+		//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
 
 	}
 

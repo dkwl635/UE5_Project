@@ -9,6 +9,7 @@
 AEnemy::AEnemy()
 {
     IsAttacking = false;
+    IsDead = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
@@ -71,7 +72,7 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
+    if (PlayerController && !IsDead)
     {
         // �÷��̾� ĳ������ ��ġ ��������
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
@@ -125,6 +126,9 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyHP <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
+        IsDead = true;
+        if(!EnemyAnim->Montage_IsPlaying(nullptr))
+            Destroy();
     }
 
     return Damage;

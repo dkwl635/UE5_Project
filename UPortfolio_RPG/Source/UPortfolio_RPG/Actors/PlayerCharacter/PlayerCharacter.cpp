@@ -42,7 +42,7 @@ APlayerCharacter::APlayerCharacter()
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
-		SpringArmComponent->TargetArmLength = 800.f;
+		SpringArmComponent->TargetArmLength = 1200.f;
 		SpringArmComponent->bInheritPitch = false;
 		SpringArmComponent->bInheritRoll = false;
 		SpringArmComponent->bInheritYaw = false;
@@ -58,6 +58,7 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void APlayerCharacter::SetAnimData(const FDataTableRowHandle& InDataTableRowHandle)
@@ -140,13 +141,13 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 		}
 		else
 		{
+			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
+			LookAtMouseCursor(HitPoint);
+			if (Skill)
+				Skill->ActiveSkill(Animation);
 		}
 	}
-
-	LookAtMouseCursor(HitPoint);
-	if(Skill)
-		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
@@ -165,13 +166,13 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 		}
 		else
 		{
+			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
+			LookAtMouseCursor(HitPoint);
+			if (Skill)
+				Skill->ActiveSkill(Animation);
 		}
 	}
-
-	LookAtMouseCursor(HitPoint);	
-	if (Skill)
-		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
@@ -216,7 +217,7 @@ void APlayerCharacter::DefaultAttackCheck()
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
 		ETraceTypeQuery::TraceTypeQuery1, false,
-		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
 	if (bIsHit)
 	{
 		for (auto& Hit : HitResult)
@@ -248,7 +249,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	float CurrentHP = StatusComponent->GetCurrentHP();
-	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
+	float NewHP = CurrentHP - Damage;
 	StatusComponent->SetCurrentHP(NewHP);
 	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetCurrentHP());
 
