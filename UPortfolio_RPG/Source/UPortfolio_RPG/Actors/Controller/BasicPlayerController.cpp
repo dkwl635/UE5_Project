@@ -71,7 +71,7 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 	}
 
 	APawn* ControlledPawn = GetPawn();
-	if (ControlledPawn != nullptr)
+	if (ControlledPawn != nullptr && !PlayerCharacter->bIsDead)
 	{
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 	}
@@ -79,45 +79,60 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 
 void ABasicPlayerController::OnSetDestinationReleased()
 {
-	// We move there and spawn some particles
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+	if(!PlayerCharacter->bIsDead)
+	{
+		// We move there and spawn some particles
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+	}
 }
 
 void ABasicPlayerController::OnDefaultAttack()
 {
-	StopMovement();
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	PlayerCharacter->OnDefaultAttack(Hit.Location);
+	if (!PlayerCharacter->bIsDead)
+	{
+		StopMovement();
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		PlayerCharacter->OnDefaultAttack(Hit.Location);
+	}
 }
 
 void ABasicPlayerController::OnSkill_Q()
 {
-	StopMovement();
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
-	PlayerCharacter->OnSkill_Q(Hit.Location);
+	if (!PlayerCharacter->bIsDead)
+	{
+		StopMovement();
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
+		PlayerCharacter->OnSkill_Q(Hit.Location);
+	}
 }
 
 void ABasicPlayerController::OnSkill_W()
 {
-	StopMovement();
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	PlayerCharacter->OnSkill_W(Hit.Location);
+	if (!PlayerCharacter->bIsDead)
+	{
+		StopMovement();
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		PlayerCharacter->OnSkill_W(Hit.Location);
+	}
 }
 
 void ABasicPlayerController::OnSpace()
 {
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
-	if (!CoolTimeManager->IsSpaceCool())
+	if (!PlayerCharacter->bIsDead)
 	{
-		CoolTimeManager->SetSpaceTimer();
-		PlayerCharacter->OnSpace(Hit.Location);
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		UCoolTimeSubsystem* CoolTimeManager = GetCoolTimeManager();
+		if (!CoolTimeManager->IsSpaceCool())
+		{
+			CoolTimeManager->SetSpaceTimer();
+			PlayerCharacter->OnSpace(Hit.Location);
+		}
 	}
 }
 

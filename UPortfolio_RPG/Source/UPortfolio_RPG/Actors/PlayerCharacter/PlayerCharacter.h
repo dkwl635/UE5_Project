@@ -101,6 +101,7 @@ public:
 	bool bIsSpace = false;
 	bool bIsDown = false;
 	bool bOnAttack = false;
+	bool bIsDead = false;
 
 protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
