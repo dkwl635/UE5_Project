@@ -31,9 +31,6 @@ struct UPORTFOLIO_RPG_API FEnemyData : public FTableRowBase
 	float EnemyHP;
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float EnemyAttackDamage;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
 	TSubclassOf<UAnimInstance> AnimClass;   //애니메이션
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
@@ -44,8 +41,5 @@ struct UPORTFOLIO_RPG_API FEnemyData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	FTransform ParticleTransform;
-
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	float EnemySpeed;              //enemy speed
 
 };

@@ -6,7 +6,7 @@
 
 UEnemyAnimInstance::UEnemyAnimInstance()	
 {
-	IsSpawn = false;
+	IssAttack = false;
 	IsDead = false;
 	Speed = 0.f;
 	/*static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_Montage(TEXT("/Script/Engine.AnimMontage'/Game/LJY/Animation/PrimeAnimMontage.PrimeAnimMontage'"));
@@ -38,9 +38,14 @@ void UEnemyAnimInstance::PlayAttackMontage()
 	Montage_Play(AttackMontage, 1.0f);
 }
 
-void UEnemyAnimInstance::SetFinishAnim()
+void UEnemyAnimInstance::SetAttackAnim()
 {
-	IsSpawn = true;
+	IssAttack = true;
+}
+
+void UEnemyAnimInstance::SetAttackEndAnim()
+{
+	IssAttack = false;
 }
 
 void UEnemyAnimInstance::SetDeadAnim()

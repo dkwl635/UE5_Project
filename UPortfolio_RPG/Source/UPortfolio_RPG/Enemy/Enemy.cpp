@@ -32,7 +32,6 @@ AEnemy::AEnemy()
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
 
-
     StatusWidget->SetupAttachment(SkeletalMeshComponent);
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -101,11 +100,11 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    float CurrentHP = EnemyHP;
+    float CurrentHP = EnemyState->GetEnemyHP();
     float NewHP = CurrentHP - EnemyState->GetAttackDamage();
 
-    EnemyHP = NewHP;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 
+    EnemyState->SetEnemyHP(NewHP);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP()); 
 
     UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
     if (StatusUserWidget)
@@ -122,9 +121,10 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 
     }
 
-    if (EnemyHP <= 0.f)
+    if (EnemyState->GetEnemyHP() <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
+        Destroy();
     }
 
     return Damage;
@@ -135,40 +135,27 @@ void AEnemy::Attack()
     if (IsAttacking) return;
 
     EnemyAnim->PlayAttackMontage();
+
+    auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    if (PlayerCharacter)
+    {
+        ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
+        if (Player)
+        {
+            UGameplayStatics::ApplyDamage(Player, EnemyState->GetEnemyAttackDamage(), GetController(), this, UDamageType::StaticClass());
+        }
+    }
     IsAttacking = true;
 }
 
 void AEnemy::AttackCheck()
 {
-    auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-    if (PlayerCharacter)
-    {
-        FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-        FVector EnemyLocation = GetActorLocation();
 
-        // 플레이어와 Enemy 사이의 거리 계산
-        float Distance = FVector::Distance(PlayerLocation, EnemyLocation);
-
-        // 공격 범위 내에 있는지 확인
-        if (Distance <= 200.f)
-        {
-            ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
-            if (Player)
-            {
-                UGameplayStatics::ApplyDamage(Player, EnemyAttackDamage, GetController(), this, UDamageType::StaticClass());
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("NoAttackRange"));
-        }
-    }
 }
 
 void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     IsAttacking = false;
-    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
 }
 
 void AEnemy::PlayAttackParticle()
@@ -205,13 +192,9 @@ bool AEnemy::AddEnemy(const FName& InKey)
         SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
         SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
 
-        EnemyHP = InData->EnemyHP;
+        EnemyState->SetEnemyHP(InData->EnemyHP);
         MaxHP = InData->EnemyHP;
-
-        EnemyAttackDamage = InData->EnemyAttackDamage;
-
-
-        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetEnemyHP());
         UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));

@@ -69,12 +69,6 @@ private:
 	UPROPERTY()
 	float MaxHP;
 
-	UPROPERTY()
-	float EnemyHP;
-
-	UPROPERTY()
-	float EnemyAttackDamage;
-
 public:										 
 	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
 	UFloatingPawnMovement* Movement;
@@ -93,7 +87,7 @@ public:
 	// particle
 	void PlayAttackParticle();
 
-public:
+private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool IsAttacking; 
 
@@ -108,6 +102,6 @@ public:
 	FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
 
 	UPROPERTY()
-	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Green"), TEXT("Black") };
+	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Dusk"), TEXT("Black") };
 
 };
