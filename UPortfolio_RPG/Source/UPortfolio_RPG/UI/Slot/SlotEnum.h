@@ -6,9 +6,13 @@ UENUM(BlueprintType)
 enum class  ERPGSLOTTYPE : uint8
 {
 	NONE,
-	INVENTORY_GEAR, //인벤토리창 슬롯
-	INVENTORY_NORMARL, //인벤토리창 슬롯
+	INVENTORY_GEAR, //
+	INVENTORY_NORMARL, //
 
-	QUICK_ITEM,			//퀵아이템 슬롯
+	QUICK_ITEM,			//
 
+	SHOP_ITEM, //
+	SHOP_SELLITEM,
+
+	EQUIPMENT_GEAR
 };

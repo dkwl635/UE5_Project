@@ -14,18 +14,18 @@ public:
 
 public:
 	UQuickItemSlotData();
-	// USlotDataï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
+	// USlotDataÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
 	bool IsValid() override;
 	UTexture2D* GetSlotImg() override;
 	bool NormalUse() override;
 	void ClearData() override;
 	void RefreshData() override;
 	int32 GetCount() override;
-
+	 struct FItemData* GetItemData() override;
 	
 public :
 
-	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	
 	TWeakObjectPtr<class URPGSlotUserWidget> OrginSlot;
 
 };
