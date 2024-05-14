@@ -4,10 +4,22 @@
 #include "UI/Slot/InventorySlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/ItemData.h"
+#include "UI/UIManager.h"
 
 UInventorySlotData::UInventorySlotData()
 {
 }
+
+bool UInventorySlotData::IsValid()
+{
+	bool bValid = true;
+
+	if (SlotIndex < 0) { bValid = false; }
+	if (!ItemData.IsValid()) { bValid = false; }
+
+	return bValid;
+}
+
 void UInventorySlotData::SetData()
 {
 	if (SlotIndex < 0) { return; }
@@ -17,7 +29,7 @@ void UInventorySlotData::SetData()
 	else 	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) { ItemType = EITEMTYPE::GEAR; }
 
 	
-	ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
+	//ItemData = InventorySubsystem->GetItemInfo(ItemType, SlotIndex);
 }
 
 int32 UInventorySlotData::GetCount()
@@ -42,15 +54,7 @@ void UInventorySlotData::ClearData()
 
 }
 
-bool UInventorySlotData::IsValid()
-{
-	bool bValid = true;
 
-	if (SlotIndex < 0) { bValid =  false; }
-	if (!ItemData.IsValid()) { bValid =  false; }
-
-	return bValid;
-}
 
 UTexture2D* UInventorySlotData::GetSlotImg()
 {
@@ -60,14 +64,32 @@ UTexture2D* UInventorySlotData::GetSlotImg()
 	return ItemData.Pin()->ItemImage;
 }
 
+FItemData* UInventorySlotData::GetItemData()
+{
+	return ItemData.Pin().Get();
+}
+
+
+
 bool UInventorySlotData::NormalUse()
 {
-	if (!IsValid()) { return false; }
-	if (!InventorySubsystem.Get()) { return false; }
-
-	InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
+	if (SlotType == ERPGSLOTTYPE::INVENTORY_GEAR) 
+	{ 
 	
-	RefreshData();
-	return true;
+	}
+	else
+	{
+		if (!IsValid()) { return false; }
+		if (!InventorySubsystem.Get()) { return false; }
+		if (AUIManager::UIManager->isShopOpen) { return false; }
+
+		InventorySubsystem->UseItem(ItemData.Pin()->ItemType, SlotIndex, 1);
+
+		RefreshData();
+		return true;
+	}
+	
+	return false;
+	
 }
 

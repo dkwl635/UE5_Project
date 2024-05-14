@@ -28,6 +28,7 @@ public:
     TArray<AEnemy*> ActiveEnemies;
 
 private:
+    //list로 액터 관리.. 
     TSubclassOf<AEnemy> EnemyClass;
 };
 	

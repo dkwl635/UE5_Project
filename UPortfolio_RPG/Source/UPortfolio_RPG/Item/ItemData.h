@@ -16,6 +16,9 @@ struct UPORTFOLIO_RPG_API FItemData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	int Unique_ID = 0;
+
 	UPROPERTY()
 	int8 CurrentBundleCount = 0;
 
@@ -34,8 +37,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	FText ItemDesc;
 
+
+	UPROPERTY(EditAnywhere)
+	int32 SellPrice = 0;
+
 	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle StatusData ;
+
+
+
 };
 
 
@@ -60,11 +70,13 @@ struct UPORTFOLIO_RPG_API FGearData : public FTableRowBase
 
 public:
 	
+	UPROPERTY(EditAnyWhere)
+	EGEARTYPE EGearType = EGEARTYPE::None;
+
 	UPROPERTY(EditAnywhere)
 	int16 GearValue = 0;
 
-	UPROPERTY(EditAnyWhere)
-	EGEARTYPE EGearType = EGEARTYPE::None;
+	
 };
 
 
@@ -79,5 +91,22 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int8 FBatlleItemType = 0;
+
+}; 
+
+USTRUCT()
+struct UPORTFOLIO_RPG_API FShopBuyItemData : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere)
+	FDataTableRowHandle ItemInfo;
+
+	UPROPERTY(EditAnywhere)
+	int32 Price = 0;
+
+	UPROPERTY(EditAnywhere)
+	int32 Count = 0;
 
 };

@@ -26,6 +26,17 @@ UDataSubsystem::UDataSubsystem()
 	}
 
 
+	//Enemy
+	{
+		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/LJY/DT_Enemy2.DT_Enemy2'") };
+		ensure(Asset.Object);
+		DT_Enemy = Asset.Object;
+		if (Asset.Object)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Succens DT_Enemy"));
+		}
+	}
+
 
 }
 
@@ -50,13 +61,13 @@ void UDataSubsystem::Init()
 	}
 	
 
-	//ÀÎº¥Àº °ÔÀÓ¸ðµå¿¡ ³ÖÀ»Áö °í¹ÎÇØ¾ß ÇÔ
+	//ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¸ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½ï¿½
 	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	UPlayerInventorySubsystem* Inven = GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	if (Inven->Init())
+	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	/*if (Inven->Init())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
-	}
+	}*/
 
 	{
 		USlotData::SlotWorld = GetWorld();
@@ -66,6 +77,8 @@ void UDataSubsystem::Init()
 
 	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
 		bInit = true;
+
+
 }
 
 FItemData* UDataSubsystem::FindItem(const FName& InKey)
@@ -73,13 +86,22 @@ FItemData* UDataSubsystem::FindItem(const FName& InKey)
 	FItemData* Row = DT_Item->FindRow<FItemData>(InKey, TEXT(""));
 	ensure(Row);
 	return Row;
-
 }
 
 FPotionData* UDataSubsystem::FindPotionData(const FName& InKey)
 {
 	FPotionData* Row = DT_Potion->FindRow<FPotionData>(InKey, TEXT(""));
 	ensure(Row);
+	return Row;
+}
+
+FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
+{
+		FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
+		ensure(Row);
+	
+		UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy"));
+	
 	return Row;
 }
 

@@ -3,8 +3,7 @@
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
-#include "Enemy/Animation/EnemyAnimInstance.h"
-//#include "PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -17,7 +16,10 @@ AEnemy::AEnemy()
     //BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
     SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-    HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+    StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+    EnemyState = CreateDefaultSubobject<UStatusComponent>(TEXT("EnemyState"));
+    ParticleAttackSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleAttackSystemComponent"));
+    ParticleAttackSystem = nullptr;
 
     Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
@@ -25,22 +27,23 @@ AEnemy::AEnemy()
 
     SetRootComponent(CapsuleComponent);
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
+    ParticleAttackSystemComponent->SetupAttachment(GetRootComponent());
   //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
 
-    HPBarWidget->SetupAttachment(SkeletalMeshComponent);
-    HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 500.f));
-    HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
+    StatusWidget->SetupAttachment(SkeletalMeshComponent);
+    
+    StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
     static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
         
-        HPBarWidget->SetWidgetClass(UI_HUD.Class);
-        HPBarWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+        StatusWidget->SetWidgetClass(UI_HUD.Class);
+        StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
-
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
@@ -51,46 +54,16 @@ AEnemy::~AEnemy()
 {
 }
 
-void AEnemy::SetEnemyData(const FDataTableRowHandle& InDataTableRowHandle)
-{
-    DataTableRowHandle = InDataTableRowHandle;
-    if (DataTableRowHandle.IsNull()) { return; }
-    if (DataTableRowHandle.RowName == NAME_None) { return; }
-    EnemyDataTableRow = DataTableRowHandle.GetRow<FEnemyDataTableRow>(TEXT(""));
-    SetEnemyData(EnemyDataTableRow);
-}
-
-void AEnemy::SetEnemyData(const FEnemyDataTableRow* InData)
-{
-    ensure(InData);
-    if (!ensure(InData))
-    {
-        UE_LOG(LogTemp, Error, TEXT("InData is nullptr!"));
-        return;
-    }
-    EnemyDataTableRow = InData;
-
-    CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
-    CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
-
-    SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
-    SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
-    SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
-    
-
-}
-
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    Init();
 }
 
 void AEnemy::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
-    SetEnemyData(DataTableRowHandle);
 }
 
 // Called every frame
@@ -122,13 +95,39 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
-    EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-    if (EnemyAnim)
+}
+
+float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    // Call the base class version of TakeDamage
+    float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    float CurrentHP = EnemyHP;
+    float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+
+    EnemyHP = NewHP;
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 
+
+    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+    if (StatusUserWidget)
     {
-        EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+        if (EnemyStatusUserWidget)
+        {
+            EnemyStatusUserWidget->SetHP(NewHP, MaxHP);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Error"));
+        }
+
     }
 
-   // EnemyAnim->OnAttackHitCheck.AddUObject(this, &AEnemy::AttackCheck);
+    if (EnemyHP <= 0.f)
+    {
+        EnemyAnim->SetDeadAnim();
+    }
+
+    return Damage;
 }
 
 void AEnemy::Attack()
@@ -141,11 +140,105 @@ void AEnemy::Attack()
 
 void AEnemy::AttackCheck()
 {
+    auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    if (PlayerCharacter)
+    {
+        FVector PlayerLocation = PlayerCharacter->GetActorLocation();
+        FVector EnemyLocation = GetActorLocation();
 
+        // 플레이어와 Enemy 사이의 거리 계산
+        float Distance = FVector::Distance(PlayerLocation, EnemyLocation);
+
+        // 공격 범위 내에 있는지 확인
+        if (Distance <= 200.f)
+        {
+            ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
+            if (Player)
+            {
+                UGameplayStatics::ApplyDamage(Player, EnemyAttackDamage, GetController(), this, UDamageType::StaticClass());
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("NoAttackRange"));
+        }
+    }
 }
 
 void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
     IsAttacking = false;
+    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
 }
+
+void AEnemy::PlayAttackParticle()
+{
+    if (ParticleAttackSystem)
+    {
+        UGameplayStatics::SpawnEmitterAttached(ParticleAttackSystem, CapsuleComponent, "Impact",
+            FVector( (SkeletalMeshComponent->GetRelativeLocation()+ParticleAttackSystemComponent->GetRelativeLocation())), 
+            ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
+    }
+}
+bool AEnemy::Init()
+{
+    DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
+
+    AddEnemy(EnemyTypes[FMath::RandRange(0, EnemyTypes.Num()-1)]);
+    return true;
+}
+
+bool AEnemy::AddEnemy(const FName& InKey)
+{
+    FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
+    if (!InData)
+    {
+        check(false);
+        return false;
+    }
+    else
+    {
+        CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
+        CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
+
+        SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
+        SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
+        SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
+
+        EnemyHP = InData->EnemyHP;
+        MaxHP = InData->EnemyHP;
+
+        EnemyAttackDamage = InData->EnemyAttackDamage;
+
+
+        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP);
+        UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
+
+        FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
+        StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
+
+        ParticleAttackSystem = InData->ParticleAttackSystem;
+
+        if (ParticleAttackSystem)
+        {
+            ParticleAttackSystemComponent->SetTemplate(ParticleAttackSystem);
+        }
+        ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
+
+
+        EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+        if (EnemyAnim != nullptr)
+        {
+               EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Anim Cast Error!!"));
+        }
+
+        return true;
+    }
+
+}
+//Impact
 

@@ -21,11 +21,11 @@ public:
 	void ClearData() override;
 	void RefreshData() override;
 	int32 GetCount() override;
-
+	 struct FItemData* GetItemData() override;
 	
 public :
 
-	//¿øº» ½½·Ô
+	
 	TWeakObjectPtr<class URPGSlotUserWidget> OrginSlot;
 
 };

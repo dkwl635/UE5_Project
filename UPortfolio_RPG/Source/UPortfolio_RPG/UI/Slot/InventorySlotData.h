@@ -17,19 +17,17 @@ public:
 	UInventorySlotData();
 
 	// USlotData을(를) 통해 상속됨
-	UTexture2D* GetSlotImg() override;
+	void SetData() override;
+	int32 GetCount() override;
 	bool IsValid() override;
 	bool NormalUse() override;
 	void RefreshData() override;
 	void ClearData() override;
-	void SetData() override;
-	int32 GetCount() override;
-	//임시로 가지고 있는 아이템 정보
+	UTexture2D* GetSlotImg() override;
 
 	TWeakPtr<struct  FItemData> ItemData;
-
-	//서로 상호작용이되는 
-	//원본 슬롯
 	EITEMTYPE ItemType = EITEMTYPE::None;
-	//TWeakObjectPtr<class URPGSlotUserWidget> QuickSlot;
+
+	 struct FItemData* GetItemData() override;
+
 };

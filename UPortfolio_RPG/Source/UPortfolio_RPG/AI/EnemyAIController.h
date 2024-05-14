@@ -22,6 +22,7 @@ public:
 
 public:
 	static const FName TargetKey;
+	static const FName TargetActorKey;
 
 private:
 	void OnRepeatTimer();

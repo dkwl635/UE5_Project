@@ -51,12 +51,19 @@ bool USlotData::NormalUse()
     return false;
 }
 
-bool USlotData::QuickUse()
+//bool USlotData::QuickUse()
+//{
+//    return false;
+//}
+//
+//bool USlotData::SpecialUse()
+//{
+//    return false;
+//}
+
+FItemData* USlotData::GetItemData()
 {
-    return false;
+    return nullptr;
 }
 
-bool USlotData::SpecialUse()
-{
-    return false;
-}
+

@@ -10,8 +10,11 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/StatusComponent.h"
 #include "Components/SkillComponent.h"
-#include "Components/CapsuleComponent.h"
+#include "Actors/Skill/SkillBase.h"
+#include "UI/Skill/Skill_MainWidget.h"
 #include "Actors/Animation/PlayerAnimInstance.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Subsystem/CoolTimeSubsystem.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -23,7 +26,6 @@ APlayerCharacter::APlayerCharacter()
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-		//SwordCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SwordCollider"));
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
@@ -60,10 +62,10 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::SetAnimData(const FDataTableRowHandle& InDataTableRowHandle)
 {
-	DataTableRowHandle = InDataTableRowHandle;
-	if (DataTableRowHandle.IsNull()) { return; }
-	if (DataTableRowHandle.RowName == NAME_None) { return; }
-	AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
+	AnimDataTableRowHandle = InDataTableRowHandle;
+	if (AnimDataTableRowHandle.IsNull()) { return; }
+	if (AnimDataTableRowHandle.RowName == NAME_None) { return; }
+	AnimDataTableRow = AnimDataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
 	SetAnimData(AnimDataTableRow);
 }
 
@@ -77,7 +79,6 @@ void APlayerCharacter::SetAnimData(const FCharacterAnimDataTableRow* InData)
 	AttackMontage_B = InData->AttackMontage_B;
 	AttackMontage_C = InData->AttackMontage_C;
 	SpaceMontage = InData->SpaceMontage;
-	Skill_Q_Montage = InData->Skill_Q_Montage;
 
 	CurrentMontage = AttackMontage_A;
 }
@@ -87,9 +88,21 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!DataTableRowHandle.IsNull() && DataTableRowHandle.RowName != NAME_None)
+	if (!StatusDataTableRowHandle.IsNull() && StatusDataTableRowHandle.RowName != NAME_None)
 	{
-		AnimDataTableRow = DataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
+		StatusDataTableRow = StatusDataTableRowHandle.GetRow<FStatusDataTableRow>(TEXT(""));
+
+		StatusComponent->SetStatusData(StatusDataTableRow);
+	}
+	if (!SkillDataTableRowHandle.IsNull() && SkillDataTableRowHandle.RowName != NAME_None)
+	{
+		SkillDataTableRow = SkillDataTableRowHandle.GetRow<FSkillDataTableRow>(TEXT(""));
+
+		SkillComponent->SetSkillData(SkillDataTableRow);
+	}
+	if (!AnimDataTableRowHandle.IsNull() && AnimDataTableRowHandle.RowName != NAME_None)
+	{
+		AnimDataTableRow = AnimDataTableRowHandle.GetRow<FCharacterAnimDataTableRow>(TEXT(""));
 
 		SetAnimData(AnimDataTableRow);
 	}
@@ -99,7 +112,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
 }
 
 // Called to bind functionality to input
@@ -108,39 +120,73 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
-void APlayerCharacter::OnSkill(const FVector& HitPoint)
+#include "UI/Skill/CoolTimerUserWidget.h"
+void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
 
+	ASkillBase* Skill = GetSkillComponent()->Skills[0];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (Manager->IsSkillCool(Skill))
+		{
+			return;
+		}
+		else
+		{
+			Manager->SetSkillTimer(Skill);
+		}
+	}
+
 	LookAtMouseCursor(HitPoint);
-	Animation->Montage_Play(Skill_Q_Montage, 1.2f);
+	if(Skill)
+		Skill->ActiveSkill(Animation);
+}
+
+void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
+{
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+	ASkillBase* Skill = GetSkillComponent()->Skills[1];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (Manager->IsSkillCool(Skill))
+		{
+			return;
+		}
+		else
+		{
+			Manager->SetSkillTimer(Skill);
+		}
+	}
+
+	LookAtMouseCursor(HitPoint);	
+	if (Skill)
+		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
-	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
-	ensure(Animation);
-	if (Animation->Montage_IsPlaying(nullptr)) { return; }
-
-	// 쿨타임 타이머
-	bool bIsSpaceCool = GetWorld()->GetTimerManager().IsTimerActive(SpaceCoolTimer);
-	if (bIsSpaceCool) { return; }
-	GetWorld()->GetTimerManager().SetTimer(SpaceCoolTimer, SpaceCoolTime, false);// 회피 5초쿨
-
-	GetController()->StopMovement();
-
 	if (!bIsSpace)
 	{
+		UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+		ensure(Animation);
+		if (Animation->Montage_IsPlaying(nullptr)) { Animation->Montage_Stop(0.2f); }
+
 		bIsSpace = true;
 		GetController()->StopMovement();
 		LookAtMouseCursor(HitPoint);
 		Animation->Montage_Play(SpaceMontage, 1.2f);
+		auto SpaceDelegate = [this]() { bIsSpace = false; };
+		GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
 	}
-	auto SpaceDelegate = [this]() { bIsSpace = false; };
-	GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
@@ -158,7 +204,6 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 }
 
 #include "Engine/DamageEvents.h"
-#include "Enemy/Enemy.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
 	float Radius = 80.f;
@@ -168,7 +213,7 @@ void APlayerCharacter::DefaultAttackCheck()
 	TSet<AActor*> AlreadyDamagedActors;
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
-		ETraceTypeQuery::TraceTypeQuery4, false,
+		ETraceTypeQuery::TraceTypeQuery1, false,
 		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
 	if (bIsHit)
 	{
@@ -194,4 +239,16 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 	NewRotation.Pitch = CurrentRotation.Pitch;
 	NewRotation.Roll = CurrentRotation.Roll;
 	SetActorRotation(NewRotation);
+}
+
+// add LJY
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float CurrentHP = StatusComponent->GetHP();
+	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
+	StatusComponent->SetHP(NewHP);
+	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
+
+	return Damage;
 }

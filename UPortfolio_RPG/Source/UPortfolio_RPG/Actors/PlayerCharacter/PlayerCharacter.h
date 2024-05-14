@@ -9,6 +9,8 @@
 struct FInputActionValue;
 class UStatusComponent;
 class USkillComponent;
+struct FSkillDataTableRow;
+struct FStatusDataTableRow;
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
@@ -23,9 +25,6 @@ struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
 	UAnimMontage* AttackMontage_C;
 	UPROPERTY(EditAnywhere, Category = "Evade")
 	UAnimMontage* SpaceMontage;
-	UPROPERTY(EditAnywhere, Category = "Skill")
-	UAnimMontage* Skill_Q_Montage;
-
 };
 
 UCLASS()
@@ -42,14 +41,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void OnSkill(const FVector& HitPoint);
+	void OnSkill_Q(const FVector& HitPoint);
+	void OnSkill_W(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	void OnDefaultAttack(const FVector& HitPoint);
 
@@ -58,6 +58,7 @@ public:
 
 public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
+	USkillComponent* GetSkillComponent() { return SkillComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -68,42 +69,52 @@ protected:
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	USkillComponent* SkillComponent;
-	/*UPROPERTY(EditAnywhere)
-	UCapsuleComponent* SwordCollider;*/
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.CharacterAnimDataTableRow"))
-	FDataTableRowHandle DataTableRowHandle;
+	FDataTableRowHandle AnimDataTableRowHandle;
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.SkillDataTableRow"))
+	FDataTableRowHandle SkillDataTableRowHandle;
+	UPROPERTY(EditAnywhere, meta = (RowType = "/Script/UPortfolio_RPG.StatusDataTableRow"))
+	FDataTableRowHandle StatusDataTableRowHandle;
 
 public:
-	UPROPERTY()UAnimMontage* AttackMontage_A;
+	UPROPERTY()
+	UAnimMontage* AttackMontage_A;
 	UPROPERTY()
 	UAnimMontage* AttackMontage_B;
 	UPROPERTY()
 	UAnimMontage* AttackMontage_C;
 	UPROPERTY()
 	UAnimMontage* SpaceMontage;
-	UPROPERTY()
-	UAnimMontage* Skill_Q_Montage;
 
 	UAnimMontage* CurrentMontage;
 
 protected:
-	FTimerHandle SpaceCoolTimer;
 	FTimerHandle SpaceTimer;
 
-	UPROPERTY(EditAnywhere, Category = "Space")
-	float SpaceCoolTime = 2.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Space")
+	float RemainingTime = 0.f;
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsSpace = false;
-	
+	bool bIsDown = false;
 	bool bOnAttack = false;
 
 protected:
+	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
+	const FSkillDataTableRow* SkillDataTableRow = nullptr;
+	const FStatusDataTableRow* StatusDataTableRow = nullptr;
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+
+// add LJY
+public:
+	virtual float TakeDamage(
+		float DamageAmount, struct FDamageEvent const& DamageEvent, 
+		class AController* EventInstigator, AActor* DamageCauser) override;
+
 };

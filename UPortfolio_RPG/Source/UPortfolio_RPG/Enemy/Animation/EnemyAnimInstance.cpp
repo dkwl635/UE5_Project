@@ -6,12 +6,14 @@
 
 UEnemyAnimInstance::UEnemyAnimInstance()	
 {
+	IsSpawn = false;
+	IsDead = false;
 	Speed = 0.f;
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_Montage(TEXT("/Script/Engine.AnimMontage'/Game/LJY/Animation/PrimeAnimMontage.PrimeAnimMontage'"));
+	/*static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_Montage(TEXT("/Script/Engine.AnimMontage'/Game/LJY/Animation/PrimeAnimMontage.PrimeAnimMontage'"));
 	if (Attack_Montage.Succeeded())
 	{
 		AttackMontage = Attack_Montage.Object;
-	}
+	}*/
 
 }
 
@@ -33,8 +35,15 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
-	//if (!Montage_IsPlaying(AttackMontage))
-	{
-		Montage_Play(AttackMontage, 1.0f);
-	}
+	Montage_Play(AttackMontage, 1.0f);
+}
+
+void UEnemyAnimInstance::SetFinishAnim()
+{
+	IsSpawn = true;
+}
+
+void UEnemyAnimInstance::SetDeadAnim()
+{
+	IsDead = true;
 }
