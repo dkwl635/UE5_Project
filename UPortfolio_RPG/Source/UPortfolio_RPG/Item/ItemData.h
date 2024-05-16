@@ -110,3 +110,12 @@ public:
 	int32 Count = 0;
 
 };
+
+
+
+struct UPORTFOLIO_RPG_API ShowBoxData 
+{
+	UTexture2D* ItemImage = nullptr;
+	FText ItemDesc;
+	FName ItemName = "";
+};

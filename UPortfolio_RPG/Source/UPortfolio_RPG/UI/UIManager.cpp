@@ -42,7 +42,7 @@ void AUIManager::PlayerGoodsUIRefresh()
 	PlayerUI->PlayerGoodsRefresh();
 }
 
-void AUIManager::ShowItemBox(FVector2D SpawnPos, FItemData* Data)
+void AUIManager::ShowItemBox(FVector2D SpawnPos, ShowBoxData Data)
 {
 	PlayerUI->ShowItemInfoBox(SpawnPos ,Data);
 }
@@ -57,10 +57,9 @@ void AUIManager::RefreshUI(ERPG_UI UIType)
 	PlayerUI->RPGUIRefresh(UIType);
 }
 
-//// Called every frame
-//void AUIManager::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
-//
+URPGUserWidget* AUIManager::GetRPGUI(ERPG_UI UIType)
+{
+	return PlayerUI->GetRPGUI(UIType);
+}
+
+

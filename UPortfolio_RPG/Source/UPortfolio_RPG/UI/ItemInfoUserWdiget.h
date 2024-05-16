@@ -30,6 +30,6 @@ public:
 	class UTextBlock* ItemInfoTextBlock;
 
 public:
-	void ShowItemInfo(struct FItemData* Data);
+	void ShowItemInfo(struct ShowBoxData Data);
 
 };

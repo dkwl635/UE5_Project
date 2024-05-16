@@ -4,10 +4,8 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
-#include  "ItemEnum.h"
-#include "UI/RPGSlotUserWidget.h"
+#include "ItemEnum.h"
 #include "PlayerInventorySubsystem.generated.h"
-
 
 
 UCLASS()
@@ -41,8 +39,6 @@ private:
 	TArray<TSharedPtr<FItemData>> NormalInventory;
 public:
 	TArray<TSharedPtr<FItemData>> EquipmentInventory;
-
-
 public : 
 	UPlayerInventorySubsystem();
 	~UPlayerInventorySubsystem();
@@ -51,15 +47,19 @@ public :
 	UFUNCTION(BlueprintCallable)
 	bool Init();
 	bool AddItem(const FName& InKey, int8 Count);	
-	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
-	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count);
-	void RemoveItem(URPGSlotUserWidget* Slot, int8 Count);
+	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
+	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
+	
 	TWeakPtr<FItemData> GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex);
 	void SwapItem(EITEMTYPE ItemType , int8 Index1, int8 Index2);
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
 
 	FItemData* ChangeGear(EGEARTYPE GearType , int8 Index1);
 	bool DeEquipment(EGEARTYPE GearType);
+
+	FItemData* GetNormalItem(int8 InvenIndex);
+	FItemData* GetGearItem(int8 InvenIndex);
+	FItemData* GetEquipmentItem(int8 InvenIndex);
 
 private:
 	void UseItem(FItemData* ItemData, int8 Count);
@@ -77,7 +77,7 @@ public:
 
 private:
 	UPROPERTY()
-	TArray<TWeakObjectPtr<URPGSlotUserWidget>> QuickItemSlots;
+	TArray<TWeakObjectPtr<class URPGSlot>> QuickItemSlots;
 
 	TArray<int> QuickItemSlotsPointer;
 	
@@ -89,7 +89,7 @@ public:
 public:
 
 	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);
-	void AttachSlot(ERPGSLOTTYPE SlotType, URPGSlotUserWidget* Slot);
+	void AttachSlot(ERPGSLOTTYPE SlotType, class URPGSlot* Slot);
 	int GetQuickSlotFromIndex(int QuickSlotIndex);
 	int CheckQuickSlotItem(int ItemIndex);
 	

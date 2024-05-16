@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UI/RPGUserWidget.h"
-#include "RPGSlotUserWidget.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Components/CanvasPanel.h"
 #include "RPGQuickSlotsUserWidget.generated.h"
@@ -24,11 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UCanvasPanel* CanvasPanel;
 
-
-	
-	TMap<int8, URPGSlotUserWidget*> QuickSlotsIndex;
-
-
+	TMap<int8, class URPGSlot*> QuickSlotsIndex;
 public:
 
 	void UseQuickSlot(int8 SlotIndex);

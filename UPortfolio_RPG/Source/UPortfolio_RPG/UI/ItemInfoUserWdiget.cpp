@@ -6,9 +6,9 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
-void UItemInfoUserWdiget::ShowItemInfo(FItemData* Data)
+void UItemInfoUserWdiget::ShowItemInfo(ShowBoxData Data)
 {
-	ImgIcon->SetBrushFromTexture(Data->ItemImage);
-	ItmeNameTextBlock->SetText(FText::FromName(Data->ItemName));
-	ItemInfoTextBlock->SetText(Data->ItemDesc);
+	ImgIcon->SetBrushFromTexture(Data.ItemImage);
+	ItmeNameTextBlock->SetText(FText::FromName(Data.ItemName));
+	ItemInfoTextBlock->SetText(Data.ItemDesc);
 }
