@@ -7,7 +7,6 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Button.h"
-#include "RPGSlotUserWidget.h"
 #include "RPGInventoryUserWidget.generated.h"
 
 /**
@@ -44,16 +43,15 @@ public:
 	UWidgetSwitcher* BagWidgetSwitcher;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<URPGSlotUserWidget> SlotBP;
+	
 
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)
 	int32 InvenSlotSizeX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 InvenSlotSizeY;
 
-	TArray<URPGSlotUserWidget*> NormalSlots;
-	TArray<URPGSlotUserWidget*> GearSlots;
+	TArray<class URPGSlot*> NormalSlots;
+	TArray<class URPGSlot*> GearSlots;
 		
 
 };

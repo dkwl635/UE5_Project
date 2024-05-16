@@ -2,45 +2,24 @@
 
 
 #include "UI/RPGPlayerEquipmentUserWidger.h"
-#include "UI/Slot/EquipmentSlotData.h"
-#include "UI/EquipmentSlot.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "UI/RPGSlot.h"
 
 void URPGPlayerEquipmentUserWidger::Init()
 {
-	WeaponSlot->Init();
-	HeadSlot->Init();
-	ArmorSlot->Init();
-	PantsSlot->Init();
-	GlovesSlot->Init();
-	ShoesSlot->Init();
-
-
 	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	
-	UEquipmentSlotData* Data = (UEquipmentSlotData*)WeaponSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[1]);
-	auto m = &(PlayerInvenSubsytem.Get()->EquipmentInventory[1]);
-	Data = (UEquipmentSlotData*)HeadSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[2]);
+	WeaponSlot->SlotIndex = 1;
+	HeadSlot->SlotIndex = 2;
+	ArmorSlot->SlotIndex = 3;
+	PantsSlot->SlotIndex = 4;
+	GlovesSlot->SlotIndex =5;
+	ShoesSlot->SlotIndex = 6;
 
-	Data = (UEquipmentSlotData*)ArmorSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[3]);
-	
-	Data = (UEquipmentSlotData*)PantsSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[4]);
-	
-	Data = (UEquipmentSlotData*)GlovesSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[5]);
-	
-	Data = (UEquipmentSlotData*)ShoesSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[6]);
 }
 
 
 void URPGPlayerEquipmentUserWidger::RefreshUI()
-{
-
+{	
 	WeaponSlot->RefreshUI();
 	HeadSlot->RefreshUI();
 	ArmorSlot->RefreshUI();
@@ -59,7 +38,7 @@ void URPGPlayerEquipmentUserWidger::HideSetUI()
 {
 }
 
-UEquipmentSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
+URPGSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 {
 	switch (Type)
 	{

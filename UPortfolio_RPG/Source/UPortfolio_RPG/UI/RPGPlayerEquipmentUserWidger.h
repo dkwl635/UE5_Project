@@ -38,20 +38,20 @@ public:
 public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
-	class UEquipmentSlot* WeaponSlot;
+	class URPGSlot* WeaponSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UEquipmentSlot* HeadSlot;
+	class URPGSlot* HeadSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UEquipmentSlot* ArmorSlot;
+	class URPGSlot* ArmorSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UEquipmentSlot* PantsSlot;
+	class URPGSlot* PantsSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UEquipmentSlot* GlovesSlot;
+	class URPGSlot* GlovesSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
-	class UEquipmentSlot* ShoesSlot;
+	class URPGSlot* ShoesSlot;
 
 public: 
-	UEquipmentSlot* GetEquipmentSlot(EGEARTYPE Type);
+	class	URPGSlot* GetEquipmentSlot(EGEARTYPE Type);
 
 	
 };

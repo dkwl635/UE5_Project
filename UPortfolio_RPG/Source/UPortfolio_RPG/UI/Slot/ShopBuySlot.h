@@ -19,18 +19,17 @@ public:
 	virtual void Init();
 
 public:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class URPGSlotUserWidget* ItemSlot;
-	
+	class UImage* ItemImage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* ItemCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* ItemNameText;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* PriceText;
 
 public:
-	TWeakObjectPtr<class UShopSlotData> BuySlotData;
 	struct FItemData* BuyItemInfo;
 	FName ItemRowName;
 	int32 BuyPrice;
