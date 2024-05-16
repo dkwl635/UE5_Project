@@ -10,6 +10,7 @@
 #include "InputActionValue.h"
 #include "Data/InputDataConfig.h"
 #include "Subsystem/CoolTimeSubsystem.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
@@ -34,6 +35,31 @@ void ABasicPlayerController::BeginPlay()
 	PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 }
 
+void ABasicPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	PawnSpringArm->TargetArmLength = FMath::Lerp(PawnSpringArm->TargetArmLength,
+		TargetArmLength, DeltaSeconds * 3.f);
+}
+
+void ABasicPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
+	PlayerCharacter = Cast<APlayerCharacter>(aPawn);
+	if (IsValid(PlayerCharacter))
+	{
+		/*UDataSubsystem* DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
+		const FCharacterDataTableRow* CharacterDataTableRow = DataSubsystem->FindChacter(TEXT("Soldier3"));
+
+		KDT2Character->SetData(CharacterDataTableRow);*/
+	}
+
+	PawnSpringArm = aPawn->GetComponentByClass<USpringArmComponent>();
+	TargetArmLength = PawnSpringArm->TargetArmLength;
+}
+
 void ABasicPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -49,6 +75,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_W);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->ZoomWheel, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnZoomWheel);
 	}
 
 }
@@ -140,4 +167,12 @@ void ABasicPlayerController::OnSpace()
 void ABasicPlayerController::OnOpenSkillUI()
 {
 
+}
+
+void ABasicPlayerController::OnZoomWheel(const FInputActionValue& InputActionValue)
+{
+	const float ActionValue = InputActionValue.Get<float>();
+
+	TargetArmLength += ActionValue * -50.f;
+	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1200.f);
 }

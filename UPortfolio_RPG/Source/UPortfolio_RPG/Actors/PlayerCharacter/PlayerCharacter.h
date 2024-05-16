@@ -9,6 +9,8 @@
 struct FInputActionValue;
 class UStatusComponent;
 class USkillComponent;
+class USpringArmComponent;
+class UCameraComponent;
 struct FSkillDataTableRow;
 struct FStatusDataTableRow;
 
@@ -59,12 +61,13 @@ public:
 public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 	USkillComponent* GetSkillComponent() { return SkillComponent; }
+	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArmComponent;
+	USpringArmComponent* SpringArmComponent;
 	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* CameraComponent;
+	UCameraComponent* CameraComponent;
 	UPROPERTY(EditAnywhere, Category = "Status")
 	UStatusComponent* StatusComponent;
 	UPROPERTY(EditAnywhere, Category = "Skill")

@@ -10,6 +10,7 @@ class UNiagaraSystem;
 struct FInputActionValue;
 class APlayerCharacter;
 class UCoolTimeSubsystem;
+class USpringArmComponent;
 
 UCLASS()
 class UPORTFOLIO_RPG_API ABasicPlayerController : public APlayerController
@@ -21,8 +22,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnPossess(APawn* aPawn) override;
 	virtual void SetupInputComponent() override;
 
 public:
@@ -36,8 +40,14 @@ protected:
 	void OnSkill_W();
 	void OnSpace();
 	void OnOpenSkillUI();
+	void OnZoomWheel(const FInputActionValue& InputActionValue);
 
 private:
 	FVector CachedDestination;
 	APlayerCharacter* PlayerCharacter;
+
+protected:
+	UPROPERTY()
+	USpringArmComponent* PawnSpringArm = nullptr;
+	float TargetArmLength = 500.f;
 };

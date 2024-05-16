@@ -47,4 +47,10 @@ UInputDataConfig::UInputDataConfig()
 		check(Asset.Succeeded());
 		OpenSkillUI = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_ZoomWheel.IA_ZoomWheel'") };
+		check(Asset.Succeeded());
+		ZoomWheel = Asset.Object;
+	}
 }

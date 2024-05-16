@@ -32,8 +32,6 @@ AEnemy::AEnemy()
   //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
-
-
     StatusWidget->SetupAttachment(SkeletalMeshComponent);
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -41,7 +39,6 @@ AEnemy::AEnemy()
     static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
-        
         StatusWidget->SetWidgetClass(UI_HUD.Class);
         StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
