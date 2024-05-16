@@ -115,6 +115,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (StatusComponent->GetCurrentHP() <= 0.f)
 		bIsDead = true;
+	else
+		bIsDead = false;
 }
 
 // Called to bind functionality to input

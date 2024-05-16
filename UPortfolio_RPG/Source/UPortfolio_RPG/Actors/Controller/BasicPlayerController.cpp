@@ -76,6 +76,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->ZoomWheel, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnZoomWheel);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->AddHP, ETriggerEvent::Started, this, &ABasicPlayerController::OnAddHP);
 	}
 
 }
@@ -100,8 +101,7 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 		CachedDestination = Hit.Location;
 	}
 
-	APawn* ControlledPawn = GetPawn();
-	if (ControlledPawn != nullptr && !PlayerCharacter->bIsDead)
+	if (PlayerCharacter != nullptr && !PlayerCharacter->bIsDead)
 	{
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 	}
@@ -175,4 +175,16 @@ void ABasicPlayerController::OnZoomWheel(const FInputActionValue& InputActionVal
 
 	TargetArmLength += ActionValue * -50.f;
 	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1200.f);
+}
+
+
+#include "Components/StatusComponent.h"
+void ABasicPlayerController::OnAddHP()
+{
+	UStatusComponent* Status = PlayerCharacter->GetStatusComponent();
+	if (Status)
+	{
+		float HP = Status->GetCurrentHP();
+		Status->SetCurrentHP(HP + 10);
+	}
 }

@@ -7,9 +7,8 @@
 #include "Enemy/Enemy.h"
 #include "EnemyPool.generated.h"
 
-/**
- * 
- */
+class AEnemyAIController;
+
 UCLASS()
 class UPORTFOLIO_RPG_API UEnemyPool : public UObject
 {
@@ -25,6 +24,7 @@ public:
     void Delete(AEnemy* InEnemy);
 
     TArray<AEnemy*> Pool;
+    TArray<AEnemyAIController*> ControllerPool;
     TArray<AEnemy*> ActiveEnemies;
 
 private:

@@ -53,4 +53,10 @@ UInputDataConfig::UInputDataConfig()
 		check(Asset.Succeeded());
 		ZoomWheel = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_AddHP.IA_AddHP'") };
+		check(Asset.Succeeded());
+		AddHP = Asset.Object;
+	}
 }

@@ -3,6 +3,7 @@
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
+#include "Enemy/EnemyPool.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -45,7 +46,7 @@ AEnemy::AEnemy()
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
-    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+    AutoPossessAI = EAutoPossessAI::Spawned;
 }
 
 AEnemy::~AEnemy()
@@ -57,6 +58,19 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
     Init();
+    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+    if (StatusUserWidget)
+    {
+        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+        if (EnemyStatusUserWidget)
+        {
+            EnemyStatusUserWidget->SetHP(this);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Error"));
+        }
+    }
 }
 
 void AEnemy::OnConstruction(const FTransform& Transform)
@@ -99,33 +113,16 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    float CurrentHP = EnemyHP;
-    float NewHP = CurrentHP - Damage;
+    float NewHP = EnemyState->GetCurrentHP() - Damage;
 
-    EnemyHP = NewHP;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 
+    EnemyState->SetCurrentHP(NewHP);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
-    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
-    if (StatusUserWidget)
-    {
-        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
-        if (EnemyStatusUserWidget)
-        {
-            EnemyStatusUserWidget->SetHP(NewHP, MaxHP);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Error"));
-        }
-
-    }
-
-    if (EnemyHP <= 0.f)
+    if (EnemyState->GetCurrentHP() <= 0.f)
     {
         EnemyAnim->SetDeadAnim();
         IsDead = true;
-        if(!EnemyAnim->Montage_IsPlaying(nullptr))
-            Destroy();
+        Pool->Delete(this);
     }
 
     return Damage;
@@ -156,7 +153,8 @@ void AEnemy::AttackCheck()
             ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
             if (Player)
             {
-                UGameplayStatics::ApplyDamage(Player, EnemyAttackDamage, GetController(), this, UDamageType::StaticClass());
+                float Damage = EnemyState->GetAttackDamage();
+                UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
             }
         }
         else
@@ -189,6 +187,11 @@ bool AEnemy::Init()
     return true;
 }
 
+void AEnemy::Reset()
+{
+    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+}
+
 bool AEnemy::AddEnemy(const FName& InKey)
 {
     FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
@@ -206,14 +209,11 @@ bool AEnemy::AddEnemy(const FName& InKey)
         SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
         SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
 
-        EnemyHP = InData->EnemyHP;
-        MaxHP = InData->EnemyHP;
+        EnemyState->SetMaxHP(InData->EnemyHP);
+        EnemyState->SetCurrentHP(InData->EnemyHP);
+        EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
-        EnemyAttackDamage = InData->EnemyAttackDamage;
-
-
-        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP);
-        UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
         StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));

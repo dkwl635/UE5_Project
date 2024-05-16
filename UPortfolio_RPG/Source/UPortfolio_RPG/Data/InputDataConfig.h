@@ -27,4 +27,6 @@ public:
 	UInputAction* Space = nullptr;
 	UInputAction* OpenSkillUI = nullptr;
 	UInputAction* ZoomWheel = nullptr;
+	// Test
+	UInputAction* AddHP = nullptr;
 };
