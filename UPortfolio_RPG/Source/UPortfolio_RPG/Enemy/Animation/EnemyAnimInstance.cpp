@@ -9,18 +9,8 @@ UEnemyAnimInstance::UEnemyAnimInstance()
 	IsSpawn = false;
 	IsDead = false;
 	Speed = 0.f;
-	/*static ConstructorHelpers::FObjectFinder<UAnimMontage> Attack_Montage(TEXT("/Script/Engine.AnimMontage'/Game/LJY/Animation/PrimeAnimMontage.PrimeAnimMontage'"));
-	if (Attack_Montage.Succeeded())
-	{
-		AttackMontage = Attack_Montage.Object;
-	}*/
-
 }
 
-void UEnemyAnimInstance::NativeInitializeAnimation()
-{
-	
-}
 
 void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -29,21 +19,42 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		FVector Velocity = Pawn->Movement->Velocity;
 		Speed = FVector(Velocity.X, Velocity.Y, 0).Size();
+		IsDead = Pawn->IsDead;
+		IsSpawn = Pawn->IsSpawn;
+		IsAttacking = Pawn->IsAttacking;
 	}
-
 }
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
-	Montage_Play(AttackMontage, 1.0f);
+	if (AttackMontage)
+	{
+		FOnMontageEnded AttackMontageDelegate;
+		AttackMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnAttackMontageEnded);
+		Montage_Play(AttackMontage, 1.0f);
+		Montage_SetEndDelegate(AttackMontageDelegate, AttackMontage);
+	}
 }
 
-void UEnemyAnimInstance::SetFinishAnim()
+void UEnemyAnimInstance::PlaySpawnMontage()
+{
+	if (SpawnMontage)
+	{
+		FOnMontageEnded SpawnMontageDelegate;
+		SpawnMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnSpawnMontageEnded);
+		Montage_Play(SpawnMontage, 1.0f);
+		Montage_SetEndDelegate(SpawnMontageDelegate, SpawnMontage);
+	}
+}
+
+void UEnemyAnimInstance::OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsSpawn = true;
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Success!"));
 }
 
-void UEnemyAnimInstance::SetDeadAnim()
+void UEnemyAnimInstance::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsDead = true;
+	IsAttacking = false;
+	UE_LOG(LogTemp, Warning, TEXT("Attack Ended"));
 }

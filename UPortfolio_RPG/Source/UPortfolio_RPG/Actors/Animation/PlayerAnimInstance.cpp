@@ -4,11 +4,13 @@
 #include "Actors/Animation/PlayerAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Components/StatusComponent.h"
 
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
 	Speed = 0.;
 	bIsSpace = false;
+	HP = 1.f;
 }
 
 void UPlayerAnimInstance::NativeBeginPlay()
@@ -32,5 +34,8 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		Speed = Player->GetVelocity().Length();
 		bIsSpace = Player->bIsSpace;
+		UStatusComponent* Status = Player->GetStatusComponent();
+		if (Status)
+			HP = Status->GetCurrentHP();
 	}
 }

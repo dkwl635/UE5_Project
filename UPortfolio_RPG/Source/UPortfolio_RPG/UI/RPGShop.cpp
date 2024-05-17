@@ -7,15 +7,12 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/TextBlock.h"
 #include "UI/Slot/ShopBuySlot.h"
-#include "UI/Slot/Slotdata.h"
-#include "UI/Slot/ShopSellSlotData.h"
-#include "UI/Slot/InventorySlotData.h"
 #include "UI/PlayerUIComponent.h"
 #include "UI/RPGMainUserWidget.h"
-#include "UI/RPGSlotUserWidget.h"
 #include "UI/UIManager.h"
 #include "Item/ItemData.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "UI/RPGSlot.h"
 
 void URPGShop::Init()
 {
@@ -35,10 +32,13 @@ void URPGShop::Init()
 	for (int i = 0; i < SellSlotList.Num(); i++)
 	{
 		auto content = SellSlotList[i]->Content.Get();
-		URPGSlotUserWidget* ShopSlot = Cast<URPGSlotUserWidget>(content);
-		ShopSlot->Init();
+		URPGSlot* ShopSlot = Cast<URPGSlot>(content);
+		ShopSlot->RPGSlotType = ERPGSLOTTYPE::SHOP_SELLITEM;
+		ShopSlot->SlotIndex = i;
 
-		SellShopSlotDataList.Add(Cast<UShopSellSlotData>(ShopSlot->GetSlotData()));
+		ShopSlot->Option1 = -1; //ItmeInventory Index;
+		ShopSlot->Option2 = -1;	//ItemType;
+		ShopSlot->Option3 = -1;
 		SellShopSlotList.Add(ShopSlot);
 	}
 
@@ -48,10 +48,11 @@ void URPGShop::RefreshUI()
 {
 	if (ShopSwitcher->GetActiveWidgetIndex() == 0)
 	{
-
+		RefreshBuySlot();
 	}
 	else if (ShopSwitcher->GetActiveWidgetIndex() == 1)
 	{
+		RefreshSellSlot();
 		SetSellPrice();
 	}
 }
@@ -76,7 +77,6 @@ void URPGShop::HideSetUI()
 
 void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
 {
-	UDataSubsystem* DataTable = GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	int SlotCount = BuyShopSlotList.Num();
 	for (int i = 0; i < SlotCount; i++)
 	{
@@ -89,7 +89,7 @@ void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
 		else
 		{
 			FShopBuyItemData Data = ShopList[i];
-			FItemData* buyItem = DataTable->FindItem(Data.ItemInfo.RowName);
+			FItemData* buyItem = DataSubsystem->FindItem(Data.ItemInfo.RowName);
 			int32 Price = Data.Price;
 			int32 Count = Data.Count;
 
@@ -102,17 +102,15 @@ void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
 
 void URPGShop::BuyItem(UShopBuySlot* ShopSlot)
 {
-		UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-
-		int32 PlayerCoin = PlayerInven->GetPlayerCoin();
+		int32 PlayerCoin = PlayerInventorySubsystem->GetPlayerCoin();
 		if (PlayerCoin < ShopSlot->BuyPrice)
 		{
 			return;
 		}
 		PlayerCoin -= ShopSlot->BuyPrice;
-		PlayerInven->SetPlayerCoin(PlayerCoin);
-		
-		bool bBuy = PlayerInven->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
+		PlayerInventorySubsystem->SetPlayerCoin(PlayerCoin);
+	
+		bool bBuy = PlayerInventorySubsystem->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
 
 		GetPlayerUI()->GetRPGUI(ERPG_UI::INVENTORY)->RefreshUI();
 
@@ -123,8 +121,6 @@ URPGMainUserWidget* URPGShop::GetPlayerUI()
 	if (!PlayerUI.IsValid())
 	{
 		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		//	UPlayerUIComponent* Find = (UPlayerUIComponent*)(PlayerControll->GetPawn()->GetComponentByClass(UPlayerUIComponent::StaticClass()));
-		//UPlayerUIComponent* Find = PlayerControll->GetPawn()->FindComponentByClass<UPlayerUIComponent>();
 		PlayerUI = AUIManager::UIManager->PlayerUI;
 	}
 
@@ -135,35 +131,47 @@ URPGMainUserWidget* URPGShop::GetPlayerUI()
 
 
 
-bool URPGShop::CheckSellItem(URPGSlotUserWidget* OrginSlot)
+bool URPGShop::CheckSellItem(URPGSlot* OrginSlot)
 {
-	int SellCount = SellShopSlotDataList.Num();
+	int SellCount = SellShopSlotList.Num();
 	for (int i = 0; i < SellCount; i++)
 	{
-		if (SellShopSlotDataList[i]->OrginSlot == OrginSlot)
+		if (SellShopSlotList[i]->Option1 == OrginSlot ->SlotIndex
+			&& SellShopSlotList[i]->Option2 == OrginSlot->Option1)
 		{
-			return false;
+			return true;
 		}
 	}
 
-	return true;
+	return false;
+}
+
+URPGSlot* URPGShop::GetEmptySellSlot()
+{
+	int SellCount = SellShopSlotList.Num();
+	for (int i = 0; i < SellCount; i++)
+	{
+		if (SellShopSlotList[i]->Option1 == -1)
+		{
+			return SellShopSlotList[i].Get();
+		}
+	}
+	return nullptr;
+
 }
 
 void URPGShop::SellItem()
 {
-	UPlayerInventorySubsystem* PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	int32 PlayerCurrentCoin = PlayerInventorySubsystem->GetPlayerCoin() + SellItemPrice;
+	PlayerInventorySubsystem->SetPlayerCoin(PlayerCurrentCoin);
 	
-	int32 PlayerCurrentCoin = PlayerInven->GetPlayerCoin() + SellItemPrice;
-	PlayerInven->SetPlayerCoin(PlayerCurrentCoin);
-	
-	int SellCount = SellShopSlotDataList.Num();
+	int SellCount = SellShopSlotList.Num();
 	for (int i = 0; i < SellCount; i++)
 	{
-		if (SellShopSlotDataList[i]->IsValid())
+		if (SellShopSlotList[i]->Option1 >= 0)
 		{
-			UInventorySlotData* data = (UInventorySlotData*)SellShopSlotDataList[i]->OrginSlot->GetSlotData();		
-			//PlayerInven->RemoveItem(data->ItemData.Pin()->ItemType, data->SlotIndex, SellShopSlotDataList[i]->SellCount);
-			PlayerInven->RemoveItem(SellShopSlotDataList[i]->OrginSlot.Get(), 1);
+			EITEMTYPE ItemType = (EITEMTYPE)SellShopSlotList[i]->Option2;
+			PlayerInventorySubsystem->RemoveItem(ItemType, SellShopSlotList[i]->Option1);
 			SellShopSlotList[i]->ClearSlot();
 			SellShopSlotList[i]->RefreshUI();
 		}
@@ -183,25 +191,48 @@ void URPGShop::ClearSellPrice()
 void URPGShop::SetSellPrice()
 {
 	int NewPrice = 0;
-	int SellCount = SellShopSlotDataList.Num();
+	int SellCount = SellShopSlotList.Num();
 	for (int i = 0; i < SellCount; i++)
 	{
-		if (SellShopSlotDataList[i]->IsValid())
+		if (SellShopSlotList[i]->IsInValue())
 		{
-			UInventorySlotData* data = (UInventorySlotData*)SellShopSlotDataList[i]->OrginSlot->GetSlotData();
-			
-			if (data->IsValid())
+			EITEMTYPE ItemType = (EITEMTYPE)SellShopSlotList[i]->Option2;
+			FItemData* Data = nullptr;
+			if (ItemType == EITEMTYPE::GEAR)
 			{
-				int ItemCount = data->ItemData.Pin()->CurrentBundleCount;
-				int ItemPrice = data->ItemData.Pin()->SellPrice;
-
-				NewPrice += (ItemCount * ItemPrice);
+				Data = PlayerInventorySubsystem->GetGearItem(SellShopSlotList[i]->Option1);
 			}
-			
+			else
+			{
+				Data = PlayerInventorySubsystem->GetNormalItem(SellShopSlotList[i]->Option1);
+			}
+			int ItemCount = Data->CurrentBundleCount;
+			int ItemPrice = Data->SellPrice;
+
+			NewPrice += (ItemCount * ItemPrice);
 		}
 	}
 	SellPriceText->SetText(FText::AsNumber(NewPrice));
 	SellItemPrice = NewPrice;
+}
+
+void URPGShop::RefreshSellSlot()
+{
+	int SellCount = SellShopSlotList.Num();
+	for (int i = 0; i < SellCount; i++)
+	{
+		SellShopSlotList[i]->RefreshUI();
+	}
+
+}
+
+void URPGShop::RefreshBuySlot()
+{
+	int SlotCount = BuyShopSlotList.Num();
+	for (int i = 0; i < SlotCount; i++)
+	{
+		BuyShopSlotList[i]->RefreshUI();
+	}
 }
 
 

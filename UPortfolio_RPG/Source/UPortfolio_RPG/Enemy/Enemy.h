@@ -16,6 +16,11 @@
 #include "Animation/EnemyAnimInstance.h"
 #include "Enemy.generated.h"
 
+class UEnemyPool;
+class UWidgetComponent;
+
+
+
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
 {
@@ -41,39 +46,20 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	UCapsuleComponent* CapsuleComponent;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* SkeletalMeshComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = UI)
-	class UWidgetComponent* HPBarWidget;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	UParticleSystem* ParticleAttackSystem;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	UParticleSystemComponent* ParticleAttackSystemComponent;
-
 	UPROPERTY(EditAnywhere)
 	UEnemyAnimInstance* EnemyAnim;
-
-	UPROPERTY()
-	UStatusComponent* EnemyState;
-
 	UPROPERTY(EditAnywhere)
+	UStatusComponent* EnemyState;
+	UPROPERTY()
 	UWidgetComponent* StatusWidget;
-
 	UPROPERTY()
 	UStatusbarUserWidget* EnemyStatusUserWidget;
-
-	UPROPERTY()
-	float MaxHP;
-
-	UPROPERTY()
-	float EnemyHP;
-
-	UPROPERTY()
-	float EnemyAttackDamage;
 
 public:										 
 	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
@@ -85,24 +71,32 @@ public:
 	void AttackCheck();
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-
 	// montage
-	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	//UFUNCTION()
+	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	// particle
 	void PlayAttackParticle();
 
 public:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool IsAttacking; 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	bool IsDead;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	bool IsSpawn;
+	float PurificationScore = 0.f;
 
+	UEnemyAnimInstance* GetAnimInstance() { return EnemyAnim; }
+	UStatusComponent* GetStatusComponent() { return EnemyState; }
 
 public:
 	UDataSubsystem* DataSubsystem;
 
 	bool Init();
 	bool AddEnemy(const FName& InKey);
+	void SetPool(UEnemyPool* InPool) { Pool = InPool; }
+	void Reset();
 
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
@@ -110,4 +104,5 @@ public:
 	UPROPERTY()
 	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Green"), TEXT("Black") };
 
+	UEnemyPool* Pool = nullptr;
 };

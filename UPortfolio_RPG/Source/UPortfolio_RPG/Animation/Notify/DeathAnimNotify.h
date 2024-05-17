@@ -6,9 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "DeathAnimNotify.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class UPORTFOLIO_RPG_API UDeathAnimNotify : public UAnimNotify
 {

@@ -39,3 +39,15 @@ enum class EGEARTYPE : uint8
 
 };
 
+UENUM(BlueprintType)
+enum class ESTAT : uint8
+{
+   None = 0,
+   HP = 1,
+   ATK = 2,
+
+
+};
+
+
+

@@ -2,9 +2,8 @@
 
 
 #include "UI/RPGQuickSlotsUserWidget.h"
-#include "Slot/QuickItemSlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
-#include "UI/RPGSlotUserWidget.h"
+#include "UI/RPGSlot.h"
 
 void URPGQuickSlotsUserWidget::Init()
 {
@@ -14,27 +13,29 @@ void URPGQuickSlotsUserWidget::Init()
 	for (int8 i = 0; i < Childs.Num(); i++)
 	{
 		auto content = Childs[i]->Content.Get();
-		URPGSlotUserWidget* SlotWidget = Cast<URPGSlotUserWidget>(content);
+		URPGSlot* SlotWidget = Cast<URPGSlot>(content);
 		if (!SlotWidget)
 		{
 			continue;
 		}
 
-		SlotWidget->Init();
-		UQuickItemSlotData* data = (UQuickItemSlotData*)SlotWidget->GetSlotData();
-		data->Helper = this;
-		
-
+		SlotWidget->SlotIndex = i;
 		SlotWidget->RefreshUI();
 		QuickSlotsIndex.Add(i, SlotWidget);
 	
-	
-
-		Inven->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
+		PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
 
 	}
 
 
+}
+
+void URPGQuickSlotsUserWidget::RefreshUI()
+{
+	for (int i = 0; i < QuickSlotsIndex.Num(); i++)
+	{
+		QuickSlotsIndex[i]->RefreshUI();
+	}
 }
 
 

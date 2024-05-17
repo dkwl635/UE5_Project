@@ -2,13 +2,25 @@
 
 
 #include "Enemy/UI/StatusbarUserWidget.h"
+#include "Enemy/Enemy.h"
+#include "Components/StatusComponent.h"
 
-void UStatusbarUserWidget::SetHP(const float CurrentHP, const float MaxHP)
+void UStatusbarUserWidget::SetHP(AEnemy* InEnemy)
 {
-	if (FMath::IsNearlyZero(MaxHP))
+	Owner = InEnemy;
+	UStatusComponent* Status = InEnemy->GetStatusComponent();
+	if (FMath::IsNearlyZero(Status->GetMaxHP()))
 	{
 		ensure(false);
 	}
-	const float Percent = CurrentHP / MaxHP;
+	const float Percent = Status->GetCurrentHP() / Status->GetMaxHP();
 	HPBar->SetPercent(Percent);
+}
+
+void UStatusbarUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (Owner)
+		SetHP(Owner);
 }

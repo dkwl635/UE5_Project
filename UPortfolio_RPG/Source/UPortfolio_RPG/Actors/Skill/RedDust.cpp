@@ -3,6 +3,11 @@
 
 #include "Actors/Skill/RedDust.h"
 #include "Enemy/Enemy.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actors/Controller/BasicPlayerController.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Components/StatusComponent.h"
+#include "Engine/DamageEvents.h"
 
 ARedDust::ARedDust()
 {
@@ -12,6 +17,11 @@ ARedDust::ARedDust()
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
 		ensure(Asset.Object);
 		StaticMesh->SetStaticMesh(Asset.Object);
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/M_Crunch_Impact_02.M_Crunch_Impact_02'"));
+		ensure(Asset.Object);
+		StaticMesh->SetMaterial(0, Asset.Object);
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/RedDust_Montage.RedDust_Montage'"));
@@ -36,7 +46,7 @@ ARedDust::ARedDust()
 	Sk_Name = TEXT("Red Dust");
 	Sk_Desc = FText::FromString(TEXT("검을 올려쳐 공격한다."));
 	Sk_CoolTime = 3.f;
-	Sk_Damage = 10.f;
+	Sk_Damage = 50.f;
 	Sk_ManaUsage = 5.f;
 }
 
@@ -53,18 +63,17 @@ void ARedDust::ActiveSkill(UAnimInstance* AnimInstance)
 
 }
 
-float ARedDust::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	Owner = DamageCauser;
-
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
 void ARedDust::OnAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
+	float Damage = Sk_Damage + Player->GetStatusComponent()->GetAttackDamage();
+
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if (Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Red Dust Hit!"));
+		UE_LOG(LogTemp, Warning, TEXT("RedDust Hit!"));
+		FDamageEvent DamageEvent;
+		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
 	}
 }

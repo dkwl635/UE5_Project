@@ -20,7 +20,7 @@
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	{
 		SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -42,7 +42,7 @@ APlayerCharacter::APlayerCharacter()
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
-		SpringArmComponent->TargetArmLength = 800.f;
+		SpringArmComponent->TargetArmLength = 1200.f;
 		SpringArmComponent->bInheritPitch = false;
 		SpringArmComponent->bInheritRoll = false;
 		SpringArmComponent->bInheritYaw = false;
@@ -58,6 +58,7 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxAcceleration = 10000.f;
 	}
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void APlayerCharacter::SetAnimData(const FDataTableRowHandle& InDataTableRowHandle)
@@ -112,6 +113,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (StatusComponent->GetCurrentHP() <= 0.f)
+		bIsDead = true;
+	else
+		bIsDead = false;
+	GetCharacterMovement()->MaxWalkSpeed = StatusComponent->GetSpeed();
 }
 
 // Called to bind functionality to input
@@ -138,13 +144,13 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 		}
 		else
 		{
+			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
+			LookAtMouseCursor(HitPoint);
+			if (Skill)
+				Skill->ActiveSkill(Animation);
 		}
 	}
-
-	LookAtMouseCursor(HitPoint);
-	if(Skill)
-		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
@@ -163,13 +169,13 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 		}
 		else
 		{
+			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
+			LookAtMouseCursor(HitPoint);
+			if (Skill)
+				Skill->ActiveSkill(Animation);
 		}
 	}
-
-	LookAtMouseCursor(HitPoint);	
-	if (Skill)
-		Skill->ActiveSkill(Animation);
 }
 
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
@@ -206,15 +212,15 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 #include "Engine/DamageEvents.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
-	float Radius = 80.f;
-	FVector Start = GetActorLocation() + GetActorForwardVector() * 120.f;
+	float Radius = 150.f;
+	FVector Start = GetActorLocation() + GetActorForwardVector() * 150.f;
 	TArray<AActor*> IgnoreActors;
 	TArray<FHitResult> HitResult;
 	TSet<AActor*> AlreadyDamagedActors;
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
 		ETraceTypeQuery::TraceTypeQuery1, false,
-		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
 	if (bIsHit)
 	{
 		for (auto& Hit : HitResult)
@@ -245,10 +251,10 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	float CurrentHP = StatusComponent->GetHP();
-	float NewHP = CurrentHP - StatusComponent->GetAttackDamage();
-	StatusComponent->SetHP(NewHP);
-	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetHP());
+	float CurrentHP = StatusComponent->GetCurrentHP();
+	float NewHP = CurrentHP - Damage;
+	StatusComponent->SetCurrentHP(NewHP);
+	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetCurrentHP());
 
 	return Damage;
 }

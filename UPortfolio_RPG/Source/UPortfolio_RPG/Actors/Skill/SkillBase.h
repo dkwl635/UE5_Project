@@ -16,9 +16,6 @@ class UPORTFOLIO_RPG_API ASkillBase : public AActor
 public:
 	virtual void ActiveSkill(UAnimInstance* AnimInstance);
 
-protected:
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
-
 public:
 	UPROPERTY(EditAnywhere)
 	FName Sk_Name;

@@ -3,6 +3,7 @@
 
 #include "Animation/Notify/DeathAnimNotify.h"
 #include "Enemy/Enemy.h"
+#include "Enemy/EnemyPool.h"
 
 void UDeathAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -11,6 +12,8 @@ void UDeathAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
     AEnemy* Enemy = Cast<AEnemy>(MeshComp->GetOwner());
     if (Enemy)
     {
-        Enemy->Destroy();
+        UEnemyPool* Pool = Enemy->Pool;
+        if(Pool)
+            Pool->Delete(Enemy);
     }
 }

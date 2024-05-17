@@ -8,21 +8,16 @@
 void ASkillBase::ActiveSkill(UAnimInstance* AnimInstance)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (Player->GetStatusComponent()->GetMP() < Sk_ManaUsage)
+	if (Player->GetStatusComponent()->GetCurrentMP() < Sk_ManaUsage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not Enough Mana"));
 		return;
 	}
 	else
 	{
-		float MP = Player->GetStatusComponent()->GetMP() - Sk_ManaUsage;
-		Player->GetStatusComponent()->SetMP(MP);
+		float MP = Player->GetStatusComponent()->GetCurrentMP() - Sk_ManaUsage;
+		Player->GetStatusComponent()->SetCurrentMP(MP);
 	}
 	if(Montage)
 		AnimInstance->Montage_Play(Montage, 1.2f);
-}
-
-float ASkillBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

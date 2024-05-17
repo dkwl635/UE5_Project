@@ -73,6 +73,9 @@ public:
 	UPROPERTY(EditAnyWhere)
 	EGEARTYPE EGearType = EGEARTYPE::None;
 
+	UPROPERTY(EditAnyWhere)
+	ESTAT EStat  = ESTAT::HP;
+
 	UPROPERTY(EditAnywhere)
 	int16 GearValue = 0;
 
@@ -109,4 +112,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	int32 Count = 0;
 
+};
+
+
+
+struct UPORTFOLIO_RPG_API ShowBoxData 
+{
+	UTexture2D* ItemImage = nullptr;
+	FText ItemDesc;
+	FName ItemName = "";
 };

@@ -15,8 +15,8 @@ class UPORTFOLIO_RPG_API UEnemyMainWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-	void SetHP(const float CurrentHP, const float MaxHP);
+//public:
+//	void SetHP(const float CurrentHP, const float MaxHP);
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))

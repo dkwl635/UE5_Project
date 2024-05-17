@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "DataSubsystem/DataSubsystem.h"
-#include "UI/Slot/SlotData.h"
+
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/Item.h"
 
@@ -24,6 +24,15 @@ UDataSubsystem::UDataSubsystem()
 			UE_LOG(LogTemp, Warning, TEXT("Succens DT_Potion"));
 		}
 	}
+	{
+		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/KJW/DT_GEARDATA.DT_GEARDATA'") };
+		ensure(Asset.Object);
+		DT_Gear = Asset.Object;
+		if (Asset.Object)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Succens DT_GEARITEM"));
+		}
+	}
 
 
 	//Enemy
@@ -43,40 +52,20 @@ UDataSubsystem::UDataSubsystem()
 UDataSubsystem::~UDataSubsystem()
 {
 	UItem::DataSubsystem = nullptr;
-	USlotData::ClearStaticMember();
+	
+	DataSubsystem = nullptr;
+}
 
+void UDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	DataSubsystem = this;
 }
 
 void UDataSubsystem::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UDataSubsystem->Init"));
-	if (bInit)
-	{
-		return;
-	}
-	if (UItem::DataSubsystem == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UItem->Init"));
-		UItem::DataSubsystem = this;
-	}
 	
-
-	//�κ��� ���Ӹ�忡 ������ ����ؾ� ��
-	// GetWorld()->GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	/*if (Inven->Init())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inven->Init"));
-	}*/
-
-	{
-		USlotData::SlotWorld = GetWorld();
-		USlotData::InventorySubsystem = Inven;
-	}
-	
-
-	UE_LOG(LogTemp, Warning, TEXT("World->Init"));
-		bInit = true;
 
 
 }
@@ -102,6 +91,13 @@ FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 	
 		UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy"));
 	
+	return Row;
+}
+
+FGearData* UDataSubsystem::FindGearData(const FName& InKey)
+{
+	FGearData* Row = DT_Gear->FindRow<FGearData>(InKey, TEXT(""));
+	ensure(Row);
 	return Row;
 }
 

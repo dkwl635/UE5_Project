@@ -3,12 +3,14 @@
 #include "Enemy/Enemy.h"
 #include "AI/EnemyAIController.h"
 #include "Components/WidgetComponent.h"
+#include "Enemy/EnemyPool.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()
 {
     IsAttacking = false;
+    IsDead = false;
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
@@ -31,8 +33,6 @@ AEnemy::AEnemy()
   //  SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
-
-
     StatusWidget->SetupAttachment(SkeletalMeshComponent);
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -40,14 +40,13 @@ AEnemy::AEnemy()
     static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
-        
         StatusWidget->SetWidgetClass(UI_HUD.Class);
         StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
     }
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
-    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+    AutoPossessAI = EAutoPossessAI::Spawned;
 }
 
 AEnemy::~AEnemy()
@@ -59,6 +58,19 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
     Init();
+    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+    if (StatusUserWidget)
+    {
+        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+        if (EnemyStatusUserWidget)
+        {
+            EnemyStatusUserWidget->SetHP(this);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Error"));
+        }
+    }
 }
 
 void AEnemy::OnConstruction(const FTransform& Transform)
@@ -71,23 +83,16 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
+    if (PlayerController && !IsDead && !IsSpawn)
     {
-        // �÷��̾� ĳ������ ��ġ ��������
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
-
-        // ������ ��ġ ��������
         FVector MonsterLocation = GetActorLocation();
-
-        // �÷��̾ ���ϴ� ���� ���
         FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
-        DirectionToPlayer.Z = 0.f; // Z �� ���� �����Ͽ� ���� �������θ� ȸ���ϵ��� ��
+        DirectionToPlayer.Z = 0.f;
 
-        // ��ǥ ȸ���� ���
         FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
-        MonsterRotation.Yaw -= 90.0f; //�÷��̾�� ������� �´� ȸ�� ���� �־������
+        MonsterRotation.Yaw -= 90.0f;
 
-        // ��ǥ ȸ���� ����
         SetActorRotation(MonsterRotation);
     }
 }
@@ -97,34 +102,21 @@ void AEnemy::PostInitializeComponents()
     Super::PostInitializeComponents();
 }
 
+
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    float CurrentHP = EnemyHP;
-    float NewHP = CurrentHP - EnemyState->GetAttackDamage();
+    float NewHP = EnemyState->GetCurrentHP() - Damage;
 
-    EnemyHP = NewHP;
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP); 
+    EnemyState->SetCurrentHP(NewHP);
+    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
-    UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
-    if (StatusUserWidget)
+    if (EnemyState->GetCurrentHP() <= 0.f)
     {
-        EnemyStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
-        if (EnemyStatusUserWidget)
-        {
-            EnemyStatusUserWidget->SetHP(NewHP, MaxHP);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Error"));
-        }
-
-    }
-
-    if (EnemyHP <= 0.f)
-    {
-        EnemyAnim->SetDeadAnim();
+        GetController()->StopMovement();
+        IsDead = true;
+        
     }
 
     return Damage;
@@ -133,6 +125,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 void AEnemy::Attack()
 {
     if (IsAttacking) return;
+    if (IsDead) return;
 
     EnemyAnim->PlayAttackMontage();
     IsAttacking = true;
@@ -155,7 +148,8 @@ void AEnemy::AttackCheck()
             ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
             if (Player)
             {
-                UGameplayStatics::ApplyDamage(Player, EnemyAttackDamage, GetController(), this, UDamageType::StaticClass());
+                float Damage = EnemyState->GetAttackDamage();
+                UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
             }
         }
         else
@@ -163,12 +157,6 @@ void AEnemy::AttackCheck()
             UE_LOG(LogTemp, Warning, TEXT("NoAttackRange"));
         }
     }
-}
-
-void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-    IsAttacking = false;
-    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
 }
 
 void AEnemy::PlayAttackParticle()
@@ -188,6 +176,15 @@ bool AEnemy::Init()
     return true;
 }
 
+void AEnemy::Reset()
+{
+    IsAttacking = false;
+    IsDead = false;
+    IsSpawn = false;
+    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+    PurificationScore = 0.f;
+}
+
 bool AEnemy::AddEnemy(const FName& InKey)
 {
     FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
@@ -205,14 +202,11 @@ bool AEnemy::AddEnemy(const FName& InKey)
         SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
         SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
 
-        EnemyHP = InData->EnemyHP;
-        MaxHP = InData->EnemyHP;
+        EnemyState->SetMaxHP(InData->EnemyHP);
+        EnemyState->SetCurrentHP(InData->EnemyHP);
+        EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
-        EnemyAttackDamage = InData->EnemyAttackDamage;
-
-
-        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyHP);
-        UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), MaxHP);
+        Movement->MaxSpeed = InData->EnemySpeed;
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
         StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
@@ -225,16 +219,8 @@ bool AEnemy::AddEnemy(const FName& InKey)
         }
         ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
 
-
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-        if (EnemyAnim != nullptr)
-        {
-               EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Anim Cast Error!!"));
-        }
+        ensure(EnemyAnim);
 
         return true;
     }

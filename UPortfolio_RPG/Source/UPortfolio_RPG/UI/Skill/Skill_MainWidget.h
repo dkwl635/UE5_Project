@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Skill/SkillInterfaceUserWidget.h"
 #include "UI/Skill/SpaceCoolTimerWidget.h"
+#include "UI/PlayerStatus/PlayerStatusBarUserWidget.h"
 #include "Skill_MainWidget.generated.h"
 
 
@@ -27,4 +28,8 @@ protected:
 	USkillInterfaceUserWidget* Sk_Interface;
 	UPROPERTY(meta=(BindWidget))
 	USpaceCoolTimerWidget* SpaceCoolTimer;
+	UPROPERTY(meta=(BindWidget))
+	UPlayerStatusBarUserWidget* HPBar;
+	UPROPERTY(meta = (BindWidget))
+	UPlayerStatusBarUserWidget* MPBar;
 };

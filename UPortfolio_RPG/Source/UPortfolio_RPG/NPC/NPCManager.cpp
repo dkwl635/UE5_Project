@@ -27,7 +27,6 @@ void ANPCManager::BeginPlay()
 	NPCTalkBoxUserwidget->NPCManager = this;
 	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
 
-
 }
 
 void ANPCManager::BeginOverlapPlayer(ANPC* Target)
@@ -50,12 +49,7 @@ URPGMainUserWidget* ANPCManager::GetPlayerUI()
 {
 	if (!PlayerUI.IsValid())
 	{
-		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	//	UPlayerUIComponent* Find = (UPlayerUIComponent*)(PlayerControll->GetPawn()->GetComponentByClass(UPlayerUIComponent::StaticClass()));
-		UPlayerUIComponent* Find = PlayerControll->GetPawn()->FindComponentByClass<UPlayerUIComponent>();
 		PlayerUI = AUIManager::UIManager->PlayerUI;
-		
-		//PlayerUI = Find->PlayerUI;
 	}
 
 	return PlayerUI.Get();
@@ -63,10 +57,20 @@ URPGMainUserWidget* ANPCManager::GetPlayerUI()
 
 void ANPCManager::StartInteractiorNPC()
 {
+	if (!CurrentNPC.IsValid())
+	{
+		return;
+	}
+
 	if (bInteractior == true)
 	{
 		return;
 	}
+
+	if (GetPlayerUI())
+	{
+		GetPlayerUI()->RPGUI->AddChildToCanvas(NPCTalkBoxUserwidget);
+		}
 	//Execute_ReceiveActiveInteractiorBox();
 	ReceiveStartInteractiorNPC();
 
@@ -92,6 +96,7 @@ void ANPCManager::InteractiorNPC()
 		if (GetPlayerUI())
 		{
 			GetPlayerUI()->RPGUI->AddChildToCanvas(NPCTalkBoxUserwidget);
+			
 			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(NPCTalkBoxUserwidget->Slot);
 			Slot->SetZOrder(NPCZOrder);		
 		}

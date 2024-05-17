@@ -5,6 +5,7 @@
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "Enemy/Enemy.h"
 
 const FName AEnemyAIController::TargetKey(TEXT("Target"));
 const FName AEnemyAIController::TargetActorKey(TEXT("TargetActor"));
@@ -42,6 +43,8 @@ void AEnemyAIController::OnRepeatTimer()
 {
 	auto CurrentPawn = GetPawn();
 	ensure(CurrentPawn);
+	AEnemy* Enemy = Cast<AEnemy>(CurrentPawn);
+	ensure(Enemy);
 
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(GetWorld()); //���忡 ��ġ�� �� �׺�޽� �о����
 	if (NavSystem == nullptr) return;

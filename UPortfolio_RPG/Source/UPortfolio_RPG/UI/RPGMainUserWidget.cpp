@@ -2,21 +2,15 @@
 
 
 #include "UI/RPGMainUserWidget.h"
-#include "UI/RPGSlotUserWidget.h"
-#include "UI/Slot/SlotData.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
+#include "Components/TextBlock.h"
 #include "UIEnum.h"
 #include "UI/ItemInfoUserWdiget.h"
 #include "Item/ItemData.h"
 #include "Math/UnrealMathUtility.h"
 
-TWeakObjectPtr<UPlayerInventorySubsystem> URPGMainUserWidget::GetPlayerInven()
-{
-    PlayerInven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-    return PlayerInven;
-}
 
 void URPGMainUserWidget::Init()
 {
@@ -133,6 +127,11 @@ UCanvasPanelSlot* URPGMainUserWidget::GetCanvasPanel(ERPG_UI Type)
 URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 {
     auto UI = GetRPGUI(Type);
+    if (UI->GetVisibility() == ESlateVisibility::Collapsed)
+    {
+        return nullptr;
+    }
+
     UI->RefreshUI();
 
     return UI;
@@ -140,14 +139,14 @@ URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 
 void URPGMainUserWidget::PlayerGoodsRefresh()
 {
-    int32 PlayerGold = GetPlayerInven()->GetPlayerGold();
-    int32 PlayerCoin = GetPlayerInven()->GetPlayerCoin();
+    int32 PlayerGold = PlayerInventorySubsystem->GetPlayerGold();
+    int32 PlayerCoin = PlayerInventorySubsystem->GetPlayerCoin();
 
     GoldTextBlock->SetText(FText::AsNumber(PlayerGold));
     CoinTextBlock->SetText(FText::AsNumber(PlayerCoin));
 }
 
-void URPGMainUserWidget::ShowItemInfoBox(FVector2D SpawnPos , FItemData* Data)
+void URPGMainUserWidget::ShowItemInfoBox(FVector2D SpawnPos , ShowBoxData Data)
 {
     ItemBoxPanel->SetVisibility(ESlateVisibility::HitTestInvisible);
     FVector2D Pos = GetShowItemPos(SpawnPos);

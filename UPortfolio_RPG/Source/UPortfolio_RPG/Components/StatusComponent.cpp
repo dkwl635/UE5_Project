@@ -28,8 +28,11 @@ void UStatusComponent::SetStatusData(const FStatusDataTableRow* InData)
 	ensure(InData);
 	if (!InData) { return; }
 
-	HP = InData->HP;
-	MP = InData->MP;
+	MaxHP = InData->MaxHP;
+	CurrentHP = MaxHP;
+	MaxMP = InData->MaxMP;
+	CurrentMP = MaxMP;
 	AttackDamage = InData->AttackDamage;
+	Speed = InData->Speed;
 }
 

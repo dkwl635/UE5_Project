@@ -3,7 +3,7 @@
 
 #include "Enemy/UI/EnemyMainWidget.h"
 
-void UEnemyMainWidget::SetHP(const float CurrentHP, const float MaxHP)
-{
-	EnemyStatusBar->SetHP(CurrentHP, MaxHP);
-}
+//void UEnemyMainWidget::SetHP(const float CurrentHP, const float MaxHP)
+//{
+//	EnemyStatusBar->SetHP(CurrentHP, MaxHP);
+//}
