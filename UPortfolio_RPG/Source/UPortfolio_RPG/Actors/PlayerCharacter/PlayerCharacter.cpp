@@ -117,6 +117,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		bIsDead = true;
 	else
 		bIsDead = false;
+	GetCharacterMovement()->MaxWalkSpeed = StatusComponent->GetSpeed();
 }
 
 // Called to bind functionality to input
@@ -211,8 +212,8 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 #include "Engine/DamageEvents.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
-	float Radius = 80.f;
-	FVector Start = GetActorLocation() + GetActorForwardVector() * 120.f;
+	float Radius = 150.f;
+	FVector Start = GetActorLocation() + GetActorForwardVector() * 150.f;
 	TArray<AActor*> IgnoreActors;
 	TArray<FHitResult> HitResult;
 	TSet<AActor*> AlreadyDamagedActors;

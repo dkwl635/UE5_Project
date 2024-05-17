@@ -17,6 +17,8 @@ struct UPORTFOLIO_RPG_API FStatusDataTableRow : public FTableRowBase
 	float MaxMP;
 	UPROPERTY(EditAnywhere)
 	float AttackDamage;
+	UPROPERTY(EditAnywhere)
+	float Speed;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -46,6 +48,8 @@ public:
 	void SetCurrentMP(float InMP) { CurrentMP = InMP; }
 	float GetAttackDamage() { return AttackDamage; }
 	void SetAttackDamage(float Damage) { AttackDamage = Damage; }
+	float GetSpeed() { return Speed; }
+	void SetSpeed(float InSpeed) { Speed = InSpeed; }
 	void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
 	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
@@ -60,6 +64,8 @@ protected:
 	float CurrentMP;
 	UPROPERTY(EditAnywhere)
 	float AttackDamage;
+	UPROPERTY(EditAnywhere)
+	float Speed;
 		
 	bool bSuperArmor;
 	bool bSuperStance;

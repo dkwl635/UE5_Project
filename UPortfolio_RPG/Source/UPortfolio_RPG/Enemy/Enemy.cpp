@@ -203,6 +203,8 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyState->SetCurrentHP(InData->EnemyHP);
         EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
+        Movement->MaxSpeed = InData->EnemySpeed;
+
         UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));

@@ -74,11 +74,8 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_Q);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_W);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
-		EnhancedInputComponent->BindAction(BasicInputDataConfig->OpenSkillUI, ETriggerEvent::Started, this, &ABasicPlayerController::OnOpenSkillUI);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->ZoomWheel, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnZoomWheel);
-		EnhancedInputComponent->BindAction(BasicInputDataConfig->AddHP, ETriggerEvent::Started, this, &ABasicPlayerController::OnAddHP);
 	}
-
 }
 
 UCoolTimeSubsystem* ABasicPlayerController::GetCoolTimeManager() const
@@ -94,7 +91,6 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 	FHitResult Hit;
 	bool bHitSuccessful = false;
 	bHitSuccessful = GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
 
 	if (bHitSuccessful)
 	{
@@ -164,27 +160,10 @@ void ABasicPlayerController::OnSpace()
 	}
 }
 
-void ABasicPlayerController::OnOpenSkillUI()
-{
-
-}
-
 void ABasicPlayerController::OnZoomWheel(const FInputActionValue& InputActionValue)
 {
 	const float ActionValue = InputActionValue.Get<float>();
 
 	TargetArmLength += ActionValue * -50.f;
 	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1200.f);
-}
-
-
-#include "Components/StatusComponent.h"
-void ABasicPlayerController::OnAddHP()
-{
-	UStatusComponent* Status = PlayerCharacter->GetStatusComponent();
-	if (Status)
-	{
-		float HP = Status->GetCurrentHP();
-		Status->SetCurrentHP(HP + 10);
-	}
 }
