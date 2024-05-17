@@ -37,21 +37,28 @@ public:
 
 public:
 	
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* WeaponSlot;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* HeadSlot;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* ArmorSlot;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* PantsSlot;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* GlovesSlot;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UEquipmentSlot* ShoesSlot;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, meta = (BindWidget))
+	class URPGSlot* WeaponSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class URPGSlot* HeadSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class URPGSlot* ArmorSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class URPGSlot* PantsSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class URPGSlot* GlovesSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
+	class URPGSlot* ShoesSlot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* AddHpText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* AddAtkText;
 public: 
-	UEquipmentSlot* GetEquipmentSlot(EGEARTYPE Type);
+	class	URPGSlot* GetEquipmentSlot(EGEARTYPE Type);
 
+public:
+	void SetAddStat();
 	
 };

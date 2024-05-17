@@ -35,6 +35,8 @@ void ACD_PlayerController::InitInfo()
 	{
 		IsDunGeonStarted = true;
 		Info = GetWorld()->SpawnActor<AChaosDungeonInfo>();
+
+		Info->InitChaosDungeon();
 	}
 
 	

@@ -27,5 +27,6 @@ protected:
 	AChaosDungeonInfo* Info = nullptr;
 
 private:
+	UPROPERTY(VisibleAnywhere)
 	bool IsDunGeonStarted = false;
 };

@@ -11,6 +11,8 @@
 #include "Data/InputDataConfig.h"
 #include "Subsystem/CoolTimeSubsystem.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Slate/DeferredCleanupSlateBrush.h"
+#include "Slate/SlateBrushAsset.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
@@ -120,6 +122,7 @@ void ABasicPlayerController::OnDefaultAttack()
 		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		PlayerCharacter->OnDefaultAttack(Hit.Location);
 	}
 }

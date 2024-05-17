@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "UI/RPGInventoryUserWidget.h"
+#include "UI/RPGSlot.h"
 #include "Item/PlayerInventorySubsystem.h"
-#include "Slot/SlotData.h"
-#include "Slot/InventorySlotData.h"
-#include	"Item/ItemEnum.h"
+#include "Item/ItemEnum.h"
 
 void URPGInventoryUserWidget::Init()
 {
@@ -11,65 +10,32 @@ void URPGInventoryUserWidget::Init()
 	int32 Col = InvenSlotSizeX;
 	int32 Row = InvenSlotSizeY;
 
-	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	if (!Inven)
-	{
-		return;
-	}	
-
 	auto GearBoxChilds = GearBox->GetSlots();
 	for (int8 i = 0; i < GearBoxChilds.Num(); i++)
 	{
 		auto content = GearBoxChilds[i]->Content.Get();
-		URPGSlotUserWidget* SlotWidget = Cast<URPGSlotUserWidget>(content);
+		URPGSlot* SlotWidget = Cast<URPGSlot>(content);
 		if (!SlotWidget)
 		{
 			continue;
 		}
 		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_GEAR;
-	
-		SlotWidget->Init();
-		auto slotData = SlotWidget->GetSlotData();
-		if (!slotData)
-		{
-			UE_LOG(LogTemp, Display, TEXT("slotData null"));
-		}
-		else
-		{
-			UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
-			InvenSlotData->SlotIndex = i;
-
-			GearSlots.Add(SlotWidget);
-			//SlotWidget->RefreshSlot();
-		}
+		SlotWidget->SlotIndex = i;
+		GearSlots.Add(SlotWidget);
 	}
-
 	auto NormalBoxChilds = NormalBox->GetSlots();
 	for (int8 i = 0; i < NormalBoxChilds.Num(); i++)
 	{
 		auto content = NormalBoxChilds[i]->Content.Get();
-		URPGSlotUserWidget* SlotWidget = Cast<URPGSlotUserWidget>(content);
+		URPGSlot* SlotWidget = Cast<URPGSlot>(content);
 		if (!SlotWidget)
 		{
 			continue;
 		}
 		SlotWidget->RPGSlotType = ERPGSLOTTYPE::INVENTORY_NORMARL;
-		SlotWidget->Init();
-		auto slotData = SlotWidget->GetSlotData();
-		if (!slotData)
-		{
-			UE_LOG(LogTemp, Display, TEXT("slotData null"));
-		}
-		else
-		{
-			UInventorySlotData* InvenSlotData = (UInventorySlotData*)slotData;
-			InvenSlotData->SlotIndex = i;
-
-			NormalSlots.Add(SlotWidget);
-			//SlotWidget->RefreshSlot();
-		}
+		SlotWidget->SlotIndex = i;
+		NormalSlots.Add(SlotWidget);
 	}
-
 	
 }
 

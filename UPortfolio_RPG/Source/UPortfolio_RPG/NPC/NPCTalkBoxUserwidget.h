@@ -38,10 +38,12 @@ public:
 	UButton* QuestButton;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UButton* DungeonButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UButton* CloseButton;
 	
 
 public :
-
 	void OpenUI();
 };

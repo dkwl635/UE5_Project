@@ -15,4 +15,5 @@ void AChaosDungeonInfo::BeginPlay()
 void AChaosDungeonInfo::InitChaosDungeon()
 {
 	AEnemySpawner* Spawner = GetWorld()->SpawnActor<AEnemySpawner>();
+	//Spawner->SpawnEnemy();
 }							
