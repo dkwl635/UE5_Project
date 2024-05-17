@@ -11,6 +11,6 @@ void UIsFinishNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
     UEnemyAnimInstance* Anim = Cast<UEnemyAnimInstance>(MeshComp->GetAnimInstance());
     if (Anim)
     {
-        Anim->SetFinishAnim();
+        //Anim->SetFinishAnim();
     }
 }

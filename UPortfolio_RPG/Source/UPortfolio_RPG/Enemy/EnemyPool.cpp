@@ -3,6 +3,7 @@
 
 #include "Enemy/EnemyPool.h"
 #include "AI/EnemyAIController.h"
+#include "Enemy/Animation/EnemyAnimInstance.h"
 
 UEnemyPool::UEnemyPool()
 {
@@ -68,15 +69,22 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     {
         Enemy = Pool.Pop(false);
         EnemyController = ControllerPool.Pop(false);
-        ActiveEnemies.Add(Enemy);
-        Enemy->SetOwner(Owner);
-        Enemy->SetInstigator(Instigator);
-        Enemy->SetPool(this);
-        Enemy->SetActorHiddenInGame(false);
-        Enemy->SetActorEnableCollision(bEnableCollision);
-        Enemy->SetActorTickEnabled(true);
-        Enemy->SetActorTransform(InTransform);
-        EnemyController->OnPossess(Enemy);
+        if(Enemy && EnemyController)
+        {
+            ActiveEnemies.Add(Enemy);
+            Enemy->SetOwner(Owner);
+            Enemy->SetInstigator(Instigator);
+            Enemy->SetPool(this);
+            Enemy->SetActorHiddenInGame(false);
+            Enemy->SetActorEnableCollision(bEnableCollision);
+            Enemy->SetActorTickEnabled(true);
+            Enemy->SetActorTransform(InTransform);
+            EnemyController->OnPossess(Enemy);
+            
+            UEnemyAnimInstance* AnimInstance = Enemy->GetAnimInstance();
+            if (AnimInstance)
+                AnimInstance->PlaySpawnMontage();
+        }
     }
     return Enemy;
 }

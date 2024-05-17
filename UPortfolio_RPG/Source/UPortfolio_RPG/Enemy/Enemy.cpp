@@ -83,23 +83,16 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController && !IsDead)
+    if (PlayerController && !IsDead && !IsSpawn)
     {
-        // �÷��̾� ĳ������ ��ġ ��������
         FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
-
-        // ������ ��ġ ��������
         FVector MonsterLocation = GetActorLocation();
-
-        // �÷��̾ ���ϴ� ���� ���
         FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
-        DirectionToPlayer.Z = 0.f; // Z �� ���� �����Ͽ� ���� �������θ� ȸ���ϵ��� ��
+        DirectionToPlayer.Z = 0.f;
 
-        // ��ǥ ȸ���� ���
         FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
-        MonsterRotation.Yaw -= 90.0f; //�÷��̾�� ������� �´� ȸ�� ���� �־������
+        MonsterRotation.Yaw -= 90.0f;
 
-        // ��ǥ ȸ���� ����
         SetActorRotation(MonsterRotation);
     }
 }
@@ -120,9 +113,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
-        EnemyAnim->SetDeadAnim();
+        GetController()->StopMovement();
         IsDead = true;
-        Pool->Delete(this);
     }
 
     return Damage;
@@ -131,6 +123,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 void AEnemy::Attack()
 {
     if (IsAttacking) return;
+    if (IsDead) return;
 
     EnemyAnim->PlayAttackMontage();
     IsAttacking = true;
@@ -164,12 +157,6 @@ void AEnemy::AttackCheck()
     }
 }
 
-void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-    IsAttacking = false;
-    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
-}
-
 void AEnemy::PlayAttackParticle()
 {
     if (ParticleAttackSystem)
@@ -189,6 +176,9 @@ bool AEnemy::Init()
 
 void AEnemy::Reset()
 {
+    IsAttacking = false;
+    IsDead = false;
+    IsSpawn = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
 }
 
@@ -226,16 +216,8 @@ bool AEnemy::AddEnemy(const FName& InKey)
         }
         ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
 
-
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-        if (EnemyAnim != nullptr)
-        {
-               EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Anim Cast Error!!"));
-        }
+        ensure(EnemyAnim);
 
         return true;
     }

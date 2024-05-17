@@ -19,6 +19,8 @@
 class UEnemyPool;
 class UWidgetComponent;
 
+
+
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
 {
@@ -70,18 +72,21 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	// montage
-	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	//UFUNCTION()
+	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	// particle
 	void PlayAttackParticle();
 
 public:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool IsAttacking; 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool IsDead;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	bool IsSpawn;
 
+	UEnemyAnimInstance* GetAnimInstance() { return EnemyAnim; }
 	UStatusComponent* GetStatusComponent() { return EnemyState; }
 
 public:

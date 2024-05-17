@@ -6,9 +6,10 @@
 #include "Animation/AnimInstance.h"
 #include "EnemyAnimInstance.generated.h"
 
-/**
- * 
- */
+class UAnimMontage;
+
+DECLARE_DELEGATE_TwoParams(FOnMontageEnded, UAnimMontage*, bool /*bInterrupted*/)
+
 UCLASS()
 class UPORTFOLIO_RPG_API UEnemyAnimInstance : public UAnimInstance
 {
@@ -16,27 +17,29 @@ class UPORTFOLIO_RPG_API UEnemyAnimInstance : public UAnimInstance
 
 public:
 	UEnemyAnimInstance();
-	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	void PlayAttackMontage();
+	void PlaySpawnMontage();
 
-	void SetFinishAnim();
+	UFUNCTION()
+	void OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	void SetDeadAnim();
-
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess=true))
-	float Speed;    //몬스터 속도
-
+	float Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsDead;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	bool IsSpawn;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Spawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* SpawnMontage;
 };

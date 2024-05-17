@@ -34,14 +34,20 @@ void AEnemySpawner::SpawnEnemy()
 {
 	FVector Origin = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 	FVector RandomLocation;
-	UNavigationSystemV1::K2_GetRandomReachablePointInRadius(GetWorld(), Origin, RandomLocation,700.f);
-	RandomLocation.Z = 50;
-	FTransform Transform = FTransform(FRotator::ZeroRotator, RandomLocation, FVector(1, 1, 1));
+	
 	SpawnNum = FMath::RandRange(10, 15);
 	int32 SpawnedEnemyNum = EnemyPool->ActiveEnemies.Num();
 	if (SpawnedEnemyNum <= MaxPoolNum)
 	{
-		EnemyPool->SpawnEnemy(Transform, true);
+		for(int32 i=0;i<SpawnNum;++i)
+		{
+			if (EnemyPool->ActiveEnemies.Num() == MaxPoolNum)
+				break;
+			UNavigationSystemV1::K2_GetRandomReachablePointInRadius(GetWorld(), Origin, RandomLocation, 2000.f);
+			RandomLocation.Z = 100;
+			FTransform Transform = FTransform(FRotator::ZeroRotator, RandomLocation, FVector(1, 1, 1));
+			EnemyPool->SpawnEnemy(Transform, true);
+		}
 	}
 }
 
