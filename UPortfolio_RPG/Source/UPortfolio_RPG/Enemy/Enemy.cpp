@@ -22,7 +22,7 @@ AEnemy::AEnemy()
     ParticleAttackSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleAttackSystemComponent"));
     ParticleAttackSystem = nullptr;
 
-    Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
+    Movement->MaxSpeed = 300.0f;                  ///���� �ӵ� ����
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
