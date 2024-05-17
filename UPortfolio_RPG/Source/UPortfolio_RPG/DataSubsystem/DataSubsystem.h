@@ -18,7 +18,9 @@ class UPORTFOLIO_RPG_API UDataSubsystem : public UGameInstanceSubsystem
 public:
 	UDataSubsystem();
 	~UDataSubsystem();
-	//���߿� ���Ӹ���ʿ� ������ ������ ����
+	
+	void Initialize(FSubsystemCollectionBase& Collection) override;
+
 	UFUNCTION(BlueprintCallable)
 	void Init();
 public:
@@ -26,6 +28,7 @@ public:
 	FItemData* FindItem(const FName& InKey);
 	FPotionData* FindPotionData(const FName& InKey);
 	FEnemyData* FindEnemyData(const FName& InKey);
+	FGearData* FindGearData(const FName& InKey);
 
 protected:
 
@@ -38,6 +41,8 @@ protected:
 	UPROPERTY()
 	UDataTable* DT_Potion;
 
+	UPROPERTY()
+	UDataTable* DT_Gear;
 
 
 // Enemy
@@ -45,3 +50,4 @@ protected:
 	UDataTable* DT_Enemy;
 
 };
+extern UDataSubsystem* DataSubsystem = nullptr;

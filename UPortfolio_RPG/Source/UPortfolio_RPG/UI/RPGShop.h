@@ -43,19 +43,21 @@ public:
 	int SellSlotMaxCount = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* SellItemList;
-	TArray<TWeakObjectPtr<class URPGSlotUserWidget>> SellShopSlotList;
-	TArray<TWeakObjectPtr<class UShopSellSlotData>> SellShopSlotDataList;
+	TArray<TWeakObjectPtr<class URPGSlot>> SellShopSlotList;
 
 private:
 	int32 SellItemPrice;
 public:
-	bool CheckSellItem(class URPGSlotUserWidget* OrginSlot);
-
+	bool CheckSellItem(class URPGSlot* OrginSlot);
+	class URPGSlot* GetEmptySellSlot();
 	UFUNCTION(BlueprintCallable)
 	void SellItem();
 
 	void ClearSellPrice();
 
 	void SetSellPrice();
+
+	void RefreshSellSlot();
+	void RefreshBuySlot();
 
 };

@@ -4,13 +4,13 @@
 #include "UI/UIManager.h"
 #include "UI/RPGMainUserWidget.h"
 #include "Item/ItemData.h"
+
+
 TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
 // Sets default values
 AUIManager::AUIManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	///Script/UMGEditor.WidgetBlueprint'/Game/KJW/UI/BPUI_MainUI.BPUI_MainUI'
 	static ConstructorHelpers::FClassFinder<URPGMainUserWidget> FindUI(TEXT("Script/UMGEditor.WidgetBlueprint'/Game/KJW/UI/BPUI_MainUI.BPUI_MainUI_C'"));
  	MainUIBP = FindUI.Class;
 
@@ -40,7 +40,7 @@ void AUIManager::PlayerGoodsUIRefresh()
 	PlayerUI->PlayerGoodsRefresh();
 }
 
-void AUIManager::ShowItemBox(FVector2D SpawnPos, FItemData* Data)
+void AUIManager::ShowItemBox(FVector2D SpawnPos, ShowBoxData Data)
 {
 	PlayerUI->ShowItemInfoBox(SpawnPos ,Data);
 }
@@ -50,10 +50,14 @@ void AUIManager::HideItemBox()
 	PlayerUI->HideItemInfoBox();
 }
 
-//// Called every frame
-//void AUIManager::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
-//
+void AUIManager::RefreshUI(ERPG_UI UIType)
+{
+	PlayerUI->RPGUIRefresh(UIType);
+}
+
+URPGUserWidget* AUIManager::GetRPGUI(ERPG_UI UIType)
+{
+	return PlayerUI->GetRPGUI(UIType);
+}
+
+

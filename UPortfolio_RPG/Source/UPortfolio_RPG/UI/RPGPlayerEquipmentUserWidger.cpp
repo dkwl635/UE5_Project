@@ -2,45 +2,34 @@
 
 
 #include "UI/RPGPlayerEquipmentUserWidger.h"
-#include "UI/Slot/EquipmentSlotData.h"
-#include "UI/EquipmentSlot.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "UI/RPGSlot.h"
+#include "Components/TextBlock.h"
 
 void URPGPlayerEquipmentUserWidger::Init()
 {
-	WeaponSlot->Init();
-	HeadSlot->Init();
-	ArmorSlot->Init();
-	PantsSlot->Init();
-	GlovesSlot->Init();
-	ShoesSlot->Init();
-
-
 	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInvenSubsytem = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
-	UEquipmentSlotData* Data = (UEquipmentSlotData*)WeaponSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[1]);
-	Data = (UEquipmentSlotData*)HeadSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[2]);
-	Data = (UEquipmentSlotData*)ArmorSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[3]);
-	Data = (UEquipmentSlotData*)PantsSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[4]);
-	Data = (UEquipmentSlotData*)GlovesSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[5]);
-	Data = (UEquipmentSlotData*)ShoesSlot->GetSlotData();
-	Data->PlayerInventory = &(PlayerInvenSubsytem.Get()->EquipmentInventory[6]);
+	WeaponSlot->SlotIndex = 1;
+	HeadSlot->SlotIndex = 2;
+	ArmorSlot->SlotIndex = 3;
+	PantsSlot->SlotIndex = 4;
+	GlovesSlot->SlotIndex =5;
+	ShoesSlot->SlotIndex = 6;
+
 }
 
 
 void URPGPlayerEquipmentUserWidger::RefreshUI()
-{
-
+{	
 	WeaponSlot->RefreshUI();
 	HeadSlot->RefreshUI();
 	ArmorSlot->RefreshUI();
 	PantsSlot->RefreshUI();
 	GlovesSlot->RefreshUI();
 	ShoesSlot->RefreshUI();
+
+	SetAddStat();
+
 }
 
 
@@ -53,7 +42,7 @@ void URPGPlayerEquipmentUserWidger::HideSetUI()
 {
 }
 
-UEquipmentSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
+URPGSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 {
 	switch (Type)
 	{
@@ -73,4 +62,13 @@ UEquipmentSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 		break;
 	}
 	return nullptr;
+}
+
+void URPGPlayerEquipmentUserWidger::SetAddStat()
+{
+	int32 AddAtk = PlayerInventorySubsystem->GetPlayerAddAttack();
+	int32 AddHp = PlayerInventorySubsystem->GetPlayerAddMaxHp();
+	
+	AddHpText->SetText(FText::AsNumber(AddHp));
+	AddAtkText->SetText(FText::AsNumber(AddAtk));
 }

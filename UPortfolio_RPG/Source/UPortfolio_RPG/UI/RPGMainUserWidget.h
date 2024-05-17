@@ -18,8 +18,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryBtn;
 
-	TWeakObjectPtr<class UPlayerInventorySubsystem> PlayerInven;
-	TWeakObjectPtr<class UPlayerInventorySubsystem> GetPlayerInven();
 public	:
 
 	virtual void Init();
@@ -76,7 +74,7 @@ public :
 	class UCanvasPanelSlot* ItemBoxPanelSlot;
 	class UItemInfoUserWdiget* ItemBox;
 
-	void ShowItemInfoBox(FVector2D SppawnPos, struct FItemData* Data);
+	void ShowItemInfoBox(FVector2D SppawnPos,struct ShowBoxData Data);
 	void HideItemInfoBox();
 
 	FVector2D GetShowItemPos(FVector2D SppawnPos);
