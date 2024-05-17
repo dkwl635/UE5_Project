@@ -11,10 +11,13 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
+ FLinearColor ShadowColor = FLinearColor(0.2f, 0.2f, 0.2f);
+ FLinearColor OrginColor = FLinearColor(1.0f, 1.0f, 1.0f);
+
 void URPGSlot::RefreshUI()
 {
 	SlotImg->SetVisibility(ESlateVisibility::Collapsed);
-	SlotImg->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f));
+	SlotImg->SetColorAndOpacity(OrginColor);
 	CountText->SetText(FText::FromString(TEXT("")));
 
 	switch (RPGSlotType)
@@ -25,9 +28,13 @@ void URPGSlot::RefreshUI()
 		FItemData* Data = PlayerInventorySubsystem->GetGearItem(SlotIndex);
 		if (Data == nullptr) { return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
-		CountText->SetText(FText::AsNumber(Data->CurrentBundleCount));
-		
+		if(Data->CurrentBundleCount > 1){ CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
 		SlotImg->SetVisibility(ESlateVisibility::Visible);
+		
+		if (AUIManager::UIManager->isShopOpen) {
+			URPGShop* RPGShop = (URPGShop*)AUIManager::UIManager->GetRPGUI(ERPG_UI::SHOP);
+			if (RPGShop->CheckSellItem(this)) { SlotImg->SetColorAndOpacity(ShadowColor); }
+		}
 		return;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
@@ -36,9 +43,13 @@ void URPGSlot::RefreshUI()
 		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(SlotIndex);
 		if (Data == nullptr) { return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
-		CountText->SetText(FText::AsNumber(Data->CurrentBundleCount));
+		if (Data->CurrentBundleCount > 1) { CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
 		SlotImg->SetVisibility(ESlateVisibility::Visible);
 
+		if (AUIManager::UIManager->isShopOpen) {
+			URPGShop* RPGShop = (URPGShop*)AUIManager::UIManager->GetRPGUI(ERPG_UI::SHOP);
+			if (RPGShop->CheckSellItem(this)) { SlotImg->SetColorAndOpacity(ShadowColor); }
+		}
 		return;
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
@@ -48,7 +59,7 @@ void URPGSlot::RefreshUI()
 		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(Option1);
 		if (Data == nullptr) {  return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
-		CountText->SetText(FText::AsNumber(Data->CurrentBundleCount));
+		if (Data->CurrentBundleCount > 1) { CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
 		SlotImg->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
@@ -64,7 +75,7 @@ void URPGSlot::RefreshUI()
 		}
 
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
-		CountText->SetText(FText::AsNumber(Data->CurrentBundleCount));
+		if (Data->CurrentBundleCount > 1) { CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
 		SlotImg->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}

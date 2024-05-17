@@ -50,8 +50,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
 	class URPGSlot* ShoesSlot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* AddHpText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* AddAtkText;
 public: 
 	class	URPGSlot* GetEquipmentSlot(EGEARTYPE Type);
 
+public:
+	void SetAddStat();
 	
 };

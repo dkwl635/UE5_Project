@@ -49,8 +49,6 @@ URPGMainUserWidget* ANPCManager::GetPlayerUI()
 {
 	if (!PlayerUI.IsValid())
 	{
-		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(),0);
-		UPlayerUIComponent* Find = PlayerControll->GetPawn()->FindComponentByClass<UPlayerUIComponent>();
 		PlayerUI = AUIManager::UIManager->PlayerUI;
 	}
 
@@ -59,6 +57,11 @@ URPGMainUserWidget* ANPCManager::GetPlayerUI()
 
 void ANPCManager::StartInteractiorNPC()
 {
+	if (!CurrentNPC.IsValid())
+	{
+		return;
+	}
+
 	if (bInteractior == true)
 	{
 		return;

@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "DropItem.generated.h"
 
+class ADropItem;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemRemovedDelegate, ADropItem*, RemoveDropItem);
+
 UCLASS()
 class UPORTFOLIO_RPG_API ADropItem : public AActor
 {
@@ -27,6 +30,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FName ItemHande;
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetDropItem();
+	UFUNCTION(BlueprintImplementableEvent)
+	void ActionDropItem();
 
+	UFUNCTION(BlueprintCallable)
+	FText SetItemText();
+
+	UFUNCTION(BlueprintCallable)
+	void AddItem();
+	void RetrunItem();
+
+	UPROPERTY()
+	FItemRemovedDelegate OnRemoveItem;
 };

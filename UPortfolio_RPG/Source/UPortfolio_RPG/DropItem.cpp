@@ -2,6 +2,8 @@
 
 
 #include "DropItem.h"
+#include "Item/PlayerInventorySubsystem.h"
+#include "UI/UIManager.h"
 
 // Sets default values
 ADropItem::ADropItem()
@@ -27,7 +29,40 @@ void ADropItem::Tick(float DeltaTime)
 
 void ADropItem::SetDropItem()
 {
+	ActionDropItem();
+}
 
+FText ADropItem::SetItemText()
+{
+	return FText::FromString("TestName");
+}
+
+void ADropItem::AddItem()
+{
+	if (ItemHande.IsNone())
+	{
+		RetrunItem();
+		return;
+	}
+
+	PlayerInventorySubsystem->AddItem(ItemHande, 1);
+
+	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
+	AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
+
+	RetrunItem();
+}
+
+void ADropItem::RetrunItem()
+{
+	this->SetActorHiddenInGame(true);
+	this->SetActorEnableCollision(false);
+	this->SetActorTickEnabled(false);
+
+	if (OnRemoveItem.IsBound())
+	{
+		OnRemoveItem.Broadcast(this);
+	}
 }
 
 

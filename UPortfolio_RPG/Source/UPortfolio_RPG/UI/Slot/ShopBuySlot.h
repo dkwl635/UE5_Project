@@ -34,6 +34,11 @@ public:
 	FName ItemRowName;
 	int32 BuyPrice;
 	int32 BuyCount;
+public:
+	UFUNCTION(BlueprintCallable)
+	void ShowItemInfo();
+	UFUNCTION(BlueprintCallable)
+	void HideItemInfo();
 public :
 	void SetShopBuySlot( struct FItemData* BuyItem, FName RowName, int32 Price, int32 Count);
 	UFUNCTION(BlueprintCallable)

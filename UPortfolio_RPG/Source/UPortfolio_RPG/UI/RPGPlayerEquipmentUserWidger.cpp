@@ -4,6 +4,7 @@
 #include "UI/RPGPlayerEquipmentUserWidger.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
+#include "Components/TextBlock.h"
 
 void URPGPlayerEquipmentUserWidger::Init()
 {
@@ -26,6 +27,9 @@ void URPGPlayerEquipmentUserWidger::RefreshUI()
 	PantsSlot->RefreshUI();
 	GlovesSlot->RefreshUI();
 	ShoesSlot->RefreshUI();
+
+	SetAddStat();
+
 }
 
 
@@ -58,4 +62,13 @@ URPGSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 		break;
 	}
 	return nullptr;
+}
+
+void URPGPlayerEquipmentUserWidger::SetAddStat()
+{
+	int32 AddAtk = PlayerInventorySubsystem->GetPlayerAddAttack();
+	int32 AddHp = PlayerInventorySubsystem->GetPlayerAddMaxHp();
+	
+	AddHpText->SetText(FText::AsNumber(AddHp));
+	AddAtkText->SetText(FText::AsNumber(AddAtk));
 }

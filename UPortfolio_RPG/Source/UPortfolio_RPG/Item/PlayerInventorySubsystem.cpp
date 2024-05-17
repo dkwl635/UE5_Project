@@ -90,7 +90,11 @@ bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
 	Inventory Inventory = GetInventory(Data->ItemType);
 
 	if (!IsAddable(Inventory ,Data, Count)) { return false; }
-	return	MoveItemToInventory(Inventory ,Data, Count);
+
+	MoveItemToInventory(Inventory, Data, Count);
+
+	
+	return	true;
 }
 
 bool UPlayerInventorySubsystem::IsAddable(Inventory Inventory,FItemData* ItemData, int8 Count)
@@ -400,12 +404,36 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 
 int32 UPlayerInventorySubsystem::GetPlayerAddAttack()
 {
-	return 1;
+	int32 Result = 0;
+	for (int i = 0; i < EquipmentInventory.Num(); i++)
+	{
+		if (!EquipmentInventory[i]){continue;}
+
+		FGearData* data  = DataSubsystem->FindGearData( EquipmentInventory[i]->StatusData.RowName);
+		if (data->EStat == ESTAT::ATK)
+		{
+			Result += data->GearValue;
+		}
+	}
+
+	return Result;
 }
 
 int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
 {
-	return 1;
+	int32 Result = 0;
+	for (int i = 0; i < EquipmentInventory.Num(); i++)
+	{
+		if (!EquipmentInventory[i]) { continue; }
+
+		FGearData* data = DataSubsystem->FindGearData(EquipmentInventory[i]->StatusData.RowName);
+		if (data->EStat == ESTAT::HP)
+		{
+			Result += data->GearValue;
+		}
+	}
+
+	return Result;
 }
 
 void UPlayerInventorySubsystem::SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex)

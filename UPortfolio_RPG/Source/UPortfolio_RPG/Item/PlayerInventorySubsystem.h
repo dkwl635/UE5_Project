@@ -97,7 +97,7 @@ public:
 
 
 public:
-	 class UDataSubsystem* DataSubsystem;
+	class UDataSubsystem* DataSubsystem;
 	class UItem* ItemClass;
 
 public:

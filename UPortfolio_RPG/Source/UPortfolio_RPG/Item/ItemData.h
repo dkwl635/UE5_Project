@@ -73,6 +73,9 @@ public:
 	UPROPERTY(EditAnyWhere)
 	EGEARTYPE EGearType = EGEARTYPE::None;
 
+	UPROPERTY(EditAnyWhere)
+	ESTAT EStat  = ESTAT::HP;
+
 	UPROPERTY(EditAnywhere)
 	int16 GearValue = 0;
 
