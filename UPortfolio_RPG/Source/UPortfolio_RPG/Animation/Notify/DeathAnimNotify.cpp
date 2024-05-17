@@ -13,6 +13,7 @@ void UDeathAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
     if (Enemy)
     {
         UEnemyPool* Pool = Enemy->Pool;
-        Pool->Delete(Enemy);
+        if(Pool)
+            Pool->Delete(Enemy);
     }
 }

@@ -78,6 +78,7 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
             Enemy->SetActorHiddenInGame(false);
             Enemy->SetActorEnableCollision(bEnableCollision);
             Enemy->SetActorTickEnabled(true);
+            Enemy->PurificationScore = FMath::RandRange(100, 200);
             Enemy->SetActorTransform(InTransform);
             EnemyController->OnPossess(Enemy);
             
@@ -88,6 +89,10 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     }
     return Enemy;
 }
+
+#include "Actors/Controller/CD_PlayerController.h"
+#include "Actors/Info/ChaosDungeonInfo.h"
+#include "Kismet/GameplayStatics.h"
 
 void UEnemyPool::Delete(AEnemy* InEnemy)
 {
@@ -101,6 +106,11 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
         InEnemy->SetActorTickEnabled(false);
         InEnemy->GetController()->UnPossess();
         ActiveEnemies.RemoveAt(Index);
+        {
+            ACD_PlayerController* CDPC = Cast<ACD_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+            AChaosDungeonInfo* Info = CDPC->GetInfo();
+            Info->AddPurification(InEnemy->PurificationScore);
+        }
         InEnemy->Reset();
         Pool.Add(InEnemy);
     }

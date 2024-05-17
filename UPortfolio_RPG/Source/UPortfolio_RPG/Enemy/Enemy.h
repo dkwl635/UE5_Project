@@ -85,6 +85,7 @@ public:
 	bool IsDead;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool IsSpawn;
+	float PurificationScore = 0.f;
 
 	UEnemyAnimInstance* GetAnimInstance() { return EnemyAnim; }
 	UStatusComponent* GetStatusComponent() { return EnemyState; }

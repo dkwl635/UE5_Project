@@ -102,6 +102,7 @@ void AEnemy::PostInitializeComponents()
     Super::PostInitializeComponents();
 }
 
+
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     // Call the base class version of TakeDamage
@@ -115,6 +116,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     {
         GetController()->StopMovement();
         IsDead = true;
+        
     }
 
     return Damage;
@@ -180,6 +182,7 @@ void AEnemy::Reset()
     IsDead = false;
     IsSpawn = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+    PurificationScore = 0.f;
 }
 
 bool AEnemy::AddEnemy(const FName& InKey)
@@ -204,8 +207,6 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
         Movement->MaxSpeed = InData->EnemySpeed;
-
-        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
         StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
