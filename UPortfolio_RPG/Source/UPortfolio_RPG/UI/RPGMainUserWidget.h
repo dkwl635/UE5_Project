@@ -9,6 +9,8 @@
 /**
  * 
  */
+struct FItemData;
+
 UCLASS()
 class UPORTFOLIO_RPG_API URPGMainUserWidget : public URPGUserWidget
 {
