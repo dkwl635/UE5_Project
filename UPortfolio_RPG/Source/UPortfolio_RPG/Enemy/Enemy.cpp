@@ -37,7 +37,7 @@ AEnemy::AEnemy()
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
         StatusWidget->SetWidgetClass(UI_HUD.Class);
@@ -163,9 +163,16 @@ void AEnemy::PlayAttackParticle()
 {
     if (ParticleAttackSystem)
     {
-        UGameplayStatics::SpawnEmitterAttached(ParticleAttackSystem, CapsuleComponent, "Impact",
-            FVector( (SkeletalMeshComponent->GetRelativeLocation()+ParticleAttackSystemComponent->GetRelativeLocation())), 
-            ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
+        UGameplayStatics::SpawnEmitterAttached(
+            ParticleAttackSystem, 
+            CapsuleComponent, 
+            FName(TEXT("EffectSocket")), 
+            FVector(50.f,0,0), 
+            FRotator(0,0,-90), 
+            FVector(3.0f, 3.0f, 3.0f), 
+            EAttachLocation::SnapToTargetIncludingScale, 
+            true 
+        );
     }
 }
 bool AEnemy::Init()

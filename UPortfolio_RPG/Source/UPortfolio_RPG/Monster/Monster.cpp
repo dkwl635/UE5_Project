@@ -13,15 +13,16 @@ AMonster::AMonster()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 
 	{
-		//static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT(""));
-		//ensure(Asset.Object);
-		//SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
+		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/FourEvilDragonsHP/Meshes/DragonTheTerrorBringer/DragonTheTerrorBringerSK.DragonTheTerrorBringerSK'"));
+		ensure(Asset.Object);
+		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
 
 
 	SetRootComponent(CapsuleComponent);
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
 
+	CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 
 }
 
