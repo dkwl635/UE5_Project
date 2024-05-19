@@ -183,16 +183,24 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 	if (!bIsSpace)
 	{
 		UAnimInstance* Animation = GetMesh()->GetAnimInstance();
-		ensure(Animation);
-		if (Animation->Montage_IsPlaying(nullptr)) { Animation->Montage_Stop(0.2f); }
+		UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(Animation);
+		ensure(Anim);
+		if (Anim->Montage_IsPlaying(nullptr)) { Anim->Montage_Stop(0.2f); }
+
+		FOnMontageEnded SpaceMontageDelegate;
+		SpaceMontageDelegate.BindUObject(this, &APlayerCharacter::OnSpaceMontageEnded);
 
 		bIsSpace = true;
 		GetController()->StopMovement();
 		LookAtMouseCursor(HitPoint);
-		Animation->Montage_Play(SpaceMontage, 1.2f);
-		auto SpaceDelegate = [this]() { bIsSpace = false; };
-		GetWorld()->GetTimerManager().SetTimer(SpaceTimer, SpaceDelegate, 0.6f, false);
+		Anim->Montage_Play(SpaceMontage, 1.2f);
+		Anim->Montage_SetEndDelegate(SpaceMontageDelegate, SpaceMontage);
 	}
+}
+
+void APlayerCharacter::OnSpaceMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	bIsSpace = false;
 }
 
 void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)

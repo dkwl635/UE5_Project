@@ -4,9 +4,9 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
+#include "UI/UIEnum.h"
 #include "ItemEnum.h"
 #include "PlayerInventorySubsystem.generated.h"
-
 
 UCLASS()
 class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsystem

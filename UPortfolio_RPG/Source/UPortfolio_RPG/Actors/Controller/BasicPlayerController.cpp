@@ -11,8 +11,6 @@
 #include "Data/InputDataConfig.h"
 #include "Subsystem/CoolTimeSubsystem.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Slate/DeferredCleanupSlateBrush.h"
-#include "Slate/SlateBrushAsset.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 ABasicPlayerController::ABasicPlayerController()
@@ -57,7 +55,7 @@ void ABasicPlayerController::OnPossess(APawn* aPawn)
 
 		KDT2Character->SetData(CharacterDataTableRow);*/
 	}
-
+	
 	PawnSpringArm = aPawn->GetComponentByClass<USpringArmComponent>();
 	TargetArmLength = PawnSpringArm->TargetArmLength;
 }

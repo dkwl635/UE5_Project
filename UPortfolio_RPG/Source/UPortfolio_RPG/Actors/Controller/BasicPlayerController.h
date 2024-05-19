@@ -39,10 +39,9 @@ protected:
 	void OnSkill_Q();
 	void OnSkill_W();
 	void OnSpace();
-	void OnOpenSkillUI();
+
 	void OnZoomWheel(const FInputActionValue& InputActionValue);
-	// Test
-	void OnAddHP();
+	
 private:
 	FVector CachedDestination;
 	APlayerCharacter* PlayerCharacter;

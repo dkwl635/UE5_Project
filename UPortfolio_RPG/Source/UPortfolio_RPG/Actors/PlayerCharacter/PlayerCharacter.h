@@ -11,8 +11,12 @@ class UStatusComponent;
 class USkillComponent;
 class USpringArmComponent;
 class UCameraComponent;
+class UAnimMontage;
 struct FSkillDataTableRow;
 struct FStatusDataTableRow;
+
+DECLARE_DELEGATE_TwoParams(FOnMontageEnded, UAnimMontage*, bool /*bInterrupted*/)
+
 
 USTRUCT()
 struct UPORTFOLIO_RPG_API FCharacterAnimDataTableRow : public FTableRowBase
@@ -53,6 +57,9 @@ public:
 	void OnSkill_Q(const FVector& HitPoint);
 	void OnSkill_W(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
+	UFUNCTION()
+	void OnSpaceMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 	void OnDefaultAttack(const FVector& HitPoint);
 
 public:
@@ -115,7 +122,6 @@ protected:
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
 
-// add LJY
 public:
 	virtual float TakeDamage(
 		float DamageAmount, struct FDamageEvent const& DamageEvent, 

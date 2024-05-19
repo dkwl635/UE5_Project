@@ -56,7 +56,7 @@ private:
 	UEnemyAnimInstance* EnemyAnim;
 	UPROPERTY(EditAnywhere)
 	UStatusComponent* EnemyState;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	UWidgetComponent* StatusWidget;
 	UPROPERTY()
 	UStatusbarUserWidget* EnemyStatusUserWidget;

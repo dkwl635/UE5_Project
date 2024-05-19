@@ -6,9 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "PlayerAnimInstance.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class UPORTFOLIO_RPG_API UPlayerAnimInstance : public UAnimInstance
 {

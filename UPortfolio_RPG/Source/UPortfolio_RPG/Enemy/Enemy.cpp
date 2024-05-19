@@ -23,7 +23,7 @@ AEnemy::AEnemy()
     ParticleAttackSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleAttackSystemComponent"));
     ParticleAttackSystem = nullptr;
 
-    Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
+    Movement->MaxSpeed = 100.0f;
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
@@ -37,7 +37,7 @@ AEnemy::AEnemy()
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
     if (UI_HUD.Succeeded())
     {
         StatusWidget->SetWidgetClass(UI_HUD.Class);
@@ -207,6 +207,7 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
         Movement->MaxSpeed = InData->EnemySpeed;
+        PurificationScore = FMath::RandRange(100, 200);
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
         StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));
