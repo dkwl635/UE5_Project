@@ -27,7 +27,7 @@ public:
 protected:
 	bool bIsStarted = false;
 	const float SpawnInterval = 5.f;
-	const float TimeLimit = 60.f;
+	const float TimeLimit = 300.f;
 	int32 Purification = 0.f;
 
 	FTimerHandle SpawnTimer;

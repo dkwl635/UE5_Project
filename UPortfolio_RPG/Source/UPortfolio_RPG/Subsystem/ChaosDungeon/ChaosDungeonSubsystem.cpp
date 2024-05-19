@@ -3,6 +3,7 @@
 
 #include "Subsystem/ChaosDungeon/ChaosDungeonSubsystem.h"
 #include "Enemy/EnemySpawner.h"
+#include "Enemy/EnemyPool.h"
 
 UChaosDungeonSubsystem::UChaosDungeonSubsystem()
 {
@@ -24,7 +25,7 @@ void UChaosDungeonSubsystem::EndDungeon()
 	GetWorld()->GetTimerManager().ClearTimer(SpawnTimer);
 	GetWorld()->GetTimerManager().ClearTimer(DungeonLimitTimer);
 	UE_LOG(LogTemp, Warning, TEXT("Dungeon Ended!"));
-	Spawner->Destroy();
+	Spawner->GetEnemyPool()->Destroy();
 }
 
 void UChaosDungeonSubsystem::SpawnEnemy()
