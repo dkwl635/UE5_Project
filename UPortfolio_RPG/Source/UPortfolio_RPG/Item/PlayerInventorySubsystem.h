@@ -4,7 +4,8 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
-#include "ItemEnum.h"
+#include "Item/ItemEnum.h"
+#include "UI/UIEnum.h"
 #include "PlayerInventorySubsystem.generated.h"
 
 
