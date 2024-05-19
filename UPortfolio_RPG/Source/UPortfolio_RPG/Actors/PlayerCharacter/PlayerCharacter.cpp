@@ -188,6 +188,7 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 		if (Anim->Montage_IsPlaying(nullptr)) { Anim->Montage_Stop(0.2f); }
 
 		FOnMontageEnded SpaceMontageDelegate;
+		SpaceMontageDelegate.Unbind();
 		SpaceMontageDelegate.BindUObject(this, &APlayerCharacter::OnSpaceMontageEnded);
 
 		bIsSpace = true;

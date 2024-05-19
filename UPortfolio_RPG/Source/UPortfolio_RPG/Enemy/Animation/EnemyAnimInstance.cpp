@@ -30,6 +30,7 @@ void UEnemyAnimInstance::PlayAttackMontage()
 	if (AttackMontage)
 	{
 		FOnMontageEnded AttackMontageDelegate;
+		AttackMontageDelegate.Unbind();
 		AttackMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnAttackMontageEnded);
 		Montage_Play(AttackMontage, 1.0f);
 		Montage_SetEndDelegate(AttackMontageDelegate, AttackMontage);
@@ -41,6 +42,7 @@ void UEnemyAnimInstance::PlaySpawnMontage()
 	if (SpawnMontage)
 	{
 		FOnMontageEnded SpawnMontageDelegate;
+		SpawnMontageDelegate.Unbind();
 		SpawnMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnSpawnMontageEnded);
 		Montage_Play(SpawnMontage, 1.0f);
 		Montage_SetEndDelegate(SpawnMontageDelegate, SpawnMontage);
