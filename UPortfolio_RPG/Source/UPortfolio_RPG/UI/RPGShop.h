@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/RPGUserWidget.h"
+#include "Styling/SlateBrush.h"
 #include "RPGShop.generated.h"
 
 /**
@@ -29,6 +30,12 @@ private:
 	class URPGMainUserWidget* GetPlayerUI();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* BuyButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* SellButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* BuyItemPanel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -44,6 +51,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UUniformGridPanel* SellItemList;
 	TArray<TWeakObjectPtr<class URPGSlot>> SellShopSlotList;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style")
+	 FSlateBrush ActivateButtonStyle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style")
+	 FSlateBrush DeactivateButtonStyle;
+
+
 
 private:
 	int32 SellItemPrice;

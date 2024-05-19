@@ -6,6 +6,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "UI/Slot/ShopBuySlot.h"
 #include "UI/PlayerUIComponent.h"
 #include "UI/RPGMainUserWidget.h"
@@ -49,11 +50,36 @@ void URPGShop::RefreshUI()
 	if (ShopSwitcher->GetActiveWidgetIndex() == 0)
 	{
 		RefreshBuySlot();
+		
+		FButtonStyle ActivateStyle = BuyButton->GetStyle();
+		ActivateStyle.Normal = ActivateButtonStyle;
+		ActivateStyle.Hovered = ActivateButtonStyle;
+		ActivateStyle.Pressed = ActivateButtonStyle;
+		BuyButton->SetStyle(ActivateStyle);
+
+		FButtonStyle  DeactivateStyle = SellButton->GetStyle();
+		DeactivateStyle.Normal = DeactivateButtonStyle;
+		DeactivateStyle.Hovered = DeactivateButtonStyle;
+		DeactivateStyle.Pressed = DeactivateButtonStyle;
+		SellButton->SetStyle(DeactivateStyle);
+
 	}
 	else if (ShopSwitcher->GetActiveWidgetIndex() == 1)
 	{
 		RefreshSellSlot();
 		SetSellPrice();
+
+		FButtonStyle ActivateStyle = SellButton->GetStyle();
+		ActivateStyle.Normal = ActivateButtonStyle;
+		ActivateStyle.Hovered = ActivateButtonStyle;
+		ActivateStyle.Pressed = ActivateButtonStyle;
+		SellButton->SetStyle(ActivateStyle);
+
+		FButtonStyle DeactivateStyle = BuyButton->GetStyle();
+		DeactivateStyle.Normal = DeactivateButtonStyle;
+		DeactivateStyle.Hovered = DeactivateButtonStyle;
+		DeactivateStyle.Pressed = DeactivateButtonStyle;
+		BuyButton->SetStyle(DeactivateStyle);
 	}
 }
 
