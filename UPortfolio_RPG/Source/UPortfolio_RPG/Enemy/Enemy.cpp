@@ -102,7 +102,6 @@ void AEnemy::PostInitializeComponents()
     Super::PostInitializeComponents();
 }
 
-
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     // Call the base class version of TakeDamage
@@ -116,7 +115,6 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     {
         GetController()->StopMovement();
         IsDead = true;
-        
     }
 
     return Damage;
@@ -182,7 +180,7 @@ void AEnemy::Reset()
     IsDead = false;
     IsSpawn = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
-    PurificationScore = 0.f;
+    PurificationScore = FMath::RandRange(100, 200);
 }
 
 bool AEnemy::AddEnemy(const FName& InKey)

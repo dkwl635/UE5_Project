@@ -14,4 +14,6 @@ class UPORTFOLIO_RPG_API AChaosDungeonGameMode : public ADefaultGameMode
 {
 	GENERATED_BODY()
 	
+public:
+	AChaosDungeonGameMode(const FObjectInitializer& ObjectInitializer);
 };

@@ -11,7 +11,6 @@ UEnemyAnimInstance::UEnemyAnimInstance()
 	Speed = 0.f;
 }
 
-
 void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	AEnemy* Pawn = Cast<AEnemy>(TryGetPawnOwner());

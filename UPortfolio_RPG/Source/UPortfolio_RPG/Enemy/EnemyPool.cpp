@@ -5,6 +5,7 @@
 #include "AI/EnemyAIController.h"
 #include "Enemy/Animation/EnemyAnimInstance.h"
 
+
 UEnemyPool::UEnemyPool()
 {
     EnemyClass = AEnemy::StaticClass();
@@ -65,6 +66,7 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
 {
     AEnemy* Enemy = nullptr;
     AEnemyAIController* EnemyController = nullptr;
+
     if (Pool.Num() > 0 && ActiveEnemies.Num()<30)
     {
         Enemy = Pool.Pop(false);
@@ -81,7 +83,7 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
             Enemy->PurificationScore = FMath::RandRange(100, 200);
             Enemy->SetActorTransform(InTransform);
             EnemyController->OnPossess(Enemy);
-            
+
             UEnemyAnimInstance* AnimInstance = Enemy->GetAnimInstance();
             if (AnimInstance)
                 AnimInstance->PlaySpawnMontage();
@@ -95,6 +97,12 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
     const int32 Index = ActiveEnemies.Find(InEnemy);
     if (Index != INDEX_NONE)
     {
+        /*UChaosDungeonSubsystem* CDSubsystem = GetWorld()->GetSubsystem<UChaosDungeonSubsystem>();
+        ensure(CDSubsystem);
+        if (CDSubsystem)
+        {
+            CDSubsystem->AddPurification(InEnemy->PurificationScore);
+        }*/
         AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
         ControllerPool.Add(EnemyController);
         InEnemy->SetActorHiddenInGame(true); 
