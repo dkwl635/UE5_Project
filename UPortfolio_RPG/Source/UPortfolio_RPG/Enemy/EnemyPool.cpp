@@ -100,15 +100,6 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
     const int32 Index = ActiveEnemies.Find(InEnemy);
     if (Index != INDEX_NONE)
     {
-        if (IsValid(CachedWorld))
-        {
-            UChaosDungeonSubsystem* CDSubsystem = CachedWorld->GetSubsystem<UChaosDungeonSubsystem>();
-            ensure(CDSubsystem);
-            if (CDSubsystem)
-            {
-                CDSubsystem->AddPurification(InEnemy->PurificationScore);
-            }
-        }
         if(InEnemy)
         {
             AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
@@ -122,6 +113,15 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
                 ActiveEnemies.RemoveAt(Index);
             InEnemy->Reset();
             Pool.Add(InEnemy);
+            if (IsValid(CachedWorld))
+            {
+                UChaosDungeonSubsystem* CDSubsystem = CachedWorld->GetSubsystem<UChaosDungeonSubsystem>();
+                ensure(CDSubsystem);
+                if (CDSubsystem)
+                {
+                    CDSubsystem->AddPurification(InEnemy->PurificationScore);
+                }
+            }
         }
     }
 }

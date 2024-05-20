@@ -114,7 +114,10 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
         if (GetController())
+        {
             GetController()->StopMovement();
+            EnemyAnim->Montage_Stop(0.1f);
+        }
         IsDead = true;
     }
 

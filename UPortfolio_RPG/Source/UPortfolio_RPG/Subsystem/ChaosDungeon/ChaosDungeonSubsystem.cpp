@@ -17,6 +17,7 @@ void UChaosDungeonSubsystem::StartDungeon()
 		Spawner = GetWorld()->SpawnActor<AEnemySpawner>();
 		GetWorld()->GetTimerManager().SetTimer(DungeonLimitTimer, this, &UChaosDungeonSubsystem::EndDungeon, TimeLimit, false);
 		GetWorld()->GetTimerManager().SetTimer(SpawnTimer, this, &UChaosDungeonSubsystem::SpawnEnemy, SpawnInterval, true);
+		SpawnEnemy();
 	}
 }
 

@@ -23,6 +23,7 @@ public:
 
 	bool IsStarted() { return bIsStarted; }
 	void AddPurification(int32 InValue);
+	int32 GetPurification() { return Purification; }
 
 protected:
 	bool bIsStarted = false;

@@ -36,6 +36,10 @@ void USkill_MainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	{
 		MPBar->SetMPBar();
 	}
+	if (PurificationGage)
+	{
+		PurificationGage->SetProgress();
+	}
 }
 
 void USkill_MainWidget::SetUIInfo()

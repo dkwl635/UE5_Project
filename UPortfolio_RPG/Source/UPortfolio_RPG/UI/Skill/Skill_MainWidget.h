@@ -7,6 +7,7 @@
 #include "UI/Skill/SkillInterfaceUserWidget.h"
 #include "UI/Skill/SpaceCoolTimerWidget.h"
 #include "UI/PlayerStatus/PlayerStatusBarUserWidget.h"
+#include "UI/ChaosDungeon/ChaosDungeonProgressUserWidget.h"
 #include "Skill_MainWidget.generated.h"
 
 
@@ -32,4 +33,6 @@ protected:
 	UPlayerStatusBarUserWidget* HPBar;
 	UPROPERTY(meta = (BindWidget))
 	UPlayerStatusBarUserWidget* MPBar;
+	UPROPERTY(meta = (BindWidget))
+	UChaosDungeonProgressUserWidget* PurificationGage;
 };
