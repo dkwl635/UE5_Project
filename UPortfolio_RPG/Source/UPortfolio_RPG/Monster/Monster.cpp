@@ -17,7 +17,7 @@ AMonster::AMonster()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	bIsScream = false;
+	IsScream = false;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
@@ -28,18 +28,31 @@ AMonster::AMonster()
 		ensure(Asset.Object);
 		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
-	{
-		static ConstructorHelpers::FObjectFinder<UParticleSystem> Asset(TEXT("/Script/Engine.ParticleSystem'/Game/AddContent/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Flamethrower.P_Flamethrower'"));
-		ensure(Asset.Object);
-		FireScreamEffect = Asset.Object;
-	}
-	{
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> Montage(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
 
-	}
 	{
-		static ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Script/Engine.CurveFloat'/Game/LJY/BossMonster/FireScreamCurve.FireScreamCurve'"));
+		static ConstructorHelpers::FClassFinder<UAnimInstance> Asset(TEXT("/Script/Engine.AnimBlueprint'/Game/LJY/BossMonster/BPA_DragonAnimBlueprint.BPA_DragonAnimBlueprint_C'"));
+		ensure(Asset.Class);
+		SkeletalMeshComponent->SetAnimInstanceClass(Asset.Class);
+		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+	}
 
+	{ 
+		//FireScream 공격 관리
+		{
+			static ConstructorHelpers::FObjectFinder<UParticleSystem> Asset(TEXT("/Script/Engine.ParticleSystem'/Game/AddContent/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Flamethrower.P_Flamethrower'"));
+			ensure(Asset.Object);
+			FireScreamEffect = Asset.Object;
+		}
+		{
+			static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
+			ensure(Asset.Object);
+			FireScreamMontage = Asset.Object;
+		}
+		{
+			static ConstructorHelpers::FObjectFinder<UCurveFloat> Asset(TEXT("/Script/Engine.CurveFloat'/Game/LJY/BossMonster/FireScreamCurve.FireScreamCurve'"));
+			ensure(Asset.Object);
+			ScreamCurve = Asset.Object;
+		}
 	}
 
 
@@ -55,12 +68,16 @@ AMonster::AMonster()
 	CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 	BoxCollision->SetCollisionProfileName(TEXT("MonsterActor"));
 
+	// BoxCollision 컴포넌트에 오버랩 이벤트 핸들러 바인딩
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonster::OnBoxCollisionOverlap);
+
 	// Initialize timeline
 		if (ScreamCurve)
 		{
 			FOnTimelineFloat TimelineCallback;
 			TimelineCallback.BindUFunction(this, FName("HandleScreamProgress"));
 			ScreamTimeline.AddInterpFloat(ScreamCurve, TimelineCallback);
+			ScreamTimeline.SetLooping(true);
 		}
 }
 
@@ -99,9 +116,8 @@ void AMonster::FireScream()
 
 void AMonster::HandleScreamProgress(float Value)
 {
-	FVector NewLocation = BoxCollision->GetRelativeLocation();
-	NewLocation.Z = Value;  // Assuming vertical movement
-	BoxCollision->SetRelativeLocation(NewLocation);
+	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
+	UE_LOG(LogTemp, Warning, TEXT("Value 값 : %f"), Value);
 }
 
 void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -110,10 +126,19 @@ void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	
 }
 
+void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 오버랩된 액터 출력
+	if (OtherActor && OtherActor != this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
+	}
+}
+
 void AMonster::ScreamDelay()
 {
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	bIsScream = true;
+	IsScream = true;
 	ScreamTimeline.PlayFromStart();
 }
 
