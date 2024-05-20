@@ -14,8 +14,13 @@ class UPORTFOLIO_RPG_API UChaosDungeonProgressUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void NativeConstruct() override;
+
 public:
 	void SetProgress();
+	UFUNCTION()
+	void OnPressButton();
 
 protected:
 	UPROPERTY(meta=(BindWidget))

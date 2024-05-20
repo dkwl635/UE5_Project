@@ -7,11 +7,12 @@
 #include "UI/Skill/SkillInterfaceUserWidget.h"
 #include "UI/Skill/SpaceCoolTimerWidget.h"
 #include "UI/PlayerStatus/PlayerStatusBarUserWidget.h"
-#include "Skill_MainWidget.generated.h"
+#include "UI/ChaosDungeon/ChaosDungeonProgressUserWidget.h"
+#include "ChaosDungeon_MainWidget.generated.h"
 
 
 UCLASS()
-class UPORTFOLIO_RPG_API USkill_MainWidget : public UUserWidget
+class UPORTFOLIO_RPG_API UChaosDungeon_MainWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -32,4 +33,6 @@ protected:
 	UPlayerStatusBarUserWidget* HPBar;
 	UPROPERTY(meta = (BindWidget))
 	UPlayerStatusBarUserWidget* MPBar;
+	UPROPERTY(meta = (BindWidget))
+	UChaosDungeonProgressUserWidget* PurificationGage;
 };

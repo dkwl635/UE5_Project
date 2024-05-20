@@ -3,6 +3,14 @@
 
 #include "ChaosDungeonProgressUserWidget.h"
 #include "Subsystem/ChaosDungeon/ChaosDungeonSubsystem.h"
+#include "Kismet/GameplayStatics.h"
+
+void UChaosDungeonProgressUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	EscapeButton->OnPressed.AddDynamic(this, &UChaosDungeonProgressUserWidget::OnPressButton);
+}
 
 void UChaosDungeonProgressUserWidget::SetProgress()
 {
@@ -22,4 +30,9 @@ void UChaosDungeonProgressUserWidget::SetProgress()
 				PercentageTextBlock->SetText(FText::FromString(PercentageText));
 		}
 	}
+}
+
+void UChaosDungeonProgressUserWidget::OnPressButton()
+{
+	UGameplayStatics::OpenLevel(this, FName(TEXT("KSHTestMap")));
 }

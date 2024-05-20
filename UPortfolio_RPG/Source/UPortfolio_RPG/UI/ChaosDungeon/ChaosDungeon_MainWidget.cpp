@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Skill/Skill_MainWidget.h"
+#include "UI/ChaosDungeon/ChaosDungeon_MainWidget.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
-void USkill_MainWidget::NativeConstruct()
+void UChaosDungeon_MainWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 }
 
-void USkill_MainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UChaosDungeon_MainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
@@ -35,9 +36,13 @@ void USkill_MainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	{
 		MPBar->SetMPBar();
 	}
+	if (PurificationGage)
+	{
+		PurificationGage->SetProgress();
+	}
 }
 
-void USkill_MainWidget::SetUIInfo()
+void UChaosDungeon_MainWidget::SetUIInfo()
 {
 	Sk_Interface->Init();
 }
