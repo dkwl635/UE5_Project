@@ -34,6 +34,7 @@ protected:
 	int32 Purification = 0.f;
 
 	FTimerHandle SpawnTimer;
+	FTimerHandle FirstSpawnTimer;
 	FTimerHandle DungeonLimitTimer;
 
 	AEnemySpawner* Spawner = nullptr;

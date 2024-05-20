@@ -17,13 +17,14 @@ void UChaosDungeonSubsystem::StartDungeon()
 		bIsStarted = true;
 		Spawner = GetWorld()->SpawnActor<AEnemySpawner>();
 		GetWorld()->GetTimerManager().SetTimer(DungeonLimitTimer, this, &UChaosDungeonSubsystem::EndDungeon, TimeLimit, false);
+		GetWorld()->GetTimerManager().SetTimer(FirstSpawnTimer, this, &UChaosDungeonSubsystem::SpawnEnemy, 1.f, false);
 		GetWorld()->GetTimerManager().SetTimer(SpawnTimer, this, &UChaosDungeonSubsystem::SpawnEnemy, SpawnInterval, true);
-		SpawnEnemy();
 	}
 }
 
 void UChaosDungeonSubsystem::EndDungeon()
 {
+	GetWorld()->GetTimerManager().ClearTimer(FirstSpawnTimer);
 	GetWorld()->GetTimerManager().ClearTimer(SpawnTimer);
 	GetWorld()->GetTimerManager().ClearTimer(DungeonLimitTimer);
 	EndMessage->SetVisibility(ESlateVisibility::Visible);
