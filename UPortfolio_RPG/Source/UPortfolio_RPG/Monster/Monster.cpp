@@ -10,6 +10,7 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Curves/CurveFloat.h"
+#include "Monster/Actor/AttackRangeActor.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -36,8 +37,9 @@ AMonster::AMonster()
 		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
 	}
 
+	//FireScream 공격 관리
 	{ 
-		//FireScream 공격 관리
+		
 		{
 			static ConstructorHelpers::FObjectFinder<UParticleSystem> Asset(TEXT("/Script/Engine.ParticleSystem'/Game/AddContent/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Flamethrower.P_Flamethrower'"));
 			ensure(Asset.Object);
@@ -92,7 +94,8 @@ void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	FireScream();
+	//FireScream();
+	AttackRange();
 }
 
 // Called every frame
@@ -117,6 +120,23 @@ void AMonster::FireScream()
 		SkeletalMeshComponent->GetAnimInstance()->Montage_Play(FireScreamMontage);
 		SkeletalMeshComponent->GetAnimInstance()->Montage_SetEndDelegate(AttackMontageDelegate, FireScreamMontage);
 	
+	}
+}
+
+void AMonster::AttackRange()
+{
+	// Calculate spawn location
+	FVector SpawnLocation = GetActorLocation(); 
+	float RandomX = FMath::RandRange(SpawnLocation.X-1000.f, SpawnLocation.X +1000.f);
+	float RandomY = FMath::RandRange(SpawnLocation.Y+200.f, SpawnLocation.Y +1000.f);	
+
+	FVector SpawnActorLocation = FVector(RandomX, RandomY, 0.f); // Final spawn location
+
+	// Spawn AttackRangeActor
+	if (AAttackRangeActor* NewAttackRangeActor = GetWorld()->SpawnActor<AAttackRangeActor>(SpawnActorLocation, FRotator::ZeroRotator))
+	{
+		// Store the reference to the spawned AttackRangeActor
+		AttackRangeActor = NewAttackRangeActor;
 	}
 }
 
@@ -146,7 +166,16 @@ void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor
 
 void AMonster::FinishFire()
 {
-	IsScream = false;
+	if (TimeLineCnt == 2) {
+		TimeLineCnt = 0;
+		IsScream = false;
+	}
+	else
+	{
+		++TimeLineCnt;
+		GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1초 지연
+		ScreamTimeline.PlayFromStart();
+	}
 }
 
 void AMonster::ScreamDelay()

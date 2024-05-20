@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Monster/Monster.h"
 #include "Monster/Animation/MonsterAnimInstance.h"
+#include "Monster/Monster.h"
 
 UMonsterAnimInstance::UMonsterAnimInstance()
 {

@@ -48,11 +48,17 @@ private:
 
 
 public: //공격 패턴 함수
-	// FireScream event
-	UFUNCTION(BlueprintCallable, Category = "Monster")
+	// FireScream Event
+	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void FireScream();
 
-private: //FireScream 이용 변수
+	// AttackRange Event 
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void AttackRange();
+
+
+//FireScream 이용 변수
+private: 
 	// Particle system
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* FireScreamEffect;
@@ -63,6 +69,7 @@ private: //FireScream 이용 변수
 
 	// Timeline for movement
 	FTimeline ScreamTimeline;
+	int TimeLineCnt = 0;
 
 	// Timeline's float curve
 	UPROPERTY()
@@ -83,16 +90,35 @@ private: //FireScream 이용 변수
 	//FireScream 공격 끝
 	UFUNCTION()
 	void FinishFire();
-	
 
-public:
-	// Scream boolean
-	bool IsScream = true;
 
-	
+//AttackRange 이용 변수
+private:
+	UPROPERTY(VisibleDefaultsOnly, Category = "Attack")
+	FVector AttackRangeLocation = FVector(0.f,0.f,0.f);
 
-private: //Delay 관리
+	UPROPERTY()
+	class AAttackRangeActor* AttackRangeActor;
+
+
+
+
+
+
+
+
+
+
+
+//Delay 관리
+private: 
 	// Delay timer handle
 	FTimerHandle DelayTimerHandle;
 	void ScreamDelay();
+
+
+public:  //Animation Bool
+	// Scream boolean
+	bool IsScream = true;
+	
 };
