@@ -3,36 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "UI/Skill/SkillInterfaceUserWidget.h"
-#include "UI/Skill/SpaceCoolTimerWidget.h"
-#include "UI/PlayerStatus/PlayerStatusBarUserWidget.h"
+#include "UI/Skill/Skill_MainWidget.h"
 #include "UI/ChaosDungeon/ChaosDungeonProgressUserWidget.h"
 #include "ChaosDungeon_MainWidget.generated.h"
 
 
 UCLASS()
-class UPORTFOLIO_RPG_API UChaosDungeon_MainWidget : public UUserWidget
+class UPORTFOLIO_RPG_API UChaosDungeon_MainWidget : public USkill_MainWidget
 {
 	GENERATED_BODY()
 
 protected:
-	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-protected:
-	UFUNCTION(BlueprintCallable)
-	void SetUIInfo();
-
-protected:
-	UPROPERTY(meta=(BindWidget))
-	USkillInterfaceUserWidget* Sk_Interface;
-	UPROPERTY(meta=(BindWidget))
-	USpaceCoolTimerWidget* SpaceCoolTimer;
-	UPROPERTY(meta=(BindWidget))
-	UPlayerStatusBarUserWidget* HPBar;
-	UPROPERTY(meta = (BindWidget))
-	UPlayerStatusBarUserWidget* MPBar;
 	UPROPERTY(meta = (BindWidget))
 	UChaosDungeonProgressUserWidget* PurificationGage;
 };
