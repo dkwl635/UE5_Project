@@ -125,5 +125,6 @@ private:
 public:  //Animation Bool
 	// Scream boolean
 	bool IsScream = true;
+	bool IsDetach = false;
 	
 };

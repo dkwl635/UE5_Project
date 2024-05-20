@@ -14,5 +14,6 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Pawn)
 	{
 		IsScream = Pawn->IsScream;
+		IsDetach = Pawn->IsDetach;
 	}
 }

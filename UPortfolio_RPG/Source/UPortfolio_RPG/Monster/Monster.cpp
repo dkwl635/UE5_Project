@@ -211,10 +211,21 @@ void AMonster::RangeSpawnDelay()
 	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
 }
 
+int cnt = 5; //임시 조건
 void AMonster::DestroyRangeActor()
 {
 	AttackRangeActor->Destroy();
-	AttackRange();
+
+	//여기에 조건 줘서 진행할지 안할지 구현하면 될듯
+	
+	if (cnt == 5) {
+		cnt += 1;
+		AttackRange();
+	}
+	else
+	{
+
+	}
 }
 
 
