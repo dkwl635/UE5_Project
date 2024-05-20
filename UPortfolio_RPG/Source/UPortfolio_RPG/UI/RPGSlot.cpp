@@ -9,12 +9,13 @@
 #include "Item/ItemEnum.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/WidgetSwitcher.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
  FLinearColor ShadowColor = FLinearColor(0.2f, 0.2f, 0.2f);
  FLinearColor OrginColor = FLinearColor(1.0f, 1.0f, 1.0f);
 
-void URPGSlot::RefreshUI()
+void URPGSlot::RefreshSlotUI()
 {
 	SlotImg->SetVisibility(ESlateVisibility::Collapsed);
 	SlotImg->SetColorAndOpacity(OrginColor);
@@ -111,6 +112,7 @@ bool URPGSlot::UseSlot()
 			if (RPGShop->CheckSellItem(this)) { break; }
 
 			URPGSlot* SellSlot=	RPGShop->GetEmptySellSlot();
+			RPGShop->ShopSwitcher->SetActiveWidgetIndex(1);
 			SellSlot->DragEnd(this);
 			break;
 		}
@@ -128,6 +130,7 @@ bool URPGSlot::UseSlot()
 			if (RPGShop->CheckSellItem(this)) { break; }
 
 			URPGSlot* SellSlot = RPGShop->GetEmptySellSlot();
+			RPGShop->ShopSwitcher->SetActiveWidgetIndex(1);
 			SellSlot->DragEnd(this);
 			break;
 		}
@@ -293,8 +296,8 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		if (AUIManager::UIManager->isShopOpen) { return false; }
 
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->SwapItem((EITEMTYPE)Option1, SlotIndex, StartSlot->SlotIndex);
-		this->RefreshUI();
-		StartSlot->RefreshUI();
+		this->RefreshSlotUI();
+		StartSlot->RefreshSlotUI();
 	}
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
@@ -304,7 +307,7 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		if (QuickSlot != -1) { return false; }
 
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->SlotIndex);
-		this->RefreshUI();
+		this->RefreshSlotUI();
 	}
 	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
@@ -314,8 +317,8 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->Option1);
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(StartSlot->SlotIndex, temp);
 
-		StartSlot->RefreshUI();
-		this->RefreshUI();
+		StartSlot->RefreshSlotUI();
+		this->RefreshSlotUI();
 	}
 	else if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL || StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		&& EndSlotType == ERPGSLOTTYPE::SHOP_SELLITEM)
@@ -326,8 +329,8 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		this->Option1 = StartSlot->SlotIndex;
 		Option2 = StartSlot->Option1;
 	
-		this->RefreshUI();
-		StartSlot->RefreshUI();
+		this->RefreshSlotUI();
+		StartSlot->RefreshSlotUI();
 
 		AUIManager::UIManager->RefreshUI(ERPG_UI::SHOP);
 		AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
@@ -375,14 +378,14 @@ void URPGSlot::DragFailed(URPGSlot* ThisSlot)
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->QuickSlotClear(this->SlotIndex);
-		this->RefreshUI();
+		this->RefreshSlotUI();
 		break;
 	}
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
 		EGEARTYPE GearType = (EGEARTYPE)SlotIndex;
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->DeEquipment(GearType);
-		this->RefreshUI();
+		this->RefreshSlotUI();
 		break;
 	}
 	case ERPGSLOTTYPE::SHOP_SELLITEM:

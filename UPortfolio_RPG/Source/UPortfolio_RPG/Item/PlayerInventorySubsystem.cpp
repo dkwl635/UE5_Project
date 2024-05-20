@@ -68,8 +68,8 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	//Load
 	Load();
 
-	/*PlayerGold = 10000;
-	PlayerCoin = 10000;*/
+	PlayerGold = 10000;
+	PlayerCoin = 10000;
 	/*AddItem(TEXT("HP100"), 12);
 	AddItem(TEXT("HP500"), 3);
 	AddItem(TEXT("Sword_0"), 1);

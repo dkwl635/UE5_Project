@@ -21,12 +21,12 @@ void URPGPlayerEquipmentUserWidger::Init()
 
 void URPGPlayerEquipmentUserWidger::RefreshUI()
 {	
-	WeaponSlot->RefreshUI();
-	HeadSlot->RefreshUI();
-	ArmorSlot->RefreshUI();
-	PantsSlot->RefreshUI();
-	GlovesSlot->RefreshUI();
-	ShoesSlot->RefreshUI();
+	WeaponSlot->RefreshSlotUI();
+	HeadSlot->RefreshSlotUI();
+	ArmorSlot->RefreshSlotUI();
+	PantsSlot->RefreshSlotUI();
+	GlovesSlot->RefreshSlotUI();
+	ShoesSlot->RefreshSlotUI();
 
 	SetAddStat();
 

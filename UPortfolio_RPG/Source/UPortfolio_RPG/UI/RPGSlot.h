@@ -37,7 +37,7 @@ public:
 	TSubclassOf<UUserWidget> DragUserWidget;
 
 public:
-	void RefreshUI();
+	void RefreshSlotUI();
 
 	UFUNCTION(BlueprintCallable)
 	bool UseSlot();

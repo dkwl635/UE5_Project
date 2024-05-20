@@ -1,57 +1,33 @@
 {
-	"Gold": 0,
-	"Coin": 0,
+	"Gold": 10000,
+	"Coin": 7200,
 	"EnchantStone": 0,
-	"GearItem": [
-		{
-			"RowName": "Sword_0",
-			"SlotIndex": 1,
-			"Count": 1
-		},
-		{
-			"RowName": "Sword_1",
-			"SlotIndex": 4,
-			"Count": 1
-		},
-		{
-			"RowName": "Shoes_1",
-			"SlotIndex": 6,
-			"Count": 1
-		}
-	],
+	"GearItem": [],
 	"NormalItem": [
 		{
-			"RowName": "HP100",
+			"RowName": "HP1000",
 			"SlotIndex": 0,
-			"Count": 10
-		},
-		{
-			"RowName": "HP100",
-			"SlotIndex": 1,
-			"Count": 2
+			"Count": 1
 		},
 		{
 			"RowName": "HP500",
-			"SlotIndex": 21,
-			"Count": 3
-		}
-	],
-	"Equipment": [
-		{
-			"RowName": "Sword_1",
-			"GearType": 1
+			"SlotIndex": 1,
+			"Count": 10
 		},
 		{
-			"RowName": "Armor_0",
-			"GearType": 3
+			"RowName": "HP500",
+			"SlotIndex": 2,
+			"Count": 10
 		},
 		{
-			"RowName": "Pants_0",
-			"GearType": 4
+			"RowName": "HP500",
+			"SlotIndex": 3,
+			"Count": 10
 		}
 	],
-	"QuickItemSlot1": 0,
+	"Equipment": [],
+	"QuickItemSlot1": 1,
 	"QuickItemSlot2": -1,
-	"QuickItemSlot3": 21,
+	"QuickItemSlot3": 3,
 	"QuickItemSlot4": -1
 }

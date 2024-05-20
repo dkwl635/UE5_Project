@@ -119,15 +119,5 @@ FVector2D URPGMainUserWidget::GetShowItemPos(FVector2D SppawnPos)
 
 void URPGMainUserWidget::UIButtonFunc(ERPG_UI Type)
 {
-    AUIManager::UIManager->GetRPGUI(Type);
-    if (AUIManager::UIManager->IsShowUI(Type))
-    {
-        AUIManager::UIManager->HideUI(Type);
-    }
-    else
-    {
-        AUIManager::UIManager->ShowUI(Type);
-    }
-
-
+    AUIManager::UIManager->GetRPGUIToggle(Type);
 }

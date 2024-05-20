@@ -42,7 +42,10 @@ public:
 	UPROPERTY(EditAnywhere , BlueprintReadWrite, meta = (BindWidget))
 	UWidgetSwitcher* BagWidgetSwitcher;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style")
+	struct FSlateBrush ActivateButtonStyle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style")
+	struct FSlateBrush DeactivateButtonStyle;
 	
 
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)

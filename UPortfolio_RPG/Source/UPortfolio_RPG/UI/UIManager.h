@@ -43,6 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HideUI(ERPG_UI Type);
 
+
+
 	UFUNCTION(BlueprintCallable)
 	void TopHideUI();
 
@@ -50,6 +52,9 @@ public:
 	class URPGUserWidget* GetRPGUI(ERPG_UI UIType);
 	UFUNCTION(BlueprintCallable)
 	bool IsShowUI(ERPG_UI UIType);
+
+	UFUNCTION(BlueprintCallable)
+	void GetRPGUIToggle(ERPG_UI UIType);
 public:
 	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
 	void PlayerGoodsUIRefresh();

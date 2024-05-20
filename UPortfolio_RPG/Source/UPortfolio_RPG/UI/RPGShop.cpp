@@ -47,6 +47,8 @@ void URPGShop::Init()
 
 void URPGShop::RefreshUI()
 {
+	
+
 	if (ShopSwitcher->GetActiveWidgetIndex() == 0)
 	{
 		RefreshBuySlot();
@@ -99,6 +101,7 @@ void URPGShop::ShowInitUI()
 void URPGShop::HideSetUI()
 {
 	AUIManager::UIManager->isShopOpen = false;
+	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
 }
 
 void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
@@ -199,7 +202,7 @@ void URPGShop::SellItem()
 			EITEMTYPE ItemType = (EITEMTYPE)SellShopSlotList[i]->Option2;
 			UPlayerInventorySubsystem::PlayerInventorySubsystem->RemoveItem(ItemType, SellShopSlotList[i]->Option1);
 			SellShopSlotList[i]->ClearSlot();
-			SellShopSlotList[i]->RefreshUI();
+			SellShopSlotList[i]->RefreshSlotUI();
 		}
 	}
 	
@@ -247,7 +250,7 @@ void URPGShop::RefreshSellSlot()
 	int SellCount = SellShopSlotList.Num();
 	for (int i = 0; i < SellCount; i++)
 	{
-		SellShopSlotList[i]->RefreshUI();
+		SellShopSlotList[i]->RefreshSlotUI();
 	}
 
 }

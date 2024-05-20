@@ -140,4 +140,16 @@ bool AUIManager::IsShowUI(ERPG_UI UIType)
 	return false;
 }
 
+void AUIManager::GetRPGUIToggle(ERPG_UI UIType)
+{
+	if (IsShowUI(UIType))
+	{
+		HideUI(UIType);
+	}
+	else
+	{
+		ShowUI(UIType);
+	}
+}
+
 
