@@ -19,6 +19,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Unique_ID = 0;
 
+	UPROPERTY(EditAnywhere)
+	FName RowName = "";
+
 	UPROPERTY()
 	int8 CurrentBundleCount = 0;
 

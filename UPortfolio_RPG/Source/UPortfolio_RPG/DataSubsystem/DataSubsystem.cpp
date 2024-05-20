@@ -4,6 +4,7 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/Item.h"
 
+UDataSubsystem* UDataSubsystem::DataSubsystem = nullptr;
 UDataSubsystem::UDataSubsystem()
 {
 	{

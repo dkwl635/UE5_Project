@@ -11,11 +11,9 @@ public class UPortfolio_RPG : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { 
             "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"
             ,"AIModule" , "Niagara","NavigationSystem", "GameplayTasks",
-            "SlateCore"
+            "SlateCore", "Json",             
+            "JsonUtilities"
         });
-
-        //��� �߰��� �ٸ����� �޸��� �ּ���.
-        //�����Ҷ� �����ϰڽ��ϴ�.
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
         PublicIncludePaths.Add("UPortfolio_RPG");

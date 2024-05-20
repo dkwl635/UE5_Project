@@ -23,7 +23,7 @@ void URPGQuickSlotsUserWidget::Init()
 		SlotWidget->RefreshUI();
 		QuickSlotsIndex.Add(i, SlotWidget);
 	
-		PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
 
 	}
 

@@ -31,20 +31,11 @@ public	:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void ShowUI(ERPG_UI Type);
-
-	void ShowUI(URPGUserWidget* UserWidget);
-
-	UFUNCTION(BlueprintCallable)
-	void HideUI(URPGUserWidget* UserWidget);
-	UFUNCTION(BlueprintCallable)
-	void ToggleUI(URPGUserWidget* UserWidget);
-	UFUNCTION(BlueprintCallable)
 	URPGUserWidget* GetRPGUI(ERPG_UI Type);
 	UFUNCTION(BlueprintCallable)
 	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
 
-	UFUNCTION(BlueprintCallable)
+	
 	URPGUserWidget* RPGUIRefresh(ERPG_UI Type);
 
 
@@ -80,4 +71,8 @@ public :
 	void HideItemInfoBox();
 
 	FVector2D GetShowItemPos(FVector2D SppawnPos);
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UIButtonFunc(ERPG_UI Type);
 };

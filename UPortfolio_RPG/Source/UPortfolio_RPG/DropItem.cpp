@@ -45,7 +45,7 @@ void ADropItem::AddItem()
 		return;
 	}
 
-	PlayerInventorySubsystem->AddItem(ItemHande, 1);
+	UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ItemHande, 1);
 
 	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
 	AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);

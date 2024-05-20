@@ -30,14 +30,32 @@ public :
 	TSubclassOf<UUserWidget> MainUIBP;
 	class URPGMainUserWidget* PlayerUI;
 	
+	TWeakObjectPtr<class UCanvasPanelSlot> TopPopupUI;
 public  :
 	bool isShopOpen;
 
+	UPROPERTY()
+	TArray<ERPG_UI> UIList;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void ShowUI(ERPG_UI Type);
+	UFUNCTION(BlueprintCallable)
+	void HideUI(ERPG_UI Type);
+
+	UFUNCTION(BlueprintCallable)
+	void TopHideUI();
+
+	UFUNCTION(BlueprintCallable)
+	class URPGUserWidget* GetRPGUI(ERPG_UI UIType);
+	UFUNCTION(BlueprintCallable)
+	bool IsShowUI(ERPG_UI UIType);
+public:
+	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
 	void PlayerGoodsUIRefresh();
 	void ShowItemBox(FVector2D SpawnPos , struct  ShowBoxData Data);
 	void HideItemBox();
 	void RefreshUI(ERPG_UI UIType);
-	class URPGUserWidget* GetRPGUI(ERPG_UI UIType);
+
+	
 };
