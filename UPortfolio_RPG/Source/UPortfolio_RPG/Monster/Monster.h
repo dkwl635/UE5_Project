@@ -9,9 +9,8 @@
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Monster/Animation/MonsterAnimInstance.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Monster.generated.h"
-
-DECLARE_DYNAMIC_DELEGATE(FOnTimelineFinished);
 
 UCLASS()
 class UPORTFOLIO_RPG_API AMonster : public APawn
@@ -100,6 +99,10 @@ private:
 	UPROPERTY()
 	class AAttackRangeActor* AttackRangeActor;
 
+	// Particle system
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UNiagaraSystem* AttackRangeEffect;
+
 
 
 
@@ -115,6 +118,8 @@ private:
 	// Delay timer handle
 	FTimerHandle DelayTimerHandle;
 	void ScreamDelay();
+	void RangeSpawnDelay();
+	void DestroyRangeActor();
 
 
 public:  //Animation Bool

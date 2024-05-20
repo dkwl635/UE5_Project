@@ -57,6 +57,16 @@ AMonster::AMonster()
 		}
 	}
 
+	// AttackRange 공격 관리
+	{
+
+		{
+			static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Asset(TEXT("/Script/Niagara.NiagaraSystem'/Game/AddContent/KTP_Effect/Particles/Bottom/Bottom05-08.Bottom05-08'"));
+			ensure(Asset.Object);
+			AttackRangeEffect = Asset.Object;
+		}
+	}
+
 
 	SetRootComponent(CapsuleComponent);
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
@@ -133,11 +143,16 @@ void AMonster::AttackRange()
 	FVector SpawnActorLocation = FVector(RandomX, RandomY, 0.f); // Final spawn location
 
 	// Spawn AttackRangeActor
-	if (AAttackRangeActor* NewAttackRangeActor = GetWorld()->SpawnActor<AAttackRangeActor>(SpawnActorLocation, FRotator::ZeroRotator))
-	{
-		// Store the reference to the spawned AttackRangeActor
-		AttackRangeActor = NewAttackRangeActor;
-	}
+	AAttackRangeActor* SpawnAttackRangeActor = GetWorld()->SpawnActor<AAttackRangeActor>(SpawnActorLocation, FRotator::ZeroRotator);
+	
+	AttackRangeActor = SpawnAttackRangeActor;
+	AttackRangeLocation = AttackRangeActor->GetActorLocation();
+	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::RangeSpawnDelay, 2.0f, false);
+
+	
+
 }
 
 void AMonster::HandleScreamProgress(float Value)
@@ -173,7 +188,7 @@ void AMonster::FinishFire()
 	else
 	{
 		++TimeLineCnt;
-		GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1초 지연
+		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1초 지연
 		ScreamTimeline.PlayFromStart();
 	}
 }
@@ -183,6 +198,23 @@ void AMonster::ScreamDelay()
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	IsScream = true;
 	ScreamTimeline.PlayFromStart();
+}
+
+void AMonster::RangeSpawnDelay()
+{
+	AttackRangeActor->StaticMesh->SetVisibility(false);
+	
+	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackRangeEffect, AttackRangeLocation, FRotator::ZeroRotator, FVector(0.5,0.5,0.5), true, true, ENCPoolMethod::None, true);
+
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
+}
+
+void AMonster::DestroyRangeActor()
+{
+	AttackRangeActor->Destroy();
+	AttackRange();
 }
 
 
