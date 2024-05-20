@@ -11,6 +11,8 @@
 #include "Monster/Animation/MonsterAnimInstance.h"
 #include "Monster.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE(FOnTimelineFinished);
+
 UCLASS()
 class UPORTFOLIO_RPG_API AMonster : public APawn
 {
@@ -78,6 +80,10 @@ private: //FireScream 이용 변수
 	UFUNCTION()
 	void OnBoxCollisionOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	//FireScream 공격 끝
+	UFUNCTION()
+	void FinishFire();
+	
 
 public:
 	// Scream boolean

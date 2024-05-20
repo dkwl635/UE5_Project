@@ -77,7 +77,13 @@ AMonster::AMonster()
 			FOnTimelineFloat TimelineCallback;
 			TimelineCallback.BindUFunction(this, FName("HandleScreamProgress"));
 			ScreamTimeline.AddInterpFloat(ScreamCurve, TimelineCallback);
-			ScreamTimeline.SetLooping(true);
+			//ScreamTimeline.SetLooping(true);
+			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // 타임라인 길이를 마지막 키프레임까지로 설정합니다.
+			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // 타임라인이 완료될 때 호출될 함수 설정
+			
+			FOnTimelineEvent TimelineFinishCallback;
+			TimelineFinishCallback.BindUFunction(this, FName("FinishFire"));
+			ScreamTimeline.SetTimelineFinishedFunc(TimelineFinishCallback);
 		}
 }
 
@@ -117,7 +123,10 @@ void AMonster::FireScream()
 void AMonster::HandleScreamProgress(float Value)
 {
 	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
-	UE_LOG(LogTemp, Warning, TEXT("Value 값 : %f"), Value);
+	//충돌 디버그박스
+	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), FColor::Red, false, -1, 0, 2);
+
+	
 }
 
 void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -133,6 +142,11 @@ void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
 	}
+}
+
+void AMonster::FinishFire()
+{
+	IsScream = false;
 }
 
 void AMonster::ScreamDelay()
