@@ -8,7 +8,6 @@ void UChaosDungeon_MainWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	
 	EndMessage->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (GetWorld())
