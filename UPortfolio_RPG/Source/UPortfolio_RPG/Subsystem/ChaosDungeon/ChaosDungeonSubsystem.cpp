@@ -2,6 +2,7 @@
 
 
 #include "Subsystem/ChaosDungeon/ChaosDungeonSubsystem.h"
+#include "UI/ChaosDungeon/ChaosDungeonEndUserWidget.h"
 #include "Enemy/EnemySpawner.h"
 #include "Enemy/EnemyPool.h"
 
@@ -25,6 +26,7 @@ void UChaosDungeonSubsystem::EndDungeon()
 {
 	GetWorld()->GetTimerManager().ClearTimer(SpawnTimer);
 	GetWorld()->GetTimerManager().ClearTimer(DungeonLimitTimer);
+	EndMessage->SetVisibility(ESlateVisibility::Visible);
 	UE_LOG(LogTemp, Warning, TEXT("Dungeon Ended!"));
 	Spawner->GetEnemyPool()->Destroy();
 }

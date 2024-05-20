@@ -6,6 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "ChaosDungeonSubsystem.generated.h"
 
+class UChaosDungeonEndUserWidget;
 class AEnemySpawner;
 
 UCLASS()
@@ -24,6 +25,7 @@ public:
 	bool IsStarted() { return bIsStarted; }
 	void AddPurification(int32 InValue);
 	int32 GetPurification() { return Purification; }
+	void SetEndWidget(UChaosDungeonEndUserWidget* InWidget) { EndMessage = InWidget; }
 
 protected:
 	bool bIsStarted = false;
@@ -35,4 +37,5 @@ protected:
 	FTimerHandle DungeonLimitTimer;
 
 	AEnemySpawner* Spawner = nullptr;
+	UChaosDungeonEndUserWidget* EndMessage;
 };
