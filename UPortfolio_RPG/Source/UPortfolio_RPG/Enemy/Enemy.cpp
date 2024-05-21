@@ -115,8 +115,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     {
         if (GetController())
         {
-            GetController()->StopMovement();
-            EnemyAnim->Montage_Stop(0.1f);
+         //   GetController()->StopMovement();
+          //  EnemyAnim->Montage_Stop(0.1f);
         }
         IsDead = true;
     }
@@ -127,7 +127,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 void AEnemy::Attack()
 {
     if (IsAttacking) return;
-    if (IsDead) return;
+   // if (IsDead) return;
 
     EnemyAnim->PlayAttackMontage();
     IsAttacking = true;
@@ -159,6 +159,12 @@ void AEnemy::AttackCheck()
             UE_LOG(LogTemp, Warning, TEXT("NoAttackRange"));
         }
     }
+}
+
+void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    IsAttacking = false;
+    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
 }
 
 void AEnemy::PlayAttackParticle()
@@ -230,6 +236,10 @@ bool AEnemy::AddEnemy(const FName& InKey)
         ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
 
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+        /*if (EnemyAnim != nullptr)
+        {
+            EnemyAnim->OnMontageEnded.AddDynamic(this, &AEnemy::OnAttackMontageEnded);
+        }*/
         ensure(EnemyAnim);
 
         return true;
