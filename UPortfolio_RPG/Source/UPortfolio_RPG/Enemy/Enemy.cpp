@@ -26,7 +26,7 @@ AEnemy::AEnemy()
     Movement->MaxSpeed = 100.0f;
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
-
+   
     SetRootComponent(CapsuleComponent);
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
     ParticleAttackSystemComponent->SetupAttachment(GetRootComponent());
@@ -37,11 +37,13 @@ AEnemy::AEnemy()
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
-    if (UI_HUD.Succeeded())
     {
-        StatusWidget->SetWidgetClass(UI_HUD.Class);
-        StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+        static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+        if (UI_HUD.Succeeded())
+        {
+            StatusWidget->SetWidgetClass(UI_HUD.Class);
+            StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+        }
     }
 
     //AIController설정
@@ -108,6 +110,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     float NewHP = EnemyState->GetCurrentHP() - Damage;
 
+    DisplayDamage(Damage);
     EnemyState->SetCurrentHP(NewHP);
     UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
 
@@ -115,6 +118,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     {
         if (GetController())
         {
+            StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
             GetController()->StopMovement();
             EnemyAnim->Montage_Stop(0.1f);
         }
@@ -170,6 +174,17 @@ void AEnemy::PlayAttackParticle()
             ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
     }
 }
+
+#include "UI/Damage/PrintDamageUserWidget.h"
+#include "Actors/Damage/PrintDamageTextActor.h"
+void AEnemy::DisplayDamage(float InDamage)
+{
+    FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+    APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+        (APrintDamageTextActor::StaticClass(), SpawnTransform);
+    Actor->SetWidgetText(InDamage, GetActorLocation());
+}
+
 bool AEnemy::Init()
 {
     DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
@@ -184,6 +199,7 @@ void AEnemy::Reset()
     IsDead = false;
     IsSpawn = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+    StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Visible);
     PurificationScore = FMath::RandRange(100, 200);
 }
 

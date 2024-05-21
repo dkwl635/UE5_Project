@@ -19,8 +19,6 @@
 class UEnemyPool;
 class UWidgetComponent;
 
-
-
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
 {
@@ -70,13 +68,11 @@ public:
 	void Attack();
 	void AttackCheck();
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
-	// montage
-	//UFUNCTION()
-	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
 	// particle
 	void PlayAttackParticle();
+
+private:
+	void DisplayDamage(float InDamage);
 
 public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
