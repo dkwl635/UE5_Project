@@ -107,9 +107,9 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
         InEnemy->GetController()->UnPossess();
         ActiveEnemies.RemoveAt(Index);
         {
-            ACD_PlayerController* CDPC = Cast<ACD_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-            AChaosDungeonInfo* Info = CDPC->GetInfo();
-            Info->AddPurification(InEnemy->PurificationScore);
+         //   ACD_PlayerController* CDPC = Cast<ACD_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+           // AChaosDungeonInfo* Info = CDPC->GetInfo();
+          //  Info->AddPurification(InEnemy->PurificationScore);
         }
         InEnemy->Reset();
         Pool.Add(InEnemy);

@@ -220,7 +220,7 @@ void APlayerCharacter::DefaultAttackCheck()
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
 		ETraceTypeQuery::TraceTypeQuery1, false,
-		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
+		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
 	if (bIsHit)
 	{
 		for (auto& Hit : HitResult)
