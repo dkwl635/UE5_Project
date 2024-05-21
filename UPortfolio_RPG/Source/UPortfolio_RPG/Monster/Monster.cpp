@@ -10,6 +10,7 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Curves/CurveFloat.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Monster/Actor/AttackRangeActor.h"
 
 // Sets default values
@@ -19,6 +20,8 @@ AMonster::AMonster()
 	PrimaryActorTick.bCanEverTick = true;
 
 	IsScream = false;
+
+	CurrentHP = MaxHP;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
@@ -105,7 +108,7 @@ void AMonster::BeginPlay()
 	Super::BeginPlay();
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FireScream();
-	AttackRange();
+	//AttackRange();
 }
 
 // Called every frame
@@ -114,6 +117,39 @@ void AMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	ScreamTimeline.TickTimeline(DeltaTime);
 }
+
+float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// Call the base class version of TakeDamage
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	CurrentHP = CurrentHP - Damage;
+
+	DisplayDamage(Damage);
+	UE_LOG(LogTemp, Warning, TEXT("Boss_HP : %f"), CurrentHP);
+
+	if (CurrentHP <= 0.f)
+	{
+		Destroy();
+	//	StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
+	//	GetController()->StopMovement();
+	//	EnemyAnim->Montage_Stop(0.1f);
+	//	IsDead = true;
+	}
+
+	return Damage;
+}
+
+
+//#include "UI/Damage/PrintDamageUserWidget.h"
+//#include "Actors/Damage/PrintDamageTextActor.h"
+	void AMonster::DisplayDamage(float InDamage)
+	{
+//		FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+//		APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+//			(APrintDamageTextActor::StaticClass(), SpawnTransform);
+//		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
+	}
+
 
 void AMonster::FireScream()
 {
@@ -172,18 +208,27 @@ void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// 오버랩된 액터 출력
+	//auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (OtherActor && OtherActor != this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
+		ACharacter* Player = Cast<ACharacter>(OtherActor);
+		if (Player)
+		{
+			float Damage = AttackDamage;
+			UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
+		}
+
 	}
 }
 
 void AMonster::FinishFire()
 {
-	if (TimeLineCnt == 2) {
+	if (TimeLineCnt == 1) {
 		TimeLineCnt = 0;
 		IsScream = false;
+	//	FireScreamEffect->Destroy();
+
 	}
 	else
 	{
@@ -211,20 +256,18 @@ void AMonster::RangeSpawnDelay()
 	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
 }
 
-int cnt = 5; //임시 조건
 void AMonster::DestroyRangeActor()
 {
 	AttackRangeActor->Destroy();
 
-	//여기에 조건 줘서 진행할지 안할지 구현하면 될듯
-	
-	if (cnt == 5) {
-		cnt += 1;
-		AttackRange();
+	if (RangeCnt == 5) {
+		RangeCnt = 1;
+		return;
 	}
 	else
 	{
-
+		++RangeCnt;
+		AttackRange();
 	}
 }
 

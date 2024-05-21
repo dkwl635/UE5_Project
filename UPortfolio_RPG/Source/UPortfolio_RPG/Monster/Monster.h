@@ -10,6 +10,7 @@
 #include "GameFramework/Pawn.h"
 #include "Monster/Animation/MonsterAnimInstance.h"
 #include "NiagaraFunctionLibrary.h"
+//#include "Enemy/UI/StatusbarUserWidget.h"
 #include "Monster.generated.h"
 
 UCLASS()
@@ -28,6 +29,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	void DisplayDamage(float InDamage);
+
+	float MaxHP = 10000;
+	float CurrentHP = 0;
+	float AttackDamage = 100;
+
+	//UPROPERTY(EditAnywhere)
+	//UWidgetComponent* StatusWidget;
 
 private:
 	// Root component
@@ -89,6 +101,8 @@ private:
 	//FireScream 공격 끝
 	UFUNCTION()
 	void FinishFire();
+
+	int RangeCnt = 1;
 
 
 //AttackRange 이용 변수
