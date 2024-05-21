@@ -116,12 +116,9 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
-        if (GetController())
-        {
-            StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
-            GetController()->StopMovement();
-            EnemyAnim->Montage_Stop(0.1f);
-        }
+        StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
+        GetController()->StopMovement();
+        EnemyAnim->Montage_Stop(0.1f);
         IsDead = true;
     }
 
@@ -189,7 +186,7 @@ void AEnemy::DisplayDamage(float InDamage)
     FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
     APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
         (APrintDamageTextActor::StaticClass(), SpawnTransform);
-    Actor->SetWidgetText(InDamage, GetActorLocation());
+    Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
 }
 
 bool AEnemy::Init()

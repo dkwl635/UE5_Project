@@ -19,6 +19,7 @@ protected:
 public:
 	void SetDamage(float InDamage);
 	void SetOwner(AActor* Owner);
+	void PlayAnimFromPawn(APawn* Pawn);
 	UFUNCTION()
 	void OnAnimFinished();
 
@@ -26,7 +27,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DamageText;
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* FloatingText;
+	UWidgetAnimation* FloatingText_Enemy;
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* FloatingText_Player;
 
 	AActor* OwningActor = nullptr;
 };

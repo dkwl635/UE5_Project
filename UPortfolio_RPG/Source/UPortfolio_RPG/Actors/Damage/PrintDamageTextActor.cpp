@@ -4,7 +4,6 @@
 #include "Actors/Damage/PrintDamageTextActor.h"
 #include "Components/WidgetComponent.h"
 #include "UI/Damage/PrintDamageUserWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APrintDamageTextActor::APrintDamageTextActor()
@@ -24,7 +23,7 @@ APrintDamageTextActor::APrintDamageTextActor()
     }
 }
 
-void APrintDamageTextActor::SetWidgetText(float InDamage, FVector InLocation)
+void APrintDamageTextActor::SetWidgetText(APawn* Damaged, float InDamage, FVector InLocation)
 {
     if (Widget)
     {
@@ -32,7 +31,9 @@ void APrintDamageTextActor::SetWidgetText(float InDamage, FVector InLocation)
         if (DamageWidget)
         {
             DamageWidget->SetOwner(this);
+            DamageWidget->PlayAnimFromPawn(Damaged);
             DamageWidget->SetDamage(InDamage);
+            Widget->SetWorldLocation(InLocation);
         }
     }
 }

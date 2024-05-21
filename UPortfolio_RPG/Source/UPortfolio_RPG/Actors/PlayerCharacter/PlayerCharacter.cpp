@@ -262,14 +262,22 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 	SetActorRotation(NewRotation);
 }
 
-// add LJY
+#include "Actors/Damage/PrintDamageTextActor.h"
+void APlayerCharacter::DisplayDamage(float InDamage)
+{
+	FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+	APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+		(APrintDamageTextActor::StaticClass(), SpawnTransform);
+	Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
+}
+
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	float CurrentHP = StatusComponent->GetCurrentHP();
 	float NewHP = CurrentHP - Damage;
+	DisplayDamage(Damage);
 	StatusComponent->SetCurrentHP(NewHP);
-	UE_LOG(LogTemp, Warning, TEXT("Character_HP : %f"), StatusComponent->GetCurrentHP());
 
 	return Damage;
 }

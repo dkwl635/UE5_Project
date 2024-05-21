@@ -121,6 +121,7 @@ protected:
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+	void DisplayDamage(float InDamage);
 
 public:
 	virtual float TakeDamage(

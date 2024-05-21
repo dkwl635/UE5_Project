@@ -1,8 +1,49 @@
 {
 	"Gold": 10000,
-	"Coin": 7200,
+	"Coin": 10000,
 	"EnchantStone": 0,
-	"GearItem": [],
+	"GearItem": [
+		{
+			"RowName": "Sword_0",
+			"SlotIndex": 0,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 1,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 2,
+			"Count": 1
+		},
+		{
+			"RowName": "Head_0",
+			"SlotIndex": 3,
+			"Count": 1
+		},
+		{
+			"RowName": "Armor_0",
+			"SlotIndex": 4,
+			"Count": 1
+		},
+		{
+			"RowName": "Pants_0",
+			"SlotIndex": 5,
+			"Count": 1
+		},
+		{
+			"RowName": "Shoes_1",
+			"SlotIndex": 6,
+			"Count": 1
+		},
+		{
+			"RowName": "Gloves_1",
+			"SlotIndex": 7,
+			"Count": 1
+		}
+	],
 	"NormalItem": [
 		{
 			"RowName": "HP1000",

@@ -2,6 +2,7 @@
 
 
 #include "UI/Damage/PrintDamageUserWidget.h"
+#include "Enemy/Enemy.h"
 
 void UPrintDamageUserWidget::NativeConstruct()
 {
@@ -9,22 +10,37 @@ void UPrintDamageUserWidget::NativeConstruct()
 
 	FWidgetAnimationDynamicEvent Delegate;
 	Delegate.BindUFunction(this, FName("OnAnimFinished"));
-	BindToAnimationFinished(FloatingText, Delegate);
+	BindToAnimationFinished(FloatingText_Enemy, Delegate);
+	BindToAnimationFinished(FloatingText_Player, Delegate);
 
-	PlayAnimation(FloatingText);
+	
 }
 
 void UPrintDamageUserWidget::SetDamage(float InDamage)
 {
 	FText Damage = FText::AsNumber(InDamage);
 	if(DamageText)
+	{
 		DamageText->SetText(Damage);
+	}
 }
 
 void UPrintDamageUserWidget::SetOwner(AActor* Owner)
 {
 	if (Owner)
 		OwningActor = Owner;
+}
+
+void UPrintDamageUserWidget::PlayAnimFromPawn(APawn* Pawn)
+{
+	if (AEnemy* Enemy = Cast<AEnemy>(Pawn))
+	{
+		PlayAnimation(FloatingText_Enemy);
+	}
+	else
+	{
+		PlayAnimation(FloatingText_Player);
+	}
 }
 
 void UPrintDamageUserWidget::OnAnimFinished()

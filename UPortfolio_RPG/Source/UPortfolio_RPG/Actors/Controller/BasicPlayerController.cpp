@@ -48,7 +48,7 @@ void ABasicPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	PlayerCharacter = Cast<APlayerCharacter>(aPawn);
-	if (IsValid(PlayerCharacter))
+	//if (IsValid(PlayerCharacter))
 	{
 		/*UDataSubsystem* DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 		const FCharacterDataTableRow* CharacterDataTableRow = DataSubsystem->FindChacter(TEXT("Soldier3"));
@@ -120,7 +120,6 @@ void ABasicPlayerController::OnDefaultAttack()
 		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		PlayerCharacter->OnDefaultAttack(Hit.Location);
 	}
 }

@@ -17,7 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	APrintDamageTextActor();
 
-	void SetWidgetText(float InDamage, FVector InLocation);
+	void SetWidgetText(APawn* Damaged, float InDamage, FVector InLocation);
 
 protected:
 	// Called when the game starts or when spawned

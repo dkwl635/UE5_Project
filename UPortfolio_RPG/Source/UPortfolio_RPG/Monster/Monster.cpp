@@ -37,7 +37,7 @@ AMonster::AMonster()
 		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
 	}
 
-	//FireScream ╟Ь╟щ ╟Э╦╝
+	//FireScream О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 	{ 
 		
 		{
@@ -57,7 +57,7 @@ AMonster::AMonster()
 		}
 	}
 
-	// AttackRange ╟Ь╟щ ╟Э╦╝
+	// AttackRange О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 	{
 
 		{
@@ -80,7 +80,7 @@ AMonster::AMonster()
 	CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 	BoxCollision->SetCollisionProfileName(TEXT("MonsterActor"));
 
-	// BoxCollision ддфВЁмф╝©║ ©ю╧Ж╥╕ юл╨╔ф╝ гз╣И╥╞ ╧ыюн╣Ы
+	// BoxCollision О©╫О©╫О©╫О©╫О©╫О©╫ф╝О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫л╨О©╫ф╝ О©╫з╣И╥╞ О©╫О©╫О©╫н╣О©╫
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonster::OnBoxCollisionOverlap);
 
 	// Initialize timeline
@@ -90,8 +90,8 @@ AMonster::AMonster()
 			TimelineCallback.BindUFunction(this, FName("HandleScreamProgress"));
 			ScreamTimeline.AddInterpFloat(ScreamCurve, TimelineCallback);
 			//ScreamTimeline.SetLooping(true);
-			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // е╦юс╤Сюн ╠Фюл╦╕ ╦╤аЖ╦╥ е╟га╥╧юс╠НаЖ╥н ╪Ёа╓гу╢о╢ы.
-			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // е╦юс╤Сюнюл ©о╥А╣и ╤╖ хёцБ╣и гт╪Ж ╪Ёа╓
+			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // е╦О©╫с╤О©╫О©╫О©╫ О©╫О©╫О©╫л╦О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ е╟О©╫О©╫О©╫О©╫О©╫с╠О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫у╢о╢О©╫.
+			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // е╦О©╫с╤О©╫О©╫О©╫О©╫О©╫ О©╫о╥О©╫О©╫ О©╫О©╫ хёО©╫О©╫О©╫ О©╫т╪О©╫ О©╫О©╫О©╫О©╫
 			
 			FOnTimelineEvent TimelineFinishCallback;
 			TimelineFinishCallback.BindUFunction(this, FName("FinishFire"));
@@ -158,7 +158,7 @@ void AMonster::AttackRange()
 void AMonster::HandleScreamProgress(float Value)
 {
 	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
-	//цФ╣╧ ╣П╧Ж╠в╧з╫╨
+	//О©╫Ф╣╧ О©╫О©╫О©╫О©╫в╧з╫О©╫
 	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), FColor::Red, false, -1, 0, 2);
 
 	
@@ -166,13 +166,13 @@ void AMonster::HandleScreamProgress(float Value)
 
 void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1цй аЖ©╛
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1О©╫О©╫ О©╫О©╫О©╫О©╫
 	
 }
 
 void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ©ю╧Ж╥╕╣х ╬вем цБ╥б
+	// О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
 	if (OtherActor && OtherActor != this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
@@ -188,7 +188,7 @@ void AMonster::FinishFire()
 	else
 	{
 		++TimeLineCnt;
-		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1цй аЖ©╛
+		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1О©╫О©╫ О©╫О©╫О©╫О©╫
 		ScreamTimeline.PlayFromStart();
 	}
 }
@@ -211,12 +211,12 @@ void AMonster::RangeSpawnDelay()
 	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
 }
 
-int cnt = 5; //юс╫ц а╤╟г
+int cnt = 5; //О©╫с╫О©╫ О©╫О©╫О©╫О©╫
 void AMonster::DestroyRangeActor()
 {
 	AttackRangeActor->Destroy();
 
-	//©╘╠Б©║ а╤╟г аЮ╪╜ аЬгЮграЖ ╬хграЖ ╠╦гЖго╦И ╣и╣М
+	//О©╫О©╫О©╫Б©║ О©╫О©╫О©╫О©╫ О©╫Ю╪╜ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫о╦О©╫ О©╫и╣О©╫
 	
 	if (cnt == 5) {
 		cnt += 1;
