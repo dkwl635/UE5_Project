@@ -46,9 +46,9 @@ public :
 	
 	UFUNCTION(BlueprintCallable)
 	bool Init();
-	void AddInitItem(const FName& InKey, int8 Count , int8 Index);
+	void AddInitItem(const FName& InKey, int Count , int8 Index);
 
-	bool AddItem(const FName& InKey, int8 Count = 1);	
+	bool AddItem(const FName& InKey, int Count = 1);
 	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
 	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
 	
@@ -107,7 +107,8 @@ public:
 	class UDataSubsystem* DataSubsystem;
 	class UItem* ItemClass;
 
-
+public:
+	bool bOpenShop = false;
 
 };
 

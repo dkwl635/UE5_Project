@@ -37,6 +37,15 @@ void ADropItem::SetDropItem(FName ItemRowName, int Count)
 
 FText ADropItem::SetItemText()
 {
+	if (ItemCount > 1)
+	{		
+		FText CountText = FText::FromString(FString::FromInt(ItemCount));
+		FText ItemNameText = FText::FromName(ItemHande);
+		
+		FText FormatText = FText::Format(NSLOCTEXT("YourNamespace", "YourKey", "{0} x{1}"), ItemNameText, CountText );
+		return FormatText;
+	}
+
 	return FText::FromName(ItemHande);
 }
 
@@ -48,7 +57,7 @@ void ADropItem::AddItem()
 		return;
 	}
 
-	UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ItemHande, 1);
+	UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ItemHande, ItemCount);
 
 	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
 	AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);

@@ -87,19 +87,45 @@ bool UPlayerInventorySubsystem::Init()
 	return true;
 }
 
-void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int8 Count, int8 Index)
+void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 Index)
 {
 	FItemData* Data = DataSubsystem->FindItem(InKey);
+	
+	if (Data->ItemType == EITEMTYPE::COIN)
+	{
+		SetPlayerCoin(GetPlayerCoin() + Count);
+		return;
+	}
+	else 	if (Data->ItemType == EITEMTYPE::GOLD)
+	{
+		SetPlayerGold(GetPlayerGold() + Count);
+		return;
+	}
+
+
+
 	Inventory Inventory = GetInventory(Data->ItemType);
 	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
 	NewItemData->CurrentBundleCount = Count;
 	(*Inventory)[Index] = NewItemData;
 }
 
-bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count)
+bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int Count)
 {
 	FItemData* Data = DataSubsystem->FindItem(InKey);
 	if (!Data) { return false; }
+
+	if (Data->ItemType == EITEMTYPE::COIN)
+	{
+		SetPlayerCoin(GetPlayerCoin() + Count);
+		return true ;
+	}
+	else 	if (Data->ItemType == EITEMTYPE::GOLD)
+	{
+		SetPlayerGold(GetPlayerGold() + Count);
+		return true;
+	}
+
 
 	Inventory Inventory = GetInventory(Data->ItemType);
 
