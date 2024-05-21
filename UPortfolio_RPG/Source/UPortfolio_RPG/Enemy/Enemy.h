@@ -56,7 +56,7 @@ private:
 	UEnemyAnimInstance* EnemyAnim;
 	UPROPERTY(EditAnywhere)
 	UStatusComponent* EnemyState;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	UWidgetComponent* StatusWidget;
 	UPROPERTY()
 	UStatusbarUserWidget* EnemyStatusUserWidget;
@@ -85,7 +85,7 @@ public:
 	bool IsDead;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool IsSpawn;
-	float PurificationScore = 0.f;
+	int32 PurificationScore = 0;
 
 	UEnemyAnimInstance* GetAnimInstance() { return EnemyAnim; }
 	UStatusComponent* GetStatusComponent() { return EnemyState; }

@@ -13,6 +13,7 @@
 #include "UI/UIManager.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Math/UnrealMathUtility.h"
+#include "Skill/Skill_MainWidget.h"
 
 void URPGMainUserWidget::Init()
 {
@@ -49,6 +50,9 @@ void URPGMainUserWidget::Init()
 
     IsPush = false;
     bInteraction = false;
+
+    
+
 }
 
 URPGMainUserWidget::~URPGMainUserWidget()

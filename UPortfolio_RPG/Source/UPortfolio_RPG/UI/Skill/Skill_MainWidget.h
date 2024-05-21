@@ -19,7 +19,7 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
-protected:
+public:
 	UFUNCTION(BlueprintCallable)
 	void SetUIInfo();
 

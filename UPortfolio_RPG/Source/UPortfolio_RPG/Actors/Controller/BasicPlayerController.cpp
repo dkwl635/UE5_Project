@@ -55,7 +55,7 @@ void ABasicPlayerController::OnPossess(APawn* aPawn)
 
 		KDT2Character->SetData(CharacterDataTableRow);*/
 	}
-
+	
 	PawnSpringArm = aPawn->GetComponentByClass<USpringArmComponent>();
 	TargetArmLength = PawnSpringArm->TargetArmLength;
 }
@@ -120,6 +120,7 @@ void ABasicPlayerController::OnDefaultAttack()
 		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		PlayerCharacter->OnDefaultAttack(Hit.Location);
 	}
 }

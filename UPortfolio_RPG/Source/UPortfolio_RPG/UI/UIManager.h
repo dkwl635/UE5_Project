@@ -51,5 +51,6 @@ public:
 	void ShowItemBox(FVector2D SpawnPos , struct  ShowBoxData Data);
 	void HideItemBox();
 	void RefreshUI(ERPG_UI UIType);
+	void SetSkillUI();
 	
 };

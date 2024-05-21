@@ -23,7 +23,7 @@ AEnemy::AEnemy()
     ParticleAttackSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleAttackSystemComponent"));
     ParticleAttackSystem = nullptr;
 
-    Movement->MaxSpeed = 100.0f;                  ///���� �ӵ� ����
+    Movement->MaxSpeed = 100.0f;
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
 
@@ -102,7 +102,6 @@ void AEnemy::PostInitializeComponents()
     Super::PostInitializeComponents();
 }
 
-
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     // Call the base class version of TakeDamage
@@ -114,9 +113,12 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
-        GetController()->StopMovement();
+        if (GetController())
+        {
+            GetController()->StopMovement();
+            EnemyAnim->Montage_Stop(0.1f);
+        }
         IsDead = true;
-        
     }
 
     return Damage;
@@ -189,7 +191,7 @@ void AEnemy::Reset()
     IsDead = false;
     IsSpawn = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
-    PurificationScore = 0.f;
+    PurificationScore = FMath::RandRange(100, 200);
 }
 
 bool AEnemy::AddEnemy(const FName& InKey)
@@ -214,6 +216,7 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
 
         Movement->MaxSpeed = InData->EnemySpeed;
+        PurificationScore = FMath::RandRange(100, 200);
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
         StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 30.0f));

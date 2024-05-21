@@ -31,6 +31,8 @@ public	:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* RPGUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class USkill_MainWidget* SkillWidget;
 public:
 
 	UFUNCTION(BlueprintCallable)

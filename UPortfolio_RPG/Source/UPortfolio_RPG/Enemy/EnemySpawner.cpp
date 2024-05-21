@@ -21,6 +21,7 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 	
 	EnemyPool->Create(GetWorld(), MaxPoolNum);
+
 }
 
 void AEnemySpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)

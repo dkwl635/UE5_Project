@@ -6,6 +6,7 @@
 #include "UI/RPGUserWidget.h"
 #include "Item/ItemData.h"
 #include "Components/CanvasPanelSlot.h"
+#include	"Skill/Skill_MainWidget.h"
 
 
 TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
@@ -122,6 +123,11 @@ void AUIManager::HideItemBox()
 void AUIManager::RefreshUI(ERPG_UI UIType)
 {
 	PlayerUI->RPGUIRefresh(UIType);
+}
+
+void AUIManager::SetSkillUI()
+{
+	PlayerUI->SkillWidget->SetUIInfo();
 }
 
 
