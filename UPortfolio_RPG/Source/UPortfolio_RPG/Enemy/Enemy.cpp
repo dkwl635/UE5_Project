@@ -169,9 +169,16 @@ void AEnemy::PlayAttackParticle()
 {
     if (ParticleAttackSystem)
     {
-        UGameplayStatics::SpawnEmitterAttached(ParticleAttackSystem, CapsuleComponent, "Impact",
-            FVector( (SkeletalMeshComponent->GetRelativeLocation()+ParticleAttackSystemComponent->GetRelativeLocation())), 
-            ParticleAttackSystemComponent->GetRelativeRotation(), FVector(ParticleAttackSystemComponent->GetRelativeScale3D()), EAttachLocation::KeepRelativeOffset, true);
+        UGameplayStatics::SpawnEmitterAttached(
+            ParticleAttackSystem, 
+            CapsuleComponent, 
+            FName(TEXT("EffectSocket")), 
+            FVector(50.f,0,0), 
+            FRotator(0,0,-90), 
+            FVector(3.0f, 3.0f, 3.0f), 
+            EAttachLocation::SnapToTargetIncludingScale, 
+            true 
+        );
     }
 }
 

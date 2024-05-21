@@ -9,12 +9,13 @@
 #include "Item/ItemEnum.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/WidgetSwitcher.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
  FLinearColor ShadowColor = FLinearColor(0.2f, 0.2f, 0.2f);
  FLinearColor OrginColor = FLinearColor(1.0f, 1.0f, 1.0f);
 
-void URPGSlot::RefreshUI()
+void URPGSlot::RefreshSlotUI()
 {
 	SlotImg->SetVisibility(ESlateVisibility::Collapsed);
 	SlotImg->SetColorAndOpacity(OrginColor);
@@ -25,7 +26,8 @@ void URPGSlot::RefreshUI()
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
 		Option1 = (int)EITEMTYPE::GEAR;
-		FItemData* Data = PlayerInventorySubsystem->GetGearItem(SlotIndex);
+	
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SlotIndex);
 		if (Data == nullptr) { return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
 		if(Data->CurrentBundleCount > 1){ CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
@@ -40,7 +42,7 @@ void URPGSlot::RefreshUI()
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
 		Option1 = (int)EITEMTYPE::OTHER;
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(SlotIndex);
 		if (Data == nullptr) { return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
 		if (Data->CurrentBundleCount > 1) { CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
@@ -54,9 +56,9 @@ void URPGSlot::RefreshUI()
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		Option1= PlayerInventorySubsystem->GetQuickSlotFromIndex(SlotIndex);
+		Option1= UPlayerInventorySubsystem::PlayerInventorySubsystem->GetQuickSlotFromIndex(SlotIndex);
 		if (Option1 < 0) { 	return; }
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		if (Data == nullptr) {  return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
 		if (Data->CurrentBundleCount > 1) { CountText->SetText(FText::AsNumber(Data->CurrentBundleCount)); }
@@ -68,10 +70,10 @@ void URPGSlot::RefreshUI()
 		if (Option1 < 0) { return; }
 		FItemData* Data = nullptr;
 		if (Option2 == (int)EITEMTYPE::GEAR) 
-		{ Data = PlayerInventorySubsystem->GetGearItem(Option1);
+		{ Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(Option1);
 		}
 		else {
-			Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+			Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		}
 
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
@@ -81,7 +83,7 @@ void URPGSlot::RefreshUI()
 	}
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
 		if (Data == nullptr) { return; }
 		SlotImg->SetBrushFromTexture(Data->ItemImage);
 		CountText->SetText(FText::FromString(TEXT("")));
@@ -110,13 +112,14 @@ bool URPGSlot::UseSlot()
 			if (RPGShop->CheckSellItem(this)) { break; }
 
 			URPGSlot* SellSlot=	RPGShop->GetEmptySellSlot();
+			RPGShop->ShopSwitcher->SetActiveWidgetIndex(1);
 			SellSlot->DragEnd(this);
 			break;
 		}
 
-		FItemData* Data = PlayerInventorySubsystem->GetGearItem(SlotIndex);
-		EGEARTYPE GearType = DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
-		PlayerInventorySubsystem->ChangeGear(GearType, SlotIndex);	
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SlotIndex);
+		EGEARTYPE GearType = UDataSubsystem::DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->ChangeGear(GearType, SlotIndex);	
 		break;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
@@ -127,20 +130,21 @@ bool URPGSlot::UseSlot()
 			if (RPGShop->CheckSellItem(this)) { break; }
 
 			URPGSlot* SellSlot = RPGShop->GetEmptySellSlot();
+			RPGShop->ShopSwitcher->SetActiveWidgetIndex(1);
 			SellSlot->DragEnd(this);
 			break;
 		}
 
-		PlayerInventorySubsystem->UseItem((EITEMTYPE)Option1, SlotIndex, 1);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->UseItem((EITEMTYPE)Option1, SlotIndex, 1);
 		break;
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		Option1 = PlayerInventorySubsystem->GetQuickSlotFromIndex(SlotIndex);
+		Option1 = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetQuickSlotFromIndex(SlotIndex);
 		if (Option1 < 0) { return false ; }
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		if (Data == nullptr) { return false; }
-		PlayerInventorySubsystem->UseItem(EITEMTYPE::OTHER, Option1, 1);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->UseItem(EITEMTYPE::OTHER, Option1, 1);
 		break;
 	}	
 	case ERPGSLOTTYPE::SHOP_SELLITEM:
@@ -152,7 +156,7 @@ bool URPGSlot::UseSlot()
 	}
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
-		PlayerInventorySubsystem->DeEquipment((EGEARTYPE)SlotIndex);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->DeEquipment((EGEARTYPE)SlotIndex);
 		break;
 	}
 	}
@@ -175,7 +179,7 @@ void URPGSlot::ClearSlot()
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		Option1 = -1;
-		PlayerInventorySubsystem->SetAttachQuickSlot(SlotIndex, -1);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(SlotIndex, -1);
 	}
 	case ERPGSLOTTYPE::SHOP_SELLITEM:
 	{
@@ -202,17 +206,17 @@ FName URPGSlot::GetFName()
 	{
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetGearItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SlotIndex);
 		return Data->ItemName;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(SlotIndex);
 		return Data->ItemName;
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		return Data->ItemName;
 	}
 	case ERPGSLOTTYPE::SHOP_SELLITEM:
@@ -220,16 +224,16 @@ FName URPGSlot::GetFName()
 		FItemData* Data = nullptr;
 		if (Option2 == (int)EITEMTYPE::GEAR)
 		{
-			Data = PlayerInventorySubsystem->GetGearItem(Option1);
+			Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(Option1);
 		}
 		else {
-			Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+			Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		}
 		return Data->ItemName;
 	}		
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
 		return Data->ItemName;
 	}
 	}
@@ -243,17 +247,17 @@ FText URPGSlot::GetDescFText()
 	{
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetGearItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SlotIndex);
 		return Data->ItemDesc;
 	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(SlotIndex);
 		return Data->ItemDesc;
 	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		return Data->ItemDesc;
 	}
 	case ERPGSLOTTYPE::SHOP_SELLITEM:
@@ -261,16 +265,16 @@ FText URPGSlot::GetDescFText()
 		FItemData* Data = nullptr;
 		if (Option2 == (int)EITEMTYPE::GEAR)
 		{
-			Data = PlayerInventorySubsystem->GetGearItem(Option1);
+			Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(Option1);
 		}
 		else {
-			Data = PlayerInventorySubsystem->GetNormalItem(Option1);
+			Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(Option1);
 		}
 		return Data->ItemDesc;
 	}
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
-		FItemData* Data = PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetEquipmentItem(SlotIndex);
 		return Data->ItemDesc;
 	}
 	}
@@ -291,30 +295,30 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 	{
 		if (AUIManager::UIManager->isShopOpen) { return false; }
 
-		PlayerInventorySubsystem->SwapItem((EITEMTYPE)Option1, SlotIndex, StartSlot->SlotIndex);
-		this->RefreshUI();
-		StartSlot->RefreshUI();
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->SwapItem((EITEMTYPE)Option1, SlotIndex, StartSlot->SlotIndex);
+		this->RefreshSlotUI();
+		StartSlot->RefreshSlotUI();
 	}
 	else if (StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
 		if (AUIManager::UIManager->isShopOpen) { return false; }
 
-		int QuickSlot = PlayerInventorySubsystem->CheckQuickSlotItem(StartSlot->SlotIndex);
+		int QuickSlot = UPlayerInventorySubsystem::PlayerInventorySubsystem->CheckQuickSlotItem(StartSlot->SlotIndex);
 		if (QuickSlot != -1) { return false; }
 
-		PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->SlotIndex);
-		this->RefreshUI();
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->SlotIndex);
+		this->RefreshSlotUI();
 	}
 	else if (StartSlotType == ERPGSLOTTYPE::QUICK_ITEM && EndSlotType == ERPGSLOTTYPE::QUICK_ITEM)
 	{
 		if (AUIManager::UIManager->isShopOpen) { return false; }
 
 		int temp = this->Option1;
-		PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->Option1);
-		PlayerInventorySubsystem->SetAttachQuickSlot(StartSlot->SlotIndex, temp);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(this->SlotIndex, StartSlot->Option1);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetAttachQuickSlot(StartSlot->SlotIndex, temp);
 
-		StartSlot->RefreshUI();
-		this->RefreshUI();
+		StartSlot->RefreshSlotUI();
+		this->RefreshSlotUI();
 	}
 	else if ((StartSlotType == ERPGSLOTTYPE::INVENTORY_NORMARL || StartSlotType == ERPGSLOTTYPE::INVENTORY_GEAR)
 		&& EndSlotType == ERPGSLOTTYPE::SHOP_SELLITEM)
@@ -325,8 +329,8 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		this->Option1 = StartSlot->SlotIndex;
 		Option2 = StartSlot->Option1;
 	
-		this->RefreshUI();
-		StartSlot->RefreshUI();
+		this->RefreshSlotUI();
+		StartSlot->RefreshSlotUI();
 
 		AUIManager::UIManager->RefreshUI(ERPG_UI::SHOP);
 		AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
@@ -350,13 +354,17 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 			EqSlot = StartSlot;
 		}
 
-		FItemData* Data = PlayerInventorySubsystem->GetGearItem(InvenSlot->SlotIndex);
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(InvenSlot->SlotIndex);
+		
+		EGEARTYPE InvenEqType = EGEARTYPE::None;
+		if (Data != nullptr)
+		{
+			InvenEqType = UDataSubsystem::DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
+		}
 
-		EGEARTYPE InvenEqType = DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
 		EGEARTYPE EqType = (EGEARTYPE)EqSlot->SlotIndex;
-		if (InvenEqType != EqType) { return false; }
-
-		auto tempData = PlayerInventorySubsystem->ChangeGear(EqType, InvenSlot->SlotIndex);
+		if ((InvenEqType != EGEARTYPE::None) && InvenEqType != EqType) { return false; }
+		auto tempData = UPlayerInventorySubsystem::PlayerInventorySubsystem->ChangeGear(EqType, InvenSlot->SlotIndex);
 	}
 	
 	return true;
@@ -373,15 +381,15 @@ void URPGSlot::DragFailed(URPGSlot* ThisSlot)
 		break;
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
-		PlayerInventorySubsystem->QuickSlotClear(this->SlotIndex);
-		this->RefreshUI();
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->QuickSlotClear(this->SlotIndex);
+		this->RefreshSlotUI();
 		break;
 	}
 	case ERPGSLOTTYPE::EQUIPMENT_GEAR:
 	{
 		EGEARTYPE GearType = (EGEARTYPE)SlotIndex;
-		PlayerInventorySubsystem->DeEquipment(GearType);
-		this->RefreshUI();
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->DeEquipment(GearType);
+		this->RefreshSlotUI();
 		break;
 	}
 	case ERPGSLOTTYPE::SHOP_SELLITEM:

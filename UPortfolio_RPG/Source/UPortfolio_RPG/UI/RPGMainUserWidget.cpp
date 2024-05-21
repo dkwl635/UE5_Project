@@ -10,10 +10,15 @@
 #include "UI/ItemInfoUserWdiget.h"
 #include "Item/ItemData.h"
 #include "Math/UnrealMathUtility.h"
-
+#include "UI/UIManager.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Math/UnrealMathUtility.h"
+#include "Skill/Skill_MainWidget.h"
 
 void URPGMainUserWidget::Init()
 {
+    SetViewSize();
+
 
     int UICount = RPGUI->GetChildrenCount();
     for (int i = 0; i < UICount; i++)
@@ -24,12 +29,16 @@ void URPGMainUserWidget::Init()
         UI->Init();
         RPGUIMap.Add(UI->UI_Type, UI);
         RPGUICanvasMap.Add(UI->UI_Type, CanvasSlot);
+
+        UI->StartUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveStart);
+        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);
         
     }
 
     GetRPGUI(ERPG_UI::INVENTORY)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::SHOP)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::EQUIPMENT)->SetVisibility(ESlateVisibility::Collapsed);
+    GetRPGUI(ERPG_UI::NPCTALK)->SetVisibility(ESlateVisibility::Collapsed);
 
     //ZOreder Setting
     GetCanvasPanel(ERPG_UI::QUICKSLOTS)->SetZOrder(HUDZOrder);
@@ -39,69 +48,23 @@ void URPGMainUserWidget::Init()
     ItemBoxPanel->SetVisibility(ESlateVisibility::Collapsed);
     ItemBoxPanelSlot = Cast<UCanvasPanelSlot>(ItemBoxPanel->Slot);
 
+    IsPush = false;
+    bInteraction = false;
+
+    
+
 }
 
 URPGMainUserWidget::~URPGMainUserWidget()
 {
-   
     RPGUIMap.Empty();
 }
 
-void URPGMainUserWidget::ShowUI(URPGUserWidget* UserWidget)
+
+
+void URPGMainUserWidget::SetViewSize()
 {
-    if (!UserWidget) { return; }
-    if (!UserWidget->IsInViewport())
-    {
-        
-        //UserWidget->AddToViewport();
-        if (TopPopupUI.IsValid())
-        {
-            TopPopupUI.Get()->SetZOrder(PopupZOrder);
-        }
-       
-        UCanvasPanelSlot* Current = GetCanvasPanel(UserWidget->UI_Type);
-        Current->SetZOrder(TopZOrder);
-        TopPopupUI = Current;
-        if (UserWidget->GetVisibility() == ESlateVisibility::Collapsed)
-        {
-            UserWidget->SetVisibility(ESlateVisibility::Visible);
-            UserWidget->ShowInitUI();
-            UserWidget->RefreshUI();
-       }
- 
-    }
-
-}
-
-void URPGMainUserWidget::ShowUI(ERPG_UI Type)
-{
-    ShowUI(GetRPGUI(Type));
-}
-
-void URPGMainUserWidget::HideUI(URPGUserWidget* UserWidget)
-{
-    if (!UserWidget) { return; }
-    if (UserWidget->IsInViewport())
-    {
-        UserWidget->HideSetUI();
-        UserWidget->SetVisibility(ESlateVisibility::Collapsed);
-    }
- 
-}
-
-void URPGMainUserWidget::ToggleUI(URPGUserWidget* UserWidget)
-{
-    if (!UserWidget) { return; }
-
-    if (!UserWidget->IsInViewport())
-    {
-        
-        ShowUI(UserWidget);
-    }
-    else
-    {
-        HideUI(UserWidget);
-    }
+   ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
 }
 
 URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)
@@ -139,8 +102,8 @@ URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 
 void URPGMainUserWidget::PlayerGoodsRefresh()
 {
-    int32 PlayerGold = PlayerInventorySubsystem->GetPlayerGold();
-    int32 PlayerCoin = PlayerInventorySubsystem->GetPlayerCoin();
+    int32 PlayerGold = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerGold();
+    int32 PlayerCoin = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerCoin();
 
     GoldTextBlock->SetText(FText::AsNumber(PlayerGold));
     CoinTextBlock->SetText(FText::AsNumber(PlayerCoin));
@@ -172,6 +135,41 @@ FVector2D URPGMainUserWidget::GetShowItemPos(FVector2D SppawnPos)
     return NewPos;
 }
 
+FVector2D URPGMainUserWidget::GetViewSize()
+{
+    if (!MoveTargetCanvasSlot) { return ViewSize; }
+    
+    return ViewSize -MoveTargetCanvasSlot->GetSize();
+}
 
+void URPGMainUserWidget::UIMoveStart(ERPG_UI Type)
+{
+    AUIManager::UIManager->ShowUI(Type);
+    MoveTargetCanvasSlot = GetCanvasPanel(Type);
+    
+    MousePotion = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld())- MoveTargetCanvasSlot->GetPosition();
+    IsPush = true;
+}
 
+void URPGMainUserWidget::UIMoveTick()
+{
+    if (!IsPush) { return; }
 
+    FVector2D Temp = GetViewSize(); 
+    FVector2D UIPos = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld()) - MousePotion;
+    UIPos.X = FMathf::Clamp(UIPos.X, 0, Temp.X);
+    UIPos.Y = FMathf::Clamp(UIPos.Y, 0, Temp.Y);
+
+    MoveTargetCanvasSlot->SetPosition(UIPos);
+}
+
+void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)
+{
+    MoveTargetCanvasSlot = nullptr;
+    IsPush = false;
+}
+
+void URPGMainUserWidget::UIButtonFunc(ERPG_UI Type)
+{
+    AUIManager::UIManager->GetRPGUIToggle(Type);
+}

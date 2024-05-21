@@ -3,6 +3,13 @@
 
 #include "UI/RPGUserWidget.h"
 #include "Components/CanvasPanelSlot.h"
+#include "UI/UIManager.h"
+
+void URPGUserWidget::HideUI()
+{
+    AUIManager::UIManager->HideUI(this->UI_Type);
+
+}
 
 void URPGUserWidget::RefreshUI()
 {

@@ -15,6 +15,7 @@
 #include "Actors/Animation/PlayerAnimInstance.h"
 #include "Actors/Controller/BasicPlayerController.h"
 #include "Subsystem/CoolTimeSubsystem.h"
+#include "UI/UIManager.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -100,6 +101,9 @@ void APlayerCharacter::BeginPlay()
 		SkillDataTableRow = SkillDataTableRowHandle.GetRow<FSkillDataTableRow>(TEXT(""));
 
 		SkillComponent->SetSkillData(SkillDataTableRow);
+
+		if (AUIManager::UIManager != nullptr) { AUIManager::UIManager->SetSkillUI(); }
+
 	}
 	if (!AnimDataTableRowHandle.IsNull() && AnimDataTableRowHandle.RowName != NAME_None)
 	{
@@ -107,6 +111,8 @@ void APlayerCharacter::BeginPlay()
 
 		SetAnimData(AnimDataTableRow);
 	}
+
+
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -229,7 +235,7 @@ void APlayerCharacter::DefaultAttackCheck()
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
 		ETraceTypeQuery::TraceTypeQuery1, false,
-		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
+		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
 	if (bIsHit)
 	{
 		for (auto& Hit : HitResult)

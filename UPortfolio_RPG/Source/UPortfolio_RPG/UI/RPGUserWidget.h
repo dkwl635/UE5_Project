@@ -21,7 +21,9 @@ public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Type")
 	ERPG_UI UI_Type;
 
-
+protected:
+	UFUNCTION(BlueprintCallable)
+	void HideUI();
 
 public:
 	UFUNCTION(BlueprintCallable)

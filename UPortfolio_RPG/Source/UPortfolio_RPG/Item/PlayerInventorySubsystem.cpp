@@ -1,10 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "PlayerInventorySubsystem.h"
 #include "DataSubsystem/DataSubsystem.h"
-#include "Item.h"
+#include "Item/Item.h"
 #include "UI/RPGSlot.h"
 #include "UI/UIManager.h"
+#include "UI/UIEnum.h"
+#include "Json.h"
+#include "JsonUtilities.h"
 
+UPlayerInventorySubsystem* UPlayerInventorySubsystem::PlayerInventorySubsystem = nullptr;
 int32 UPlayerInventorySubsystem::GetPlayerCoin()
 {
 	return PlayerCoin;
@@ -58,15 +62,16 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	EquipmentInventory.Init(nullptr,7);
 	QuickItemSlotsPointer.Init(-1, 8);
 
-
 	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
 
+	//Load
+	Load();
+
 	PlayerGold = 10000;
 	PlayerCoin = 10000;
-	
-	AddItem(TEXT("HP100"), 12);
-	AddItem(TEXT("HP500"), 3);
+	/*AddItem(TEXT("HP100"), 12);
+	AddItem(TEXT("HP500"), 3);*/
 	AddItem(TEXT("Sword_0"), 1);
 	AddItem(TEXT("Sword_1"), 1);
 	AddItem(TEXT("Sword_1"), 1);
@@ -82,10 +87,45 @@ bool UPlayerInventorySubsystem::Init()
 	return true;
 }
 
-bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
+void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 Index)
+{
+	FItemData* Data = DataSubsystem->FindItem(InKey);
+	
+	if (Data->ItemType == EITEMTYPE::COIN)
+	{
+		SetPlayerCoin(GetPlayerCoin() + Count);
+		return;
+	}
+	else 	if (Data->ItemType == EITEMTYPE::GOLD)
+	{
+		SetPlayerGold(GetPlayerGold() + Count);
+		return;
+	}
+
+
+
+	Inventory Inventory = GetInventory(Data->ItemType);
+	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
+	NewItemData->CurrentBundleCount = Count;
+	(*Inventory)[Index] = NewItemData;
+}
+
+bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int Count)
 {
 	FItemData* Data = DataSubsystem->FindItem(InKey);
 	if (!Data) { return false; }
+
+	if (Data->ItemType == EITEMTYPE::COIN)
+	{
+		SetPlayerCoin(GetPlayerCoin() + Count);
+		return true ;
+	}
+	else 	if (Data->ItemType == EITEMTYPE::GOLD)
+	{
+		SetPlayerGold(GetPlayerGold() + Count);
+		return true;
+	}
+
 
 	Inventory Inventory = GetInventory(Data->ItemType);
 
@@ -93,7 +133,6 @@ bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count = 1)
 
 	MoveItemToInventory(Inventory, Data, Count);
 
-	
 	return	true;
 }
 
@@ -210,10 +249,8 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 		(*Inventory)[EmptyIndex] = NewItemData;
 
 		if (RemainingCount <= 0) { return  true; }
-
 		EmptyIndex = FindEmptyInventory(Inventory , EmptyIndex+1);
 	}
-
 	return false;
 }
 
@@ -353,6 +390,15 @@ bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int
 	return true;
 }
 
+void UPlayerInventorySubsystem::AddInitGear(const FName& InKey, EGEARTYPE GearType)
+{
+	FItemData* Data = DataSubsystem->FindItem(InKey);
+	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
+
+	NewItemData->CurrentBundleCount = 1;
+	EquipmentInventory[(int)GearType] = NewItemData;
+}
+
 FItemData* UPlayerInventorySubsystem::ChangeGear(EGEARTYPE GearType,int8 Index)
 {
 	FItemData* OrginData = (EquipmentInventory[(int)GearType]).Get();
@@ -434,6 +480,167 @@ int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
 	}
 
 	return Result;
+}
+
+void UPlayerInventorySubsystem::Save()
+{
+	//Inventory
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+	JsonObject->SetNumberField(TEXT("Gold"), PlayerGold);
+	JsonObject->SetNumberField(TEXT("Coin"), PlayerCoin);
+	JsonObject->SetNumberField(TEXT("EnchantStone"), EnchantStone);
+
+	//GearInventory
+	TArray<TSharedPtr<FJsonValue>> GearItemJsonArray;
+	int Size = GearInventory.Num();
+	for (int i = 0; i < Size; i++)
+	{
+		if(GearInventory[i].IsValid()){
+			
+			TSharedPtr<FJsonObject> JsonIteemObject = MakeShareable(new FJsonObject());
+			JsonIteemObject->SetStringField(TEXT("RowName"), GearInventory[i]->RowName.ToString());
+			JsonIteemObject->SetNumberField(TEXT("SlotIndex"), i);
+			JsonIteemObject->SetNumberField(TEXT("Count"), GearInventory[i]->CurrentBundleCount);
+			GearItemJsonArray.Add(MakeShareable(new FJsonValueObject(JsonIteemObject)));
+		}
+	}
+	JsonObject->SetArrayField(TEXT("GearItem"), GearItemJsonArray);
+	//NormalInventory
+	TArray<TSharedPtr<FJsonValue>> NormalItemJsonArray;
+	 Size = NormalInventory.Num();
+	for (int i = 0; i < Size; i++)
+	{
+		if (NormalInventory[i].IsValid()) {
+
+			TSharedPtr<FJsonObject> JsonIteemObject = MakeShareable(new FJsonObject());
+			JsonIteemObject->SetStringField(TEXT("RowName"), NormalInventory[i]->RowName.ToString());
+			JsonIteemObject->SetNumberField(TEXT("SlotIndex"), i);
+			JsonIteemObject->SetNumberField(TEXT("Count"), NormalInventory[i]->CurrentBundleCount);
+			NormalItemJsonArray.Add(MakeShareable(new FJsonValueObject(JsonIteemObject)));
+		}
+	}
+	JsonObject->SetArrayField(TEXT("NormalItem"), NormalItemJsonArray);
+	//EquipmentInventory
+	TArray<TSharedPtr<FJsonValue>> EquipmentJsonArray;
+	Size = EquipmentInventory.Num();
+	for (int i = 0; i < Size; i++)
+	{
+		if (EquipmentInventory[i].IsValid()) {
+
+			TSharedPtr<FJsonObject> JsonIteemObject = MakeShareable(new FJsonObject());
+			JsonIteemObject->SetStringField(TEXT("RowName"), EquipmentInventory[i]->RowName.ToString());
+			JsonIteemObject->SetNumberField(TEXT("GearType"), i);
+			EquipmentJsonArray.Add(MakeShareable(new FJsonValueObject(JsonIteemObject)));
+		}
+	}
+	JsonObject->SetArrayField(TEXT("Equipment"), EquipmentJsonArray);
+
+	//QuickSlot
+	JsonObject->SetNumberField(TEXT("QuickItemSlot1"), QuickItemSlotsPointer[0]);
+	JsonObject->SetNumberField(TEXT("QuickItemSlot2"), QuickItemSlotsPointer[1]);
+	JsonObject->SetNumberField(TEXT("QuickItemSlot3"), QuickItemSlotsPointer[2]);
+	JsonObject->SetNumberField(TEXT("QuickItemSlot4"), QuickItemSlotsPointer[3]);
+
+ 	FString OutputString;
+ 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+
+	if (FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer))
+	{
+		FString FilePath = FPaths::ProjectDir() / TEXT("SaveData/SaveData.json");
+		
+		if (FFileHelper::SaveStringToFile(OutputString, *FilePath))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Successfully saved JSON to file"));
+		}	
+	}
+
+
+
+}
+
+void UPlayerInventorySubsystem::Load()
+{
+	FString FilePath = FPaths::ProjectDir() / TEXT("SaveData/SaveData.json");
+	FString JsonString;
+
+	if (FFileHelper::LoadFileToString(JsonString, *FilePath))
+	{
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+
+		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+		{
+			PlayerGold = JsonObject->GetNumberField("Gold");
+			PlayerCoin = JsonObject->GetNumberField("Coin");
+			EnchantStone = JsonObject->GetNumberField("EnchantStone");
+
+			//GearItem
+			const TArray<TSharedPtr<FJsonValue>>* GearJsonArray;
+			if (JsonObject->TryGetArrayField(TEXT("GearItem"), GearJsonArray))
+			{
+				for (const TSharedPtr<FJsonValue>& JsonValue : *GearJsonArray)
+				{
+					TSharedPtr<FJsonObject> ItemObject = JsonValue->AsObject();
+					if (ItemObject.IsValid())
+					{
+						FName RowName = FName(ItemObject->GetStringField(TEXT("RowName")));
+						int8 SlotIndex = ItemObject->GetNumberField(TEXT("SlotIndex"));
+						int8 Count = ItemObject->GetNumberField(TEXT("Count"));
+
+						AddInitItem(RowName, Count, SlotIndex);
+					}
+				}
+			}
+			//NormalItem
+			const TArray<TSharedPtr<FJsonValue>>* NormalJsonArray;
+			if (JsonObject->TryGetArrayField(TEXT("NormalItem"), NormalJsonArray))
+			{
+				for (const TSharedPtr<FJsonValue>& JsonValue : *NormalJsonArray)
+				{
+					TSharedPtr<FJsonObject> ItemObject = JsonValue->AsObject();
+					if (ItemObject.IsValid())
+					{
+						FName RowName = FName(ItemObject->GetStringField(TEXT("RowName")));
+						int8 SlotIndex = ItemObject->GetNumberField(TEXT("SlotIndex"));
+						int8 Count = ItemObject->GetNumberField(TEXT("Count"));
+
+						AddInitItem(RowName, Count, SlotIndex);
+					}
+				}
+			}
+			//EquipmentInventory
+			const TArray<TSharedPtr<FJsonValue>>* EquipmentJsonArray;
+			if (JsonObject->TryGetArrayField(TEXT("Equipment"), EquipmentJsonArray))
+			{
+				for (const TSharedPtr<FJsonValue>& JsonValue : *EquipmentJsonArray)
+				{
+					TSharedPtr<FJsonObject> ItemObject = JsonValue->AsObject();
+					if (ItemObject.IsValid())
+					{
+						FName RowName = FName(ItemObject->GetStringField(TEXT("RowName")));
+						EGEARTYPE GearType = (EGEARTYPE)ItemObject->GetNumberField(TEXT("GearType"));
+						AddInitGear(RowName, GearType);
+					}
+				}
+
+			}
+
+			int  SlotItem = -1;
+			JsonObject->TryGetNumberField("QuickItemSlot1", SlotItem);
+			SetAttachQuickSlot(0, SlotItem);
+			JsonObject->TryGetNumberField("QuickItemSlot2", SlotItem);
+			SetAttachQuickSlot(1, SlotItem);
+			JsonObject->TryGetNumberField("QuickItemSlot3", SlotItem);
+			SetAttachQuickSlot(2, SlotItem);
+			JsonObject->TryGetNumberField("QuickItemSlot4", SlotItem);
+			SetAttachQuickSlot(3, SlotItem);
+
+
+		}
+		
+	}
+	
+
 }
 
 void UPlayerInventorySubsystem::SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex)

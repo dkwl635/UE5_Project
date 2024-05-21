@@ -19,6 +19,9 @@ public:
 	UDataSubsystem();
 	~UDataSubsystem();
 	
+public:
+	static UDataSubsystem* DataSubsystem;// = nullptr;
+
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -50,4 +53,3 @@ protected:
 	UDataTable* DT_Enemy;
 
 };
-extern UDataSubsystem* DataSubsystem = nullptr;
