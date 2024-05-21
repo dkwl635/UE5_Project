@@ -10,7 +10,7 @@ void URPGQuickSlotsUserWidget::Init()
 	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 	auto Childs =  CanvasPanel->GetSlots();
 	
-	for (int8 i = 0; i < Childs.Num(); i++)
+	for (int i = 0; i < Childs.Num(); i++)
 	{
 		auto content = Childs[i]->Content.Get();
 		URPGSlot* SlotWidget = Cast<URPGSlot>(content);
@@ -20,10 +20,10 @@ void URPGQuickSlotsUserWidget::Init()
 		}
 
 		SlotWidget->SlotIndex = i;
-		SlotWidget->RefreshUI();
+		SlotWidget->RefreshSlotUI();
 		QuickSlotsIndex.Add(i, SlotWidget);
 	
-		PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
 
 	}
 
@@ -34,7 +34,7 @@ void URPGQuickSlotsUserWidget::RefreshUI()
 {
 	for (int i = 0; i < QuickSlotsIndex.Num(); i++)
 	{
-		QuickSlotsIndex[i]->RefreshUI();
+		QuickSlotsIndex[i]->RefreshSlotUI();
 	}
 }
 

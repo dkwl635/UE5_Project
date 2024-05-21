@@ -4,7 +4,8 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Slot/SlotEnum.h"
-#include "ItemEnum.h"
+#include "Item/ItemEnum.h"
+#include "UI/UIEnum.h"
 #include "PlayerInventorySubsystem.generated.h"
 
 
@@ -14,10 +15,15 @@ class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsyst
 	GENERATED_BODY()
 
 public:
+	static UPlayerInventorySubsystem* PlayerInventorySubsystem; //= nullptr;
 	typedef  TArray<TSharedPtr<struct FItemData>>* Inventory;
+private:
+	const int8 MaxInvenSize = 30;
+	TArray<TSharedPtr<FItemData>> GearInventory;
+	TArray<TSharedPtr<FItemData>> NormalInventory;
+	TArray<TSharedPtr<FItemData>> EquipmentInventory;
 
 private:
-
 	UPROPERTY(EditAnywhere)
 	int32 PlayerCoin = 0;
 	UPROPERTY(EditAnywhere)
@@ -33,12 +39,6 @@ public:
 	void SetPlayerGold(int32 Value);
 	void SetPlayerEnchantStone(int32 Value);
 
-private:
-	const int8 MaxInvenSize = 30;
-	TArray<TSharedPtr<FItemData>> GearInventory;
-	TArray<TSharedPtr<FItemData>> NormalInventory;
-public:
-	TArray<TSharedPtr<FItemData>> EquipmentInventory;
 public : 
 	UPlayerInventorySubsystem();
 	~UPlayerInventorySubsystem();
@@ -46,7 +46,9 @@ public :
 	
 	UFUNCTION(BlueprintCallable)
 	bool Init();
-	bool AddItem(const FName& InKey, int8 Count);	
+	void AddInitItem(const FName& InKey, int Count , int8 Index);
+
+	bool AddItem(const FName& InKey, int Count = 1);
 	void UseItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
 	void RemoveItem(EITEMTYPE ItemType, int8 InventoryIndex, int8 Count = 1);
 	
@@ -54,12 +56,17 @@ public :
 	void SwapItem(EITEMTYPE ItemType , int8 Index1, int8 Index2);
 	bool CombineItem(EITEMTYPE ItemType, int8 Index1, int8 Index2);
 
+	void AddInitGear(const FName& InKey, EGEARTYPE GearType);
 	FItemData* ChangeGear(EGEARTYPE GearType , int8 Index1);
 	bool DeEquipment(EGEARTYPE GearType);
 
 	FItemData* GetNormalItem(int8 InvenIndex);
 	FItemData* GetGearItem(int8 InvenIndex);
 	FItemData* GetEquipmentItem(int8 InvenIndex);
+public:
+	int32 GetPlayerAddAttack();
+	int32 GetPlayerAddMaxHp();
+
 
 private:
 	void UseItem(FItemData* ItemData, int8 Count);
@@ -81,20 +88,20 @@ private:
 
 	TArray<int> QuickItemSlotsPointer;
 	
-public:
-	int32 GetPlayerAddAttack();
-	int32 GetPlayerAddMaxHp();
-	
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void Save();
+	UFUNCTION(BlueprintCallable)
+	void Load();
+	
 public:
 
 	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);
 	void AttachSlot(ERPGSLOTTYPE SlotType, class URPGSlot* Slot);
 	int GetQuickSlotFromIndex(int QuickSlotIndex);
 	int CheckQuickSlotItem(int ItemIndex);
-	
 	void QuickSlotClear(int8 QuickSlotIndex);
-
 
 public:
 	class UDataSubsystem* DataSubsystem;
@@ -103,7 +110,5 @@ public:
 public:
 	bool bOpenShop = false;
 
-
 };
 
-extern UPlayerInventorySubsystem* PlayerInventorySubsystem = nullptr;

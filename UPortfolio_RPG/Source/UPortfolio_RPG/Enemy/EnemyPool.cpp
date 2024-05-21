@@ -4,6 +4,7 @@
 #include "Enemy/EnemyPool.h"
 #include "AI/EnemyAIController.h"
 #include "Enemy/Animation/EnemyAnimInstance.h"
+#include "Subsystem/ChaosDungeon/ChaosDungeonSubsystem.h"
 
 UEnemyPool::UEnemyPool()
 {
@@ -15,6 +16,7 @@ void UEnemyPool::Create(UWorld* World, uint32 Count)
     Pool.Reserve(Count);
     ControllerPool.Reserve(Count);
     ActiveEnemies.Reserve(Count);
+    CachedWorld = World;
 
     for (uint32 i = 0; i < Count; ++i)
     {
@@ -40,13 +42,15 @@ void UEnemyPool::Destroy()
         if (Enemy)
         {
             Enemy->Destroy();
+            Enemy = nullptr;
         }
     }
-    for (auto* It : ActiveEnemies)
+    for (AEnemy* It : ActiveEnemies)
     {
         if (It)
         {
             It->Destroy();
+            It = nullptr;
         }
     }
     for (auto* It : ControllerPool)
@@ -54,17 +58,16 @@ void UEnemyPool::Destroy()
         if (It)
         {
             It->Destroy();
+            It = nullptr;
         }
     }
-    Pool.Empty();
-    ActiveEnemies.Empty();
-    ControllerPool.Empty();
 }
 
 AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollision, AActor* Owner, APawn* Instigator)
 {
     AEnemy* Enemy = nullptr;
     AEnemyAIController* EnemyController = nullptr;
+
     if (Pool.Num() > 0 && ActiveEnemies.Num()<30)
     {
         Enemy = Pool.Pop(false);
@@ -81,7 +84,7 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
             Enemy->PurificationScore = FMath::RandRange(100, 200);
             Enemy->SetActorTransform(InTransform);
             EnemyController->OnPossess(Enemy);
-            
+
             UEnemyAnimInstance* AnimInstance = Enemy->GetAnimInstance();
             if (AnimInstance)
                 AnimInstance->PlaySpawnMontage();
@@ -90,8 +93,6 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     return Enemy;
 }
 
-#include "Actors/Controller/CD_PlayerController.h"
-#include "Actors/Info/ChaosDungeonInfo.h"
 #include "Kismet/GameplayStatics.h"
 
 void UEnemyPool::Delete(AEnemy* InEnemy)
@@ -99,19 +100,28 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
     const int32 Index = ActiveEnemies.Find(InEnemy);
     if (Index != INDEX_NONE)
     {
-        AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
-        ControllerPool.Add(EnemyController);
-        InEnemy->SetActorHiddenInGame(true); 
-        InEnemy->SetActorEnableCollision(false);
-        InEnemy->SetActorTickEnabled(false);
-        InEnemy->GetController()->UnPossess();
-        ActiveEnemies.RemoveAt(Index);
+        if(InEnemy)
         {
-            ACD_PlayerController* CDPC = Cast<ACD_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-            AChaosDungeonInfo* Info = CDPC->GetInfo();
-            Info->AddPurification(InEnemy->PurificationScore);
+            AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
+            if(EnemyController)
+                ControllerPool.Add(EnemyController);
+            InEnemy->SetActorHiddenInGame(true);
+            InEnemy->SetActorEnableCollision(false);
+            InEnemy->SetActorTickEnabled(false);
+            InEnemy->GetController()->UnPossess();
+            if(!ActiveEnemies.IsEmpty())
+                ActiveEnemies.RemoveAt(Index);
+            InEnemy->Reset();
+            Pool.Add(InEnemy);
+            if (IsValid(CachedWorld))
+            {
+                UChaosDungeonSubsystem* CDSubsystem = CachedWorld->GetSubsystem<UChaosDungeonSubsystem>();
+                ensure(CDSubsystem);
+                if (CDSubsystem)
+                {
+                    CDSubsystem->AddPurification(InEnemy->PurificationScore);
+                }
+            }
         }
-        InEnemy->Reset();
-        Pool.Add(InEnemy);
     }
 }

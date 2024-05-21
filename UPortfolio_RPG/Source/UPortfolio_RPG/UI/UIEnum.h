@@ -10,6 +10,7 @@ enum class ERPG_UI : uint8
 	QUICKSLOTS,
 	SHOP,
 	EQUIPMENT,
+	NPCTALK,
 };
 
 static int  TopZOrder = 5;

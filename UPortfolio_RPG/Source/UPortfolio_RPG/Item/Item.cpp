@@ -6,7 +6,7 @@
 UDataSubsystem* UItem::DataSubsystem = nullptr;
 TMap<FName, FPotionData*> UItem::PotionDatas;
 
-//Target class´Â º¯°æµÉ²¨ÀÓ ÀÓ½Ã
+//Target classï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½
 bool UItem::UseItem(AActor* Target, FItemData* ItemData)
 {
 

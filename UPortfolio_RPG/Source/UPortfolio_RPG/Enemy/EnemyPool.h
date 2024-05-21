@@ -29,6 +29,8 @@ public:
 
 private:
     //list로 액터 관리.. 
-    TSubclassOf<AEnemy> EnemyClass;
+    TSubclassOf<AEnemy> EnemyClass; 
+
+    UWorld* CachedWorld = nullptr;
 };
 	

@@ -10,8 +10,10 @@
 #include "Components/CanvasPanel.h"
 #include "UI/RPGShop.h"
 #include "UI/UIManager.h"
+#include	"Item/ItemData.h"
 
-// Sets default values
+
+ANPCManager* ANPCManager::NPCManager = nullptr;
 ANPCManager::ANPCManager()
 {
  	PrimaryActorTick.bCanEverTick = false;
@@ -22,16 +24,11 @@ ANPCManager::ANPCManager()
 void ANPCManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	NPCTalkBoxUserwidget = Cast<UNPCTalkBoxUserwidget>(CreateWidget<UNPCTalkBoxUserwidget>(GetWorld(), NPCUserWidget));
-	NPCTalkBoxUserwidget->NPCManager = this;
-	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
-
+	NPCManager = this;
 }
 
 void ANPCManager::BeginOverlapPlayer(ANPC* Target)
 {
-	UE_LOG(LogTemp, Warning, TEXT("BeginOverlapPlayer"));
 	CurrentNPC = Target;	
 }
 
@@ -40,20 +37,10 @@ void ANPCManager::EndOverlapPlayer(ANPC* Target)
 	if (CurrentNPC.Get() == Target)
 	{
 		CurrentNPC = nullptr;
-	
-		UE_LOG(LogTemp, Warning, TEXT("EndOverlapPlayer"));
 	}
 }
 
-URPGMainUserWidget* ANPCManager::GetPlayerUI()
-{
-	if (!PlayerUI.IsValid())
-	{
-		PlayerUI = AUIManager::UIManager->PlayerUI;
-	}
 
-	return PlayerUI.Get();
-}
 
 void ANPCManager::StartInteractiorNPC()
 {
@@ -66,12 +53,6 @@ void ANPCManager::StartInteractiorNPC()
 	{
 		return;
 	}
-
-	if (GetPlayerUI())
-	{
-		GetPlayerUI()->RPGUI->AddChildToCanvas(NPCTalkBoxUserwidget);
-		}
-	//Execute_ReceiveActiveInteractiorBox();
 	ReceiveStartInteractiorNPC();
 
 }
@@ -82,7 +63,12 @@ void ANPCManager::EndInteractiorNPC()
 	{
 		return;
 	}
-	NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Collapsed);
+	
+	if (AUIManager::UIManager->IsShowUI(ERPG_UI::NPCTALK))
+	{
+		AUIManager::UIManager->HideUI(ERPG_UI::NPCTALK);
+	}
+	
 	ReceiveEndInteractiorNPC();
 }
 
@@ -93,16 +79,7 @@ void ANPCManager::InteractiorNPC()
 		bInteractior = true;
 		CurrentNPC->StartInteraction();
 
-		if (GetPlayerUI())
-		{
-			GetPlayerUI()->RPGUI->AddChildToCanvas(NPCTalkBoxUserwidget);
-			
-			UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(NPCTalkBoxUserwidget->Slot);
-			Slot->SetZOrder(NPCZOrder);		
-		}
-
-
-		NPCTalkBoxUserwidget->SetVisibility(ESlateVisibility::Visible);
+		AUIManager::UIManager->ShowUI(ERPG_UI::NPCTALK);
 		return;
 	}
 	else
@@ -125,16 +102,13 @@ void ANPCManager::OpenShopUI()
 	{
 		return;
 	}
+	
+	URPGShop* ShopUI = Cast<URPGShop>(AUIManager::UIManager->GetRPGUI(ERPG_UI::SHOP));
+	ShopUI->SetShopData(CurrentNPC.Get()->ShopBuyData);
 
-	if (GetPlayerUI())
-	{
-		URPGShop* ShopUI = Cast<URPGShop>( GetPlayerUI()->GetRPGUI(ERPG_UI::SHOP));
-		ShopUI->SetShopData(CurrentNPC->ShopBuyData);
-		GetPlayerUI()->ShowUI(ERPG_UI::SHOP);
-		GetPlayerUI()->ShowUI(ERPG_UI::INVENTORY);
-
-		//EndInteractiorNPC();
-	}
+	AUIManager::UIManager->ShowUI(ERPG_UI::SHOP);
+	AUIManager::UIManager->ShowUI(ERPG_UI::INVENTORY);
+	
 
 }
 

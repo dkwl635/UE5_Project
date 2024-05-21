@@ -25,7 +25,7 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemy();
-
+	UEnemyPool* GetEnemyPool() { return EnemyPool; }
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

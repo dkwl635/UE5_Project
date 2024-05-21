@@ -4,6 +4,7 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/Item.h"
 
+UDataSubsystem* UDataSubsystem::DataSubsystem = nullptr;
 UDataSubsystem::UDataSubsystem()
 {
 	{
@@ -86,9 +87,9 @@ FPotionData* UDataSubsystem::FindPotionData(const FName& InKey)
 
 FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 {
-		FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
-		ensure(Row);
-	
+	FEnemyData* Row = DT_Enemy->FindRow<FEnemyData>(InKey, TEXT(""));
+	ensure(Row);
+	if(!Row)
 		UE_LOG(LogTemp, Warning, TEXT("No DT_Enemy"));
 	
 	return Row;

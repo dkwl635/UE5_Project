@@ -29,9 +29,12 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FName ItemHande;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	int ItemCount;
+
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetDropItem();
+	void SetDropItem(FName ItemRowName, int Count = 1);
 	UFUNCTION(BlueprintImplementableEvent)
 	void ActionDropItem();
 

@@ -13,9 +13,7 @@ UCLASS()
 class UPORTFOLIO_RPG_API UNPCTalkBoxUserwidget : public URPGUserWidget
 {
 	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TWeakObjectPtr<class ANPCManager> NPCManager;
+
 public:
 
 	class UTextBlock;
@@ -46,4 +44,10 @@ public:
 
 public :
 	void OpenUI();
+
+	void HideSetUI() override;
+
+	UFUNCTION(BlueprintCallable)
+	void OpenShop();
+
 };

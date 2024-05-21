@@ -23,7 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UCanvasPanel* CanvasPanel;
 
-	TMap<int8, class URPGSlot*> QuickSlotsIndex;
+	TMap<int, class URPGSlot*> QuickSlotsIndex;
 public:
 
 	void UseQuickSlot(int8 SlotIndex);

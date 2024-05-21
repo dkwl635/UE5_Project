@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Actors/Controller/BasicPlayerController.h"
-#include "CD_PlayerController.generated.h"
+#include "ChaosDungeonController.generated.h"
 
-class AChaosDungeonInfo;
+class UChaosDungeonSubsystem;
 
 UCLASS()
-class UPORTFOLIO_RPG_API ACD_PlayerController : public ABasicPlayerController
+class UPORTFOLIO_RPG_API AChaosDungeonController : public ABasicPlayerController
 {
 	GENERATED_BODY()
 	
@@ -17,15 +17,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-protected:
-	void InitInfo();
-
-public:
-	AChaosDungeonInfo* GetInfo() { return Info; }
+	UChaosDungeonSubsystem* GetDungeonSubsystem() const;
 
 protected:
-	AChaosDungeonInfo* Info = nullptr;
+	void StartDungeon();
 
 private:
-	bool IsDunGeonStarted = false;
+	bool bIsStarted = false;
 };

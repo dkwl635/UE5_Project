@@ -19,11 +19,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Unique_ID = 0;
 
-	UPROPERTY()
-	int8 CurrentBundleCount = 0;
+	UPROPERTY(EditAnywhere)
+	FName RowName = "";
 
 	UPROPERTY(EditAnywhere)
 	FName ItemName = "";
+
+	UPROPERTY()
+	int8 CurrentBundleCount = 0;
 	
 	UPROPERTY(EditAnywhere)
 	EITEMTYPE ItemType = EITEMTYPE::None;

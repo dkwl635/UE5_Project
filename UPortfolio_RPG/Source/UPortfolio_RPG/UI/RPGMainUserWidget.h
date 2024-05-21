@@ -16,9 +16,6 @@ class UPORTFOLIO_RPG_API URPGMainUserWidget : public URPGUserWidget
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(meta = (BindWidget))
-	UButton* InventoryBtn;
 
 public	:
 
@@ -27,30 +24,39 @@ public	:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D ViewSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MousePotion;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsPush;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* RPGUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class USkill_MainWidget* SkillWidget;
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void UIMoveStart(ERPG_UI Type);
+	UFUNCTION(BlueprintCallable)
+	void UIMoveTick();
+	UFUNCTION(BlueprintCallable)
+	void UIMoveEnd(ERPG_UI Type);
+
+public:
+
+	void SetViewSize();
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void ShowUI(ERPG_UI Type);
-
-	void ShowUI(URPGUserWidget* UserWidget);
-
-	UFUNCTION(BlueprintCallable)
-	void HideUI(URPGUserWidget* UserWidget);
-	UFUNCTION(BlueprintCallable)
-	void ToggleUI(URPGUserWidget* UserWidget);
-	UFUNCTION(BlueprintCallable)
 	URPGUserWidget* GetRPGUI(ERPG_UI Type);
+	
 	UFUNCTION(BlueprintCallable)
 	class UCanvasPanelSlot* GetCanvasPanel(ERPG_UI Type);
-
-	UFUNCTION(BlueprintCallable)
+	
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	class UCanvasPanelSlot* MoveTargetCanvasSlot;
+	
 	URPGUserWidget* RPGUIRefresh(ERPG_UI Type);
-
-
-public :
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (BindWidget))
-	class UCanvasPanel* RPGUI;
 
 public:
 	//Interaction
@@ -61,7 +67,6 @@ private:
 	TMap<ERPG_UI, URPGUserWidget*> RPGUIMap;
 	TMap<ERPG_UI, UCanvasPanelSlot*> RPGUICanvasMap;
 	TWeakObjectPtr<UCanvasPanelSlot> TopPopupUI;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* GoldTextBlock;
@@ -80,4 +85,10 @@ public :
 	void HideItemInfoBox();
 
 	FVector2D GetShowItemPos(FVector2D SppawnPos);
+	
+	FVector2D GetViewSize();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UIButtonFunc(ERPG_UI Type);
 };
