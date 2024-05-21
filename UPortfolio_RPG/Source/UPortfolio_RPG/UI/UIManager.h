@@ -20,20 +20,15 @@ public:
 	static TWeakObjectPtr<AUIManager> UIManager;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
 public :
 	TSubclassOf<UUserWidget> MainUIBP;
 	class URPGMainUserWidget* PlayerUI;
-	
 	TWeakObjectPtr<class UCanvasPanelSlot> TopPopupUI;
+
 public  :
 	bool isShopOpen;
-
 	UPROPERTY()
 	TArray<ERPG_UI> UIList;
 
@@ -42,17 +37,12 @@ public:
 	void ShowUI(ERPG_UI Type);
 	UFUNCTION(BlueprintCallable)
 	void HideUI(ERPG_UI Type);
-
-
-
 	UFUNCTION(BlueprintCallable)
 	void TopHideUI();
-
 	UFUNCTION(BlueprintCallable)
 	class URPGUserWidget* GetRPGUI(ERPG_UI UIType);
 	UFUNCTION(BlueprintCallable)
 	bool IsShowUI(ERPG_UI UIType);
-
 	UFUNCTION(BlueprintCallable)
 	void GetRPGUIToggle(ERPG_UI UIType);
 public:
@@ -61,6 +51,5 @@ public:
 	void ShowItemBox(FVector2D SpawnPos , struct  ShowBoxData Data);
 	void HideItemBox();
 	void RefreshUI(ERPG_UI UIType);
-
 	
 };

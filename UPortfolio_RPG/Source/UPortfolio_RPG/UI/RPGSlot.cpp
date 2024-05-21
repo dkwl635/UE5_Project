@@ -355,11 +355,15 @@ bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 		}
 
 		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(InvenSlot->SlotIndex);
+		
+		EGEARTYPE InvenEqType = EGEARTYPE::None;
+		if (Data != nullptr)
+		{
+			InvenEqType = UDataSubsystem::DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
+		}
 
-		EGEARTYPE InvenEqType = UDataSubsystem::DataSubsystem->FindGearData(Data->StatusData.RowName)->EGearType;
 		EGEARTYPE EqType = (EGEARTYPE)EqSlot->SlotIndex;
-		if (InvenEqType != EqType) { return false; }
-
+		if ((InvenEqType != EGEARTYPE::None) && InvenEqType != EqType) { return false; }
 		auto tempData = UPlayerInventorySubsystem::PlayerInventorySubsystem->ChangeGear(EqType, InvenSlot->SlotIndex);
 	}
 	

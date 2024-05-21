@@ -23,4 +23,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	class AUIManager* GetUIManager();
+
+	UFUNCTION(BlueprintCallable)
+	class ANPCManager* GetNPCManager();
+
+	UFUNCTION(BlueprintCallable)
+	class ADropItemManager* GetDropItemManager();
 };

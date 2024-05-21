@@ -142,7 +142,6 @@ void URPGShop::BuyItem(UShopBuySlot* ShopSlot)
 		bool bBuy = UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
 
 		GetPlayerUI()->GetRPGUI(ERPG_UI::INVENTORY)->RefreshUI();
-
 }
 
 URPGMainUserWidget* URPGShop::GetPlayerUI()

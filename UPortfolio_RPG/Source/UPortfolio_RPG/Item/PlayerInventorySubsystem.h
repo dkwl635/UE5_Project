@@ -15,11 +15,15 @@ class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsyst
 	GENERATED_BODY()
 
 public:
-
 	static UPlayerInventorySubsystem* PlayerInventorySubsystem; //= nullptr;
 	typedef  TArray<TSharedPtr<struct FItemData>>* Inventory;
 private:
+	const int8 MaxInvenSize = 30;
+	TArray<TSharedPtr<FItemData>> GearInventory;
+	TArray<TSharedPtr<FItemData>> NormalInventory;
+	TArray<TSharedPtr<FItemData>> EquipmentInventory;
 
+private:
 	UPROPERTY(EditAnywhere)
 	int32 PlayerCoin = 0;
 	UPROPERTY(EditAnywhere)
@@ -35,12 +39,6 @@ public:
 	void SetPlayerGold(int32 Value);
 	void SetPlayerEnchantStone(int32 Value);
 
-private:
-	const int8 MaxInvenSize = 30;
-	TArray<TSharedPtr<FItemData>> GearInventory;
-	TArray<TSharedPtr<FItemData>> NormalInventory;
-public:
-	TArray<TSharedPtr<FItemData>> EquipmentInventory;
 public : 
 	UPlayerInventorySubsystem();
 	~UPlayerInventorySubsystem();
@@ -65,6 +63,10 @@ public :
 	FItemData* GetNormalItem(int8 InvenIndex);
 	FItemData* GetGearItem(int8 InvenIndex);
 	FItemData* GetEquipmentItem(int8 InvenIndex);
+public:
+	int32 GetPlayerAddAttack();
+	int32 GetPlayerAddMaxHp();
+
 
 private:
 	void UseItem(FItemData* ItemData, int8 Count);
@@ -86,9 +88,6 @@ private:
 
 	TArray<int> QuickItemSlotsPointer;
 	
-public:
-	int32 GetPlayerAddAttack();
-	int32 GetPlayerAddMaxHp();
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -96,23 +95,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Load();
 	
-
 public:
 
 	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);
 	void AttachSlot(ERPGSLOTTYPE SlotType, class URPGSlot* Slot);
 	int GetQuickSlotFromIndex(int QuickSlotIndex);
 	int CheckQuickSlotItem(int ItemIndex);
-	
 	void QuickSlotClear(int8 QuickSlotIndex);
-
 
 public:
 	class UDataSubsystem* DataSubsystem;
 	class UItem* ItemClass;
 
-public:
-	bool bOpenShop = false;
 
 
 };

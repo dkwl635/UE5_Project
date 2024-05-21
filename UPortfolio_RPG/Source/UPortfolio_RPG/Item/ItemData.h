@@ -22,11 +22,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	FName RowName = "";
 
-	UPROPERTY()
-	int8 CurrentBundleCount = 0;
-
 	UPROPERTY(EditAnywhere)
 	FName ItemName = "";
+
+	UPROPERTY()
+	int8 CurrentBundleCount = 0;
 	
 	UPROPERTY(EditAnywhere)
 	EITEMTYPE ItemType = EITEMTYPE::None;

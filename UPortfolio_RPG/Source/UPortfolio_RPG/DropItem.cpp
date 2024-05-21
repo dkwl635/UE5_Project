@@ -27,14 +27,17 @@ void ADropItem::Tick(float DeltaTime)
 
 }
 
-void ADropItem::SetDropItem()
+void ADropItem::SetDropItem(FName ItemRowName, int Count)
 {
+	ItemHande = ItemRowName;
+	ItemCount = Count;
+
 	ActionDropItem();
 }
 
 FText ADropItem::SetItemText()
 {
-	return FText::FromString("TestName");
+	return FText::FromName(ItemHande);
 }
 
 void ADropItem::AddItem()

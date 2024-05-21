@@ -66,11 +66,8 @@ public:
 	class URPGSlot* GetEmptySellSlot();
 	UFUNCTION(BlueprintCallable)
 	void SellItem();
-
 	void ClearSellPrice();
-
 	void SetSellPrice();
-
 	void RefreshSellSlot();
 	void RefreshBuySlot();
 

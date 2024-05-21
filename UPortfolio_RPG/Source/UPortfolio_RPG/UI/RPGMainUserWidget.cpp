@@ -11,9 +11,13 @@
 #include "Item/ItemData.h"
 #include "Math/UnrealMathUtility.h"
 #include "UI/UIManager.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Math/UnrealMathUtility.h"
 
 void URPGMainUserWidget::Init()
 {
+    SetViewSize();
+
 
     int UICount = RPGUI->GetChildrenCount();
     for (int i = 0; i < UICount; i++)
@@ -24,6 +28,9 @@ void URPGMainUserWidget::Init()
         UI->Init();
         RPGUIMap.Add(UI->UI_Type, UI);
         RPGUICanvasMap.Add(UI->UI_Type, CanvasSlot);
+
+        UI->StartUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveStart);
+        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);
         
     }
 
@@ -40,6 +47,8 @@ void URPGMainUserWidget::Init()
     ItemBoxPanel->SetVisibility(ESlateVisibility::Collapsed);
     ItemBoxPanelSlot = Cast<UCanvasPanelSlot>(ItemBoxPanel->Slot);
 
+    IsPush = false;
+    bInteraction = false;
 }
 
 URPGMainUserWidget::~URPGMainUserWidget()
@@ -48,6 +57,11 @@ URPGMainUserWidget::~URPGMainUserWidget()
 }
 
 
+
+void URPGMainUserWidget::SetViewSize()
+{
+   ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
+}
 
 URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)
 {
@@ -115,6 +129,40 @@ FVector2D URPGMainUserWidget::GetShowItemPos(FVector2D SppawnPos)
    NewPos.Y = FMathf::Clamp(SppawnPos.Y, 0, NewPos.Y);
 
     return NewPos;
+}
+
+FVector2D URPGMainUserWidget::GetViewSize()
+{
+    if (!MoveTargetCanvasSlot) { return ViewSize; }
+    
+    return ViewSize -MoveTargetCanvasSlot->GetSize();
+}
+
+void URPGMainUserWidget::UIMoveStart(ERPG_UI Type)
+{
+    AUIManager::UIManager->ShowUI(Type);
+    MoveTargetCanvasSlot = GetCanvasPanel(Type);
+    
+    MousePotion = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld())- MoveTargetCanvasSlot->GetPosition();
+    IsPush = true;
+}
+
+void URPGMainUserWidget::UIMoveTick()
+{
+    if (!IsPush) { return; }
+
+    FVector2D Temp = GetViewSize(); 
+    FVector2D UIPos = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld()) - MousePotion;
+    UIPos.X = FMathf::Clamp(UIPos.X, 0, Temp.X);
+    UIPos.Y = FMathf::Clamp(UIPos.Y, 0, Temp.Y);
+
+    MoveTargetCanvasSlot->SetPosition(UIPos);
+}
+
+void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)
+{
+    MoveTargetCanvasSlot = nullptr;
+    IsPush = false;
 }
 
 void URPGMainUserWidget::UIButtonFunc(ERPG_UI Type)

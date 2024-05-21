@@ -71,7 +71,7 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	PlayerGold = 10000;
 	PlayerCoin = 10000;
 	/*AddItem(TEXT("HP100"), 12);
-	AddItem(TEXT("HP500"), 3);
+	AddItem(TEXT("HP500"), 3);*/
 	AddItem(TEXT("Sword_0"), 1);
 	AddItem(TEXT("Sword_1"), 1);
 	AddItem(TEXT("Sword_1"), 1);
@@ -79,7 +79,7 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	AddItem(TEXT("Armor_0"), 1);
 	AddItem(TEXT("Pants_0"), 1);
 	AddItem(TEXT("Shoes_1"), 1);
-	AddItem(TEXT("Gloves_1"), 1);*/
+	AddItem(TEXT("Gloves_1"), 1);
 }
 
 bool UPlayerInventorySubsystem::Init()
@@ -107,7 +107,6 @@ bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int8 Count)
 
 	MoveItemToInventory(Inventory, Data, Count);
 
-	
 	return	true;
 }
 
@@ -224,10 +223,8 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 		(*Inventory)[EmptyIndex] = NewItemData;
 
 		if (RemainingCount <= 0) { return  true; }
-
 		EmptyIndex = FindEmptyInventory(Inventory , EmptyIndex+1);
 	}
-
 	return false;
 }
 
