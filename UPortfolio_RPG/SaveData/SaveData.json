@@ -1,0 +1,33 @@
+{
+	"Gold": 10000,
+	"Coin": 7200,
+	"EnchantStone": 0,
+	"GearItem": [],
+	"NormalItem": [
+		{
+			"RowName": "HP1000",
+			"SlotIndex": 0,
+			"Count": 1
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 1,
+			"Count": 10
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 2,
+			"Count": 10
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 3,
+			"Count": 10
+		}
+	],
+	"Equipment": [],
+	"QuickItemSlot1": 1,
+	"QuickItemSlot2": -1,
+	"QuickItemSlot3": 3,
+	"QuickItemSlot4": -1
+}
