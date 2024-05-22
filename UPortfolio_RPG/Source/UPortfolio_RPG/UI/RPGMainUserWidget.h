@@ -43,8 +43,8 @@ public:
 	void UIMoveEnd(ERPG_UI Type);
 
 public:
-
-	void SetViewSize();
+	UFUNCTION(BlueprintCallable)
+	void SetViewSize(FVector2D Size);
 
 public:
 	UFUNCTION(BlueprintCallable)

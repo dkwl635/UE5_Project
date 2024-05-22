@@ -13,7 +13,7 @@ TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
 // Sets default values
 AUIManager::AUIManager()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FClassFinder<URPGMainUserWidget> FindUI(TEXT("Script/UMGEditor.WidgetBlueprint'/Game/KJW/UI/BPUI_MainUI.BPUI_MainUI_C'"));
  	MainUIBP = FindUI.Class;
 
@@ -32,10 +32,25 @@ void AUIManager::BeginPlay()
 		PlayerUI = Cast<URPGMainUserWidget>(Widget);
 
 		ensure(PlayerUI);
-
 		PlayerUI->Init();
 		PlayerUI->AddToViewport();
+
 	}
+
+	
+}
+
+void AUIManager::Tick(float DeltaSeconds)
+{
+	if (PlayerUI)
+	{
+		FVector2D OutViewportSize;
+		GEngine->GameViewport->GetViewportSize(OutViewportSize);
+		float scale = GEngine->GameViewport->GetDPIScale();
+		UE_LOG(LogTemp, Log, TEXT("Viewport Size: %s"), *OutViewportSize.ToString());
+	}
+
+
 }
 
 void AUIManager::ShowUI(ERPG_UI Type)

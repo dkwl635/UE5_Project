@@ -55,6 +55,10 @@ UDataSubsystem::~UDataSubsystem()
 	UItem::DataSubsystem = nullptr;
 	
 	DataSubsystem = nullptr;
+	//DT_Item = nullptr;
+	//DT_Potion = nullptr;
+	//DT_Gear = nullptr;
+	//DT_Enemy = nullptr;
 }
 
 void UDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)

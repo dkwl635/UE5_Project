@@ -6,6 +6,18 @@
 #include "UI/UIManager.h"
 #include "NPC/NPCManager.h"
 #include "Components/DropItemManager.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
+
+
+
+void URPGGameInstance::Init()
+{
+	Super::Init();
+}
+
+
+
 
 UDataSubsystem* URPGGameInstance::GetDataSubsyetem()
 {

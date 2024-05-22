@@ -14,6 +14,8 @@ class UPORTFOLIO_RPG_API URPGGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+	void Init() override;
 
 
 public:

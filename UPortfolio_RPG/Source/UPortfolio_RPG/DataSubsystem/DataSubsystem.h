@@ -38,7 +38,7 @@ protected:
 	bool bInit = false;
 
 //ITEM
-	UPROPERTY()
+	//UPROPERTY()
 	UDataTable* DT_Item;
 
 	UPROPERTY()

@@ -108,6 +108,9 @@ void ANPCManager::OpenShopUI()
 
 	AUIManager::UIManager->ShowUI(ERPG_UI::SHOP);
 	AUIManager::UIManager->ShowUI(ERPG_UI::INVENTORY);
+
+	AUIManager::UIManager->GetCanvasPanel(ERPG_UI::SHOP)->SetPosition(FVector2D(311, 140));
+	AUIManager::UIManager->GetCanvasPanel(ERPG_UI::INVENTORY)->SetPosition(FVector2D(1000, 165));
 	
 
 }

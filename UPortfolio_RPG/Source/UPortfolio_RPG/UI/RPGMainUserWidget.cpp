@@ -14,12 +14,13 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Math/UnrealMathUtility.h"
 #include "Skill/Skill_MainWidget.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/GameViewportClient.h"
+
 
 void URPGMainUserWidget::Init()
 {
-    SetViewSize();
-
-
     int UICount = RPGUI->GetChildrenCount();
     for (int i = 0; i < UICount; i++)
     {
@@ -62,9 +63,17 @@ URPGMainUserWidget::~URPGMainUserWidget()
 
 
 
-void URPGMainUserWidget::SetViewSize()
+void URPGMainUserWidget::SetViewSize(FVector2D Size)
 {
-   ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
+    ViewSize = Size;
+   // //UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetViewportSize(X, Y);
+   // GEngine->GameViewport->GetViewportSize(ViewSize);
+   // GetWorld()->GetGameViewport();
+   // ViewSize = ViewSize / UWidgetLayoutLibrary::GetViewportScale(GetWorld());
+   // //ViewSize = ViewSize * GEngine->GameViewport->GetDPIScale();
+   ////ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
+   //
+
 }
 
 URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)
@@ -161,6 +170,7 @@ void URPGMainUserWidget::UIMoveTick()
     UIPos.Y = FMathf::Clamp(UIPos.Y, 0, Temp.Y);
 
     MoveTargetCanvasSlot->SetPosition(UIPos);
+    //MoveTargetCanvasSlot->SetPosition(UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld()));
 }
 
 void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)

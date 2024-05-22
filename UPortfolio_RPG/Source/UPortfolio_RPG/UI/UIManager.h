@@ -21,9 +21,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	 void Tick(float DeltaSeconds) override ;
 
 public :
 	TSubclassOf<UUserWidget> MainUIBP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class URPGMainUserWidget* PlayerUI;
 	TWeakObjectPtr<class UCanvasPanelSlot> TopPopupUI;
 
