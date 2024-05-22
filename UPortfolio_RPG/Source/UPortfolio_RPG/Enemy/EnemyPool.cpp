@@ -29,7 +29,7 @@ void UEnemyPool::Create(UWorld* World, uint32 Count)
             AEnemyAIController* EnemyController = Cast<AEnemyAIController>(NewEnemy->GetController());
             ControllerPool.Add(EnemyController);
 
-            NewEnemy->GetController()->UnPossess();
+            EnemyController->UnPossess();
             Pool.Add(NewEnemy);
         }
     }
@@ -93,8 +93,6 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     return Enemy;
 }
 
-#include "Kismet/GameplayStatics.h"
-
 void UEnemyPool::Delete(AEnemy* InEnemy)
 {
     const int32 Index = ActiveEnemies.Find(InEnemy);
@@ -105,10 +103,10 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
             AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
             if(EnemyController)
                 ControllerPool.Add(EnemyController);
+            EnemyController->UnPossess();
             InEnemy->SetActorHiddenInGame(true);
             InEnemy->SetActorEnableCollision(false);
             InEnemy->SetActorTickEnabled(false);
-            InEnemy->GetController()->UnPossess();
             if(!ActiveEnemies.IsEmpty())
                 ActiveEnemies.RemoveAt(Index);
             InEnemy->Reset();

@@ -117,9 +117,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
         StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
-        GetController()->StopMovement();
-        EnemyAnim->Montage_Stop(0.1f);
         IsDead = true;
+        EnemyAnim->Montage_Stop(0.1f);
     }
 
     return Damage;
@@ -183,10 +182,13 @@ void AEnemy::PlayAttackParticle()
 #include "Actors/Damage/PrintDamageTextActor.h"
 void AEnemy::DisplayDamage(float InDamage)
 {
-    FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+    const float RandX = FMath::RandRange(0, 50);
+    const float RandY = FMath::RandRange(0, 50);
+    const float RandZ = FMath::RandRange(0, 50);
+    const FVector RandVector = FVector(RandX, RandY, RandZ);
     APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
-        (APrintDamageTextActor::StaticClass(), SpawnTransform);
-    Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
+        (APrintDamageTextActor::StaticClass());
+    Actor->SetWidgetText(this, InDamage, GetActorLocation() + RandVector);
 }
 
 bool AEnemy::Init()

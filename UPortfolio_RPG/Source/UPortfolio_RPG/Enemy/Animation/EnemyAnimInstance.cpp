@@ -3,6 +3,7 @@
 
 #include "Enemy/Animation/EnemyAnimInstance.h"
 #include "Enemy/Enemy.h"
+#include "Enemy/EnemyPool.h"
 
 UEnemyAnimInstance::UEnemyAnimInstance()	
 {
@@ -28,6 +29,7 @@ void UEnemyAnimInstance::PlayAttackMontage()
 {
 	if (AttackMontage)
 	{
+		Montage_Stop(0.1f);
 		FOnMontageEnded AttackMontageDelegate;
 		AttackMontageDelegate.Unbind();
 		AttackMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnAttackMontageEnded);
@@ -56,6 +58,9 @@ void UEnemyAnimInstance::OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterr
 
 void UEnemyAnimInstance::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsAttacking = false;
-	UE_LOG(LogTemp, Warning, TEXT("Attack Ended"));
+	AEnemy* Enemy = Cast<AEnemy>(TryGetPawnOwner());
+	if (Enemy)
+	{
+		Enemy->IsAttacking = false;
+	}
 }

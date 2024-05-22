@@ -38,20 +38,32 @@ public:
 	void SetStatusData(const FStatusDataTableRow* InData);
 
 public:
-	float GetMaxHP() { return MaxHP; }
-	float GetCurrentHP() { return CurrentHP; }
-	void SetMaxHP(float InHP) { MaxHP = InHP; }
-	void SetCurrentHP(float InHP) { CurrentHP = InHP; }
-	float GetMaxMP() { return MaxMP; }
-	float GetCurrentMP() { return CurrentMP; }
-	void SetMaxMP(float InMP) { MaxMP = InMP; }
-	void SetCurrentMP(float InMP) { CurrentMP = InMP; }
-	float GetAttackDamage() { return AttackDamage; }
-	void SetAttackDamage(float Damage) { AttackDamage = Damage; }
-	float GetSpeed() { return Speed; }
-	void SetSpeed(float InSpeed) { Speed = InSpeed; }
-	void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
-	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
+	inline float GetMaxHP() { return MaxHP; }
+	inline float GetCurrentHP() { return CurrentHP; }
+	inline void SetMaxHP(float InHP)
+	{
+		if (MaxHP <= 0) { MaxHP = 0; }
+		else { MaxHP = InHP; }
+	}
+	inline void SetCurrentHP(float InHP)
+	{
+		if (CurrentHP <= 0) { CurrentHP = 0; }
+		else { CurrentHP = InHP; }
+	}
+	inline float GetMaxMP() { return MaxMP; }
+	inline float GetCurrentMP() { return CurrentMP; }
+	inline void SetMaxMP(float InMP) { MaxMP = InMP; }
+	inline void SetCurrentMP(float InMP)
+	{
+		if (CurrentMP <= 0) { CurrentMP = 0; }
+		else { CurrentMP = InMP; }
+	}
+	inline float GetAttackDamage() { return AttackDamage; }
+	inline void SetAttackDamage(float Damage) { AttackDamage = Damage; }
+	inline float GetSpeed() { return Speed; }
+	inline void SetSpeed(float InSpeed) { Speed = InSpeed; }
+	inline void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
+	inline void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
 protected:
 	UPROPERTY(EditAnywhere)

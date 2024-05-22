@@ -8,6 +8,12 @@
 
 class UAnimInstance;
 
+enum class ESkillState
+{
+	Idle,
+	Targeting
+};
+
 UCLASS()
 class UPORTFOLIO_RPG_API ASkillBase : public AActor
 {

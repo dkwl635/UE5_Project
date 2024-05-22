@@ -50,7 +50,7 @@ void AEnemyAIController::OnRepeatTimer()
 	if (NavSystem == nullptr) return;
 
 	FNavLocation NextLocation;         //AI���� �̵��� ���� ��ġ ����
-	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, NextLocation)) 
+	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, NextLocation) && !(Enemy->IsDead))
 	{
 		MoveToLocation(NextLocation.Location);     //AIMoveTo ���, ���� ��ġ�� �̵�
 	}

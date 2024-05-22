@@ -265,10 +265,13 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 #include "Actors/Damage/PrintDamageTextActor.h"
 void APlayerCharacter::DisplayDamage(float InDamage)
 {
-	FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+	const float RandX = FMath::RandRange(0, 50);
+	const float RandY = FMath::RandRange(0, 50);
+	const float RandZ = FMath::RandRange(0, 50);
+	const FVector RandVector = FVector(RandX, RandY, RandZ);
 	APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
-		(APrintDamageTextActor::StaticClass(), SpawnTransform);
-	Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
+		(APrintDamageTextActor::StaticClass());
+	Actor->SetWidgetText(this, InDamage, GetActorLocation() + RandVector);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

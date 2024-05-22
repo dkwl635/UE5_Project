@@ -42,7 +42,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		true
 	);
 	auto Enemy = Cast<AEnemy>(OwnerComp.GetAIOwner()->GetPawn());
-	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APlayerCharacter>()) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
+	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APawn>() && !Enemy->IsDead) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetActorKey, HitResult.GetActor()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
 		//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
