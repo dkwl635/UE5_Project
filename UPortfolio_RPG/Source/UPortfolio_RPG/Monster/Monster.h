@@ -10,8 +10,10 @@
 #include "GameFramework/Pawn.h"
 #include "Monster/Animation/MonsterAnimInstance.h"
 #include "NiagaraFunctionLibrary.h"
-//#include "Enemy/UI/StatusbarUserWidget.h"
+#include "Enemy/UI/StatusbarUserWidget.h"
 #include "Monster.generated.h"
+
+class UWidgetComponent;
 
 UCLASS()
 class UPORTFOLIO_RPG_API AMonster : public APawn
@@ -57,6 +59,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	UMonsterAnimInstance* MonsterAnim;
 
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* StatusWidget;
+	UPROPERTY()
+	UStatusbarUserWidget* EnemyStatusUserWidget;
+
 
 public: //공격 패턴 함수
 	// FireScream Event
@@ -73,6 +80,8 @@ private:
 	// Particle system
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* FireScreamEffect;
+
+	UParticleSystemComponent* SpawnedEffect;
 
 	// Animation montage
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
@@ -121,7 +130,10 @@ private:
 
 
 
-
+//공격 끝을 알리는 변수
+	private:
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Finish, Meta = (AllowPrivateAccess = true))
+		bool IsAttackFinish = false;
 
 
 
@@ -138,7 +150,11 @@ private:
 
 public:  //Animation Bool
 	// Scream boolean
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
 	bool IsScream = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
 	bool IsDetach = false;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
+	bool IsRange = false;
 	
 };

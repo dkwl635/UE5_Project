@@ -23,6 +23,8 @@ AMonster::AMonster()
 
 	CurrentHP = MaxHP;
 
+	SpawnedEffect = nullptr;
+
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
@@ -130,10 +132,6 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 	if (CurrentHP <= 0.f)
 	{
 		Destroy();
-	//	StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
-	//	GetController()->StopMovement();
-	//	EnemyAnim->Montage_Stop(0.1f);
-	//	IsDead = true;
 	}
 
 	return Damage;
@@ -144,18 +142,19 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 //#include "Actors/Damage/PrintDamageTextActor.h"
 	void AMonster::DisplayDamage(float InDamage)
 	{
-//		FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
-//		APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
-//			(APrintDamageTextActor::StaticClass(), SpawnTransform);
-//		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));
+	/*	FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+		APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+			(APrintDamageTextActor::StaticClass(), SpawnTransform);
+		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));*/
 	}
 
 
 void AMonster::FireScream()
 {
+	IsAttackFinish = false;
 	if (FireScreamEffect)
 	{
-		UGameplayStatics::SpawnEmitterAttached(FireScreamEffect, SkeletalMeshComponent, FName(TEXT("FireAttack")));
+		SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(FireScreamEffect, SkeletalMeshComponent, FName(TEXT("FireAttack")));
 	}
 
 	if (FireScreamMontage && SkeletalMeshComponent->GetAnimInstance())
@@ -172,6 +171,9 @@ void AMonster::FireScream()
 void AMonster::AttackRange()
 {
 	// Calculate spawn location
+	IsAttackFinish = false;
+	IsRange = true;
+
 	FVector SpawnLocation = GetActorLocation(); 
 	float RandomX = FMath::RandRange(SpawnLocation.X-1000.f, SpawnLocation.X +1000.f);
 	float RandomY = FMath::RandRange(SpawnLocation.Y+200.f, SpawnLocation.Y +1000.f);	
@@ -227,7 +229,8 @@ void AMonster::FinishFire()
 	if (TimeLineCnt == 1) {
 		TimeLineCnt = 0;
 		IsScream = false;
-	//	FireScreamEffect->Destroy();
+		SpawnedEffect->DestroyComponent();
+		IsAttackFinish = true;
 
 	}
 	else
@@ -262,6 +265,8 @@ void AMonster::DestroyRangeActor()
 
 	if (RangeCnt == 5) {
 		RangeCnt = 1;
+		IsRange = false;
+		IsAttackFinish = true;
 		return;
 	}
 	else

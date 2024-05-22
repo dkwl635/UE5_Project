@@ -57,7 +57,7 @@ void UEnemyAnimInstance::OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterr
 
 void UEnemyAnimInstance::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	AEnemy* Pawn = Cast<AEnemy>(TryGetPawnOwner());
-	Pawn->IsAttacking = false;
+	AEnemy* Enemy = Cast<AEnemy>(TryGetPawnOwner());
+	Enemy->IsAttacking = false;
 	UE_LOG(LogTemp, Warning, TEXT("Attack Ended"));
 }
