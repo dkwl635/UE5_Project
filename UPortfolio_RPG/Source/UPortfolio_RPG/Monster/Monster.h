@@ -56,10 +56,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMeshComponent;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Transient)
 	UMonsterAnimInstance* MonsterAnim;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	UWidgetComponent* StatusWidget;
 	UPROPERTY()
 	UStatusbarUserWidget* EnemyStatusUserWidget;

@@ -35,12 +35,7 @@ AMonster::AMonster()
 		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
 
-	{
-		static ConstructorHelpers::FClassFinder<UAnimInstance> Asset(TEXT("/Script/Engine.AnimBlueprint'/Game/LJY/BossMonster/BPA_DragonAnimBlueprint.BPA_DragonAnimBlueprint_C'"));
-		ensure(Asset.Class);
-		SkeletalMeshComponent->SetAnimInstanceClass(Asset.Class);
-		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-	}
+	 
 
 	//FireScream 공격 관리
 	{ 
@@ -108,6 +103,9 @@ AMonster::AMonster()
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
+	{
+		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+	}
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FireScream();
 	//AttackRange();
