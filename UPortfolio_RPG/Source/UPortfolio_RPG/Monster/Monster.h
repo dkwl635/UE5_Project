@@ -151,7 +151,7 @@ private:
 public:  //Animation Bool
 	// Scream boolean
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
-	bool IsScream = true;
+	bool IsScream = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
 	bool IsDetach = false;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))

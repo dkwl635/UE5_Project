@@ -150,6 +150,7 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 void AMonster::FireScream()
 {
 	IsAttackFinish = false;
+
 	if (FireScreamEffect)
 	{
 		SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(FireScreamEffect, SkeletalMeshComponent, FName(TEXT("FireAttack")));
