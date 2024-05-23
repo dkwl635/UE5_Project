@@ -112,7 +112,11 @@ void APlayerCharacter::BeginPlay()
 		SetAnimData(AnimDataTableRow);
 	}
 
-
+	TargetingCircleInstance = GetWorld()->SpawnActor<AActor>(TargetingCircleActor);
+	if (TargetingCircleInstance)
+	{
+		TargetingCircleInstance->SetActorHiddenInGame(true);
+	}
 }
 
 #include "Actors/Skill/CastingSkill.h"
@@ -129,7 +133,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]);
 	if (Skill->CurrentSkillState == ESkillState::Targeting)
 	{
-		Skill->Tick(DeltaTime);
+		FVector MouseWorldPosition = GetMouseWorldPosition();
+		TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
 	}
 }
 
@@ -145,7 +150,11 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
-
+	if (ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]))
+	{
+		TargetingCircleInstance->SetActorHiddenInGame(true);
+		Skill->CurrentSkillState = ESkillState::Idle;
+	}
 	ASkillBase* Skill = GetSkillComponent()->Skills[0];
 	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
 	if (PlayerController)
@@ -171,6 +180,11 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
 	ensure(Animation);
 	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+	if (ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]))
+	{
+		TargetingCircleInstance->SetActorHiddenInGame(true);
+		Skill->CurrentSkillState = ESkillState::Idle;
+	}
 	ASkillBase* Skill = GetSkillComponent()->Skills[1];
 	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
 	if (PlayerController)
@@ -213,9 +227,11 @@ void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
 			if (Skill->CurrentSkillState == ESkillState::Idle)
 			{
 				Skill->ActiveSkill(Animation);
+				TargetingCircleInstance->SetActorHiddenInGame(false);
 			}
 			else
 			{
+				TargetingCircleInstance->SetActorHiddenInGame(true);
 				Skill->ActiveSkill(Animation);
 				Manager->SetSkillTimer(Skill);
 			}
@@ -231,6 +247,12 @@ void APlayerCharacter::OnSpace(const FVector& HitPoint)
 		UPlayerAnimInstance* Anim = Cast<UPlayerAnimInstance>(Animation);
 		ensure(Anim);
 		if (Anim->Montage_IsPlaying(nullptr)) { Anim->Montage_Stop(0.2f); }
+
+		if (ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]))
+		{
+			TargetingCircleInstance->SetActorHiddenInGame(true);
+			Skill->CurrentSkillState = ESkillState::Idle;
+		}
 
 		FOnMontageEnded SpaceMontageDelegate;
 		SpaceMontageDelegate.Unbind();
@@ -257,6 +279,12 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 		ensure(Animation);
 		if (Animation->Montage_IsPlaying(nullptr)) { return; }
 		
+		if (ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]))
+		{
+			TargetingCircleInstance->SetActorHiddenInGame(true);
+			Skill->CurrentSkillState = ESkillState::Idle;
+		}
+
 		bOnAttack = true;
 		LookAtMouseCursor(HitPoint);
 		Animation->Montage_Play(CurrentMontage, 1.2f);
@@ -273,7 +301,7 @@ void APlayerCharacter::DefaultAttackCheck()
 	TSet<AActor*> AlreadyDamagedActors;
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
-		ETraceTypeQuery::TraceTypeQuery2, false,
+		ETraceTypeQuery::TraceTypeQuery3, false,
 		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
 	if (bIsHit)
 	{
@@ -299,6 +327,30 @@ void APlayerCharacter::LookAtMouseCursor(const FVector& HitPoint)
 	NewRotation.Pitch = CurrentRotation.Pitch;
 	NewRotation.Roll = CurrentRotation.Roll;
 	SetActorRotation(NewRotation);
+}
+
+FVector APlayerCharacter::GetMouseWorldPosition()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		float MouseX, MouseY;
+		PlayerController->GetMousePosition(MouseX, MouseY);
+
+		FVector WorldLocation, WorldDirection;
+		PlayerController->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldLocation, WorldDirection);
+
+		FHitResult HitResult;
+		FVector Start = WorldLocation;
+		FVector End = Start + (WorldDirection * 10000.0f);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility))
+		{
+			return HitResult.Location;
+		}
+	}
+
+	return FVector::ZeroVector;
 }
 
 #include "Actors/Damage/PrintDamageTextActor.h"

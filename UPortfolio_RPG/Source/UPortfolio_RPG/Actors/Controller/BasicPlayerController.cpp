@@ -87,6 +87,10 @@ UCoolTimeSubsystem* ABasicPlayerController::GetCoolTimeManager() const
 	return GetLocalPlayer()->GetSubsystem<UCoolTimeSubsystem>();
 }
 
+#include "Actors/Skill/SkillBase.h"
+#include "Actors/Skill/CastingSkill.h"
+#include "Components/SkillComponent.h"
+
 void ABasicPlayerController::OnSetDestinationTriggered()
 {
 	FHitResult Hit;
@@ -100,6 +104,11 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 
 	if (PlayerCharacter != nullptr && !PlayerCharacter->bIsDead)
 	{
+		if (ACastingSkill* Skill = Cast<ACastingSkill>(PlayerCharacter->GetSkillComponent()->GetSkills()[2]))
+		{
+			PlayerCharacter->GetTargetingActor()->SetActorHiddenInGame(true);
+			Skill->CurrentSkillState = ESkillState::Idle;
+		}
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 	}
 }
@@ -176,5 +185,5 @@ void ABasicPlayerController::OnZoomWheel(const FInputActionValue& InputActionVal
 	const float ActionValue = InputActionValue.Get<float>();
 
 	TargetArmLength += ActionValue * -50.f;
-	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1200.f);
+	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1400.f);
 }

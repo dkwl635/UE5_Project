@@ -71,7 +71,7 @@ public:
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 	USkillComponent* GetSkillComponent() { return SkillComponent; }
 	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }
-
+	AActor* GetTargetingActor() { return TargetingCircleInstance; }
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
@@ -116,6 +116,12 @@ public:
 	bool bIsDead = false;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	TSubclassOf<AActor> TargetingCircleActor;
+
+	AActor* TargetingCircleInstance = nullptr;
+
+protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
@@ -123,6 +129,7 @@ protected:
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+	FVector GetMouseWorldPosition();
 	void DisplayDamage(float InDamage);
 
 public:

@@ -7,11 +7,6 @@ ACastingSkill::ACastingSkill()
 {
 	TargetingCircleInstance = nullptr;
     {
-        static ConstructorHelpers::FClassFinder<AActor> CircleActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/SpawnedActor/CastingSkillCircle.CastingSkillCircle_C'"));
-        ensure(CircleActor.Class);
-        TargetingCircleActor = CircleActor.Class;
-    }
-    {
         static ConstructorHelpers::FClassFinder<AActor> EffectActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/SpawnedActor/EffectActor.EffectActor_C'"));
         ensure(EffectActor.Class);
         AreaEffectActor = EffectActor.Class;
@@ -42,17 +37,13 @@ ACastingSkill::ACastingSkill()
 void ACastingSkill::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void ACastingSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrentSkillState == ESkillState::Targeting && TargetingCircleInstance)
-	{
-		FVector MouseWorldPosition = GetMouseWorldPosition();
-		TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
-	}
 }
 
 void ACastingSkill::ActiveSkill(UAnimInstance* AnimInstance)
@@ -120,23 +111,19 @@ FVector ACastingSkill::GetMouseWorldPosition()
 
 void ACastingSkill::StartTargeting()
 {
-    FVector MouseWorldPosition = GetMouseWorldPosition() + FVector(0, 0, 5);
-    if (TargetingCircleActor)
-    {
-        TargetingCircleInstance = GetWorld()->SpawnActor<AActor>(TargetingCircleActor, MouseWorldPosition, FRotator::ZeroRotator);
-        CurrentSkillState = ESkillState::Targeting;
-    }
+    CurrentSkillState = ESkillState::Targeting;
 }
 
 void ACastingSkill::CastAreaEffect()
 {
-    if (TargetingCircleInstance && AreaEffectActor)
+    APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    AActor* TargetingCircle = Player->GetTargetingActor();
+
+    if (TargetingCircle && AreaEffectActor)
     {
-        FVector TargetPosition = TargetingCircleInstance->GetActorLocation() + FVector(0, 0, 30);
+        FVector TargetPosition = TargetingCircle->GetActorLocation() + FVector(0, 0, 30);
         AreaEffecInstance = GetWorld()->SpawnActor<AActor>(AreaEffectActor, TargetPosition, FRotator::ZeroRotator);
 
-        TargetingCircleInstance->Destroy();
-        TargetingCircleInstance = nullptr;
         CurrentSkillState = ESkillState::Idle;
     }
 }

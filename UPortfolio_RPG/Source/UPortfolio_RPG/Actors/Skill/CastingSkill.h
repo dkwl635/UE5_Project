@@ -26,9 +26,6 @@ public:
 
 protected:
     UPROPERTY(EditAnywhere, Category = "Skill")
-    TSubclassOf<AActor> TargetingCircleActor;
-
-    UPROPERTY(EditAnywhere, Category = "Skill")
     TSubclassOf<AActor> AreaEffectActor;
 
     AActor* TargetingCircleInstance;
