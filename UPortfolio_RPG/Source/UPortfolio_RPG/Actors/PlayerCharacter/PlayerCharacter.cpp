@@ -16,6 +16,7 @@
 #include "Actors/Controller/BasicPlayerController.h"
 #include "Subsystem/CoolTimeSubsystem.h"
 #include "UI/UIManager.h"
+#include "Components/PostProcessComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -27,6 +28,8 @@ APlayerCharacter::APlayerCharacter()
 		CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 		StatusComponent = CreateDefaultSubobject<UStatusComponent>(TEXT("StatusComponent"));
 		SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
+		PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
+		PostProcessComponent->SetupAttachment(GetRootComponent());
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone.Greystone'"));
@@ -40,6 +43,11 @@ APlayerCharacter::APlayerCharacter()
 		static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/KSH/Character/Animation/BPA_Player.BPA_Player_C'"));
 		ensure(Anim.Class);
 		GetMesh()->SetAnimInstanceClass(Anim.Class);
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/MT_PostProcess_SkillRange.MT_PostProcess_SkillRange'"));
+		ensure(Material.Object);
+		PostProcessSkill = Material.Object;
 	}
 	{
 		SpringArmComponent->SetupAttachment(GetRootComponent());
@@ -84,7 +92,6 @@ void APlayerCharacter::SetAnimData(const FCharacterAnimDataTableRow* InData)
 
 	CurrentMontage = AttackMontage_A;
 }
-
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -117,6 +124,13 @@ void APlayerCharacter::BeginPlay()
 	{
 		TargetingCircleInstance->SetActorHiddenInGame(true);
 	}
+
+	if (PostProcessSkill)
+	{
+		UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(PostProcessSkill, this);
+		PostProcessComponent->AddOrUpdateBlendable(DynamicMaterial);
+		PostProcessComponent->bEnabled = false;
+	}
 }
 
 #include "Actors/Skill/CastingSkill.h"
@@ -133,8 +147,24 @@ void APlayerCharacter::Tick(float DeltaTime)
 	ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]);
 	if (Skill->CurrentSkillState == ESkillState::Targeting)
 	{
+		PostProcessComponent->bEnabled = true;
 		FVector MouseWorldPosition = GetMouseWorldPosition();
-		TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
+		FVector CenterLocation = GetActorLocation();
+		float Distance = FVector::Dist(CenterLocation, MouseWorldPosition);
+		UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>(PostProcessComponent->Settings.WeightedBlendables.Array[0].Object);
+		if (DynamicMaterial)
+		{
+			DynamicMaterial->SetVectorParameterValue("CharacterPosition", FLinearColor(CenterLocation.X, CenterLocation.Y, CenterLocation.Z));
+			DynamicMaterial->SetScalarParameterValue("SkillRange", Skill->Sk_MaxDistance);
+			if (Skill->Sk_MaxDistance >= Distance)
+			{
+				TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
+			}
+		}
+	}
+	else
+	{
+		PostProcessComponent->bEnabled = false;
 	}
 }
 
@@ -220,10 +250,7 @@ void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
 			return;
 		}
 		else
-		{
-			PlayerController->StopMovement();
-			LookAtMouseCursor(HitPoint);
-			
+		{	
 			if (Skill->CurrentSkillState == ESkillState::Idle)
 			{
 				Skill->ActiveSkill(Animation);
@@ -231,6 +258,8 @@ void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
 			}
 			else
 			{
+				LookAtMouseCursor(HitPoint);
+				PlayerController->StopMovement();
 				TargetingCircleInstance->SetActorHiddenInGame(true);
 				Skill->ActiveSkill(Animation);
 				Manager->SetSkillTimer(Skill);

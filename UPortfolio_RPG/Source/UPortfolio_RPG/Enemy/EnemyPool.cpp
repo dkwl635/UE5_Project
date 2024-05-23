@@ -68,15 +68,13 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     AEnemy* Enemy = nullptr;
     AEnemyAIController* EnemyController = nullptr;
 
-    if (Pool.Num() > 0 && ActiveEnemies.Num()<30)
+    if (Pool.Num() > 0)
     {
         Enemy = Pool.Pop(false);
         EnemyController = ControllerPool.Pop(false);
         if(Enemy && EnemyController)
         {
             ActiveEnemies.Add(Enemy);
-            Enemy->SetOwner(Owner);
-            Enemy->SetInstigator(Instigator);
             Enemy->SetPool(this);
             Enemy->SetActorHiddenInGame(false);
             Enemy->SetActorEnableCollision(bEnableCollision);
@@ -92,7 +90,7 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
     }
     return Enemy;
 }
-
+#include "BehaviorTree/BlackboardComponent.h"
 void UEnemyPool::Delete(AEnemy* InEnemy)
 {
     const int32 Index = ActiveEnemies.Find(InEnemy);

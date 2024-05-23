@@ -39,6 +39,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Sk_ManaUsage;
 	UPROPERTY(EditAnywhere)
+	float Sk_MaxDistance;
+	UPROPERTY(EditAnywhere)
 	UTexture2D* Sk_Image;
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Sk_Image_Cool;

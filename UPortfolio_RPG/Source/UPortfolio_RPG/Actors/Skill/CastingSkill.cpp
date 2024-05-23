@@ -6,6 +6,7 @@
 ACastingSkill::ACastingSkill()
 {
 	TargetingCircleInstance = nullptr;
+
     {
         static ConstructorHelpers::FClassFinder<AActor> EffectActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/SpawnedActor/EffectActor.EffectActor_C'"));
         ensure(EffectActor.Class);
@@ -32,6 +33,7 @@ ACastingSkill::ACastingSkill()
     Sk_CoolTime = 10.f;
     Sk_Damage = 70.f;
     Sk_ManaUsage = 20.f;
+    Sk_MaxDistance = 1500.f;
 }
 
 void ACastingSkill::BeginPlay()

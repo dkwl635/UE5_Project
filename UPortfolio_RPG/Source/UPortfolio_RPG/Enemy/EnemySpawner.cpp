@@ -12,7 +12,6 @@ AEnemySpawner::AEnemySpawner()
 	PrimaryActorTick.bCanEverTick = false;
 
 	EnemyPool = NewObject<UEnemyPool>();
-	EnemyPool->Pool.Reserve(MaxPoolNum);
 }
 
 // Called when the game starts or when spawned
@@ -21,7 +20,6 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 	
 	EnemyPool->Create(GetWorld(), MaxPoolNum);
-
 }
 
 void AEnemySpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)

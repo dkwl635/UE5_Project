@@ -47,12 +47,12 @@ ARedDust::ARedDust()
 		this->Sk_Image_Cool = Asset.Object;
 	}
 	StaticMesh->SetRelativeLocation(FVector(250., 0., -88.));
-	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
+	StaticMesh->SetRelativeScale3D(FVector(6., 1, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;
 	Effect->SetupAttachment(StaticMesh);
-	Effect->SetRelativeLocation(FVector(-50, 0, 105));
-	Effect->SetRelativeRotation(FRotator(-60, 0, 90));
+	Effect->SetRelativeLocation(FVector(-36, 0, 120));
+	Effect->SetRelativeRotation(FRotator(-41, 29, 48));
 
 	Sk_Name = TEXT("Red Dust");
 	Sk_Desc = FText::FromString(TEXT("검을 올려쳐 공격한다."));

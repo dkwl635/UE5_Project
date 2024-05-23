@@ -95,8 +95,8 @@ public:
 	void SetPool(UEnemyPool* InPool) { Pool = InPool; }
 	void Reset();
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
+	//UPROPERTY(EditAnywhere, Category = "Enemy")
+	//FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
 
 	UPROPERTY()
 	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Green"), TEXT("Black") };

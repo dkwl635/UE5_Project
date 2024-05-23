@@ -48,7 +48,7 @@ AEnemy::AEnemy()
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
-    AutoPossessAI = EAutoPossessAI::Spawned;
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 AEnemy::~AEnemy()

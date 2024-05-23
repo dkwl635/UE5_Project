@@ -121,6 +121,13 @@ protected:
 
 	AActor* TargetingCircleInstance = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
+	class UPostProcessComponent* PostProcessComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
+	class UMaterialInterface* PostProcessSkill;
+	
+
 protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
