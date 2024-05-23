@@ -226,11 +226,10 @@ void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor
 void AMonster::FinishFire()
 {
 	if (TimeLineCnt == 1) {
-		TimeLineCnt = 0;
 		IsScream = false;
 		SpawnedEffect->DestroyComponent();
 		IsAttackFinish = true;
-
+		TimeLineCnt = 0;
 	}
 	else
 	{
