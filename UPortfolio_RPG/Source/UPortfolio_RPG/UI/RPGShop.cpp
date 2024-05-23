@@ -12,6 +12,7 @@
 #include "UI/RPGMainUserWidget.h"
 #include "UI/UIManager.h"
 #include "Item/ItemData.h"
+#include "Data/TextTable.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
 
@@ -273,7 +274,9 @@ void URPGShop::OpenTextBox()
 	YesButtonFunc.BindUObject(this, &URPGShop::SellItem);
 	FOnButtonCallBack NoButtonFunc;
 
-	FText Text = FText::FromString(TEXT("Shop"));
+	FStringData* data = UDataSubsystem::DataSubsystem->FindStringData(ShopSellStringRowName);
+	FText Text = data->ItemDesc;
+//	FText Text = FText::FromString(TEXT("Shop"));
 	AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
 	//AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, FText::FromString(TEXT("")));
 

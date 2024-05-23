@@ -381,7 +381,15 @@ void URPGSlot::DragFailed(URPGSlot* ThisSlot)
 		FOnButtonCallBack YesButtonFunc;
 		YesButtonFunc.BindUObject(this, &URPGSlot::RemoveOrginSlotData);
 		FOnButtonCallBack NoButtonFunc;
-		FText Text = FText::FromString(TEXT("Item"));
+		
+		FStringData* data = UDataSubsystem::DataSubsystem->FindStringData(ItemRemoveCheckString);
+		FText StringText = data->ItemDesc;
+		
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SlotIndex);
+		FName ItemName = Data->ItemName;
+		FText ItemNameText = FText::FromName(ItemName);
+
+		FText Text = FText::Format(StringText, ItemNameText);
 		AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
 		break;
 	}
@@ -391,7 +399,15 @@ void URPGSlot::DragFailed(URPGSlot* ThisSlot)
 		FOnButtonCallBack YesButtonFunc;
 		YesButtonFunc.BindUObject(this, &URPGSlot::RemoveOrginSlotData);
 		FOnButtonCallBack NoButtonFunc;
-		FText Text = FText::FromString(TEXT("Item"));
+
+		FStringData* data = UDataSubsystem::DataSubsystem->FindStringData(ItemRemoveCheckString);
+		FText StringText = data->ItemDesc;
+
+		FItemData* Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(SlotIndex);
+		FName ItemName = Data->ItemName;
+		FText ItemNameText = FText::FromName(ItemName);
+
+		FText Text = FText::Format(StringText, ItemNameText);
 		AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
 		break;
 	}

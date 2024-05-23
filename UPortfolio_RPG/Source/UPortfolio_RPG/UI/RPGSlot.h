@@ -13,6 +13,8 @@ UCLASS()
 class UPORTFOLIO_RPG_API URPGSlot : public UUserWidget
 {
 	GENERATED_BODY()
+private:
+	const FName ItemRemoveCheckString = "ItemRemoveCheckString";
 
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

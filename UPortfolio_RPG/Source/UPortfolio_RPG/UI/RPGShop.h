@@ -16,6 +16,9 @@ class UPORTFOLIO_RPG_API URPGShop : public URPGUserWidget
 	GENERATED_BODY()
 
 protected:
+	const	FName ShopSellStringRowName = "ItemRemoCheckString";
+
+protected:
 	virtual void Init() override;
 
 public:

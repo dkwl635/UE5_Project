@@ -34,7 +34,10 @@ UDataSubsystem::UDataSubsystem()
 			UE_LOG(LogTemp, Warning, TEXT("Succens DT_GEARITEM"));
 		}
 	}
-
+	{
+		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/KJW/DT_String.DT_String'") };
+		DT_String = Asset.Object;
+	}
 
 	//Enemy
 	{
@@ -104,5 +107,12 @@ FGearData* UDataSubsystem::FindGearData(const FName& InKey)
 	FGearData* Row = DT_Gear->FindRow<FGearData>(InKey, TEXT(""));
 	ensure(Row);
 	return Row;
+}
+
+FStringData* UDataSubsystem::FindStringData(const FName& InKey)
+{
+	FStringData* Row = DT_String->FindRow<FStringData>(InKey, TEXT(""));
+	return Row;
+
 }
 
