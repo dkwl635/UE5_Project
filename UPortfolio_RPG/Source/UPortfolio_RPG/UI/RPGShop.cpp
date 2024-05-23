@@ -15,6 +15,7 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
 
+
 void URPGShop::Init()
 {
 	auto SlotList = BuyItemPanel->GetSlots();
@@ -261,6 +262,22 @@ void URPGShop::RefreshBuySlot()
 	{
 		BuyShopSlotList[i]->RefreshUI();
 	}
+}
+
+void URPGShop::OpenTextBox()
+{
+	AUIManager::UIManager->ShowUI(ERPG_UI::TEXTBOX);
+
+	//DECLARE_DELEGATE(FOnButtonCallBack);
+	FOnButtonCallBack YesButtonFunc;
+	YesButtonFunc.BindUObject(this, &URPGShop::SellItem);
+	FOnButtonCallBack NoButtonFunc;
+
+	FText Text = FText::FromString(TEXT("Shop"));
+	AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
+	//AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, FText::FromString(TEXT("")));
+
+
 }
 
 

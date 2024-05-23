@@ -287,12 +287,15 @@ void UPlayerInventorySubsystem::RemoveItem(EITEMTYPE ItemType, int8 InventoryInd
 
 	if (ItemType != EITEMTYPE::GEAR)
 	{
-		if (int QuickSlot = CheckQuickSlotItem(InventoryIndex) != -1)
+		int QuickSlot = CheckQuickSlotItem(InventoryIndex);
+		if (QuickSlot != -1)
 		{
 			QuickSlotClear(QuickSlot);
 			AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
 		}
 	}
+
+	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
 }
 
 
@@ -662,9 +665,14 @@ void UPlayerInventorySubsystem::QuickSlotClear(int8 QuickSlotIndex)
 
 int UPlayerInventorySubsystem::CheckQuickSlotItem(int ItemIndex)
 {
+	int select = -1;
 	for (int8 i = 0; i < QuickItemSlotsPointer.Num(); i++)
 	{
-		if (QuickItemSlotsPointer[i] == ItemIndex) { return i; }
+		if (QuickItemSlotsPointer[i] == ItemIndex)
+		{
+			select = i;
+			return select;
+		}
 	}
 
 	return -1;

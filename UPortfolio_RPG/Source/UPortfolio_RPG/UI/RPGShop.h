@@ -70,5 +70,6 @@ public:
 	void SetSellPrice();
 	void RefreshSellSlot();
 	void RefreshBuySlot();
-
+	UFUNCTION(BlueprintCallable)
+	void OpenTextBox();
 };

@@ -284,7 +284,7 @@ FText URPGSlot::GetDescFText()
 
 bool URPGSlot::DragEnd(URPGSlot* StartSlot)
 {
-	if (this == StartSlot) { return false; }
+	if (this == StartSlot) { return true; }
 
 	ERPGSLOTTYPE StartSlotType = StartSlot->RPGSlotType;
 	ERPGSLOTTYPE EndSlotType = this->RPGSlotType;
@@ -376,9 +376,25 @@ void URPGSlot::DragFailed(URPGSlot* ThisSlot)
 	switch (StartSlotType)
 	{
 	case ERPGSLOTTYPE::INVENTORY_GEAR:
+	{
+		AUIManager::UIManager->ShowUI(ERPG_UI::TEXTBOX);
+		FOnButtonCallBack YesButtonFunc;
+		YesButtonFunc.BindUObject(this, &URPGSlot::RemoveOrginSlotData);
+		FOnButtonCallBack NoButtonFunc;
+		FText Text = FText::FromString(TEXT("Item"));
+		AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
 		break;
+	}
 	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	{
+		AUIManager::UIManager->ShowUI(ERPG_UI::TEXTBOX);
+		FOnButtonCallBack YesButtonFunc;
+		YesButtonFunc.BindUObject(this, &URPGSlot::RemoveOrginSlotData);
+		FOnButtonCallBack NoButtonFunc;
+		FText Text = FText::FromString(TEXT("Item"));
+		AUIManager::UIManager->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
 		break;
+	}
 	case ERPGSLOTTYPE::QUICK_ITEM:
 	{
 		UPlayerInventorySubsystem::PlayerInventorySubsystem->QuickSlotClear(this->SlotIndex);
@@ -422,4 +438,27 @@ void URPGSlot::HideItemInfo()
 {
 	AUIManager::UIManager->HideItemBox();
 }
+
+void URPGSlot::RemoveOrginSlotData()
+{
+	switch (RPGSlotType)
+	{
+	case ERPGSLOTTYPE::INVENTORY_GEAR:
+	{
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->RemoveItem(EITEMTYPE::GEAR, SlotIndex, 1);
+		ClearSlot();
+		break;
+	}
+	case ERPGSLOTTYPE::INVENTORY_NORMARL:
+	{
+		UPlayerInventorySubsystem::PlayerInventorySubsystem->RemoveItem(EITEMTYPE::OTHER, SlotIndex, 1);
+		ClearSlot();
+		break;
+
+	}
+	}
+}
+
+
+
 

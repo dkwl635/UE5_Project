@@ -17,6 +17,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/GameViewportClient.h"
+#include "UI/RPGTextBox.h"
 
 
 void URPGMainUserWidget::Init()
@@ -32,14 +33,19 @@ void URPGMainUserWidget::Init()
         RPGUICanvasMap.Add(UI->UI_Type, CanvasSlot);
 
         UI->StartUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveStart);
-        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);
-        
+        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);   
     }
+
+    URPGUserWidget* widget = Cast<URPGUserWidget>(TextBox);
+    UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(TextBoxCanvas->Slot);
+    RPGUIMap.Add(ERPG_UI::TEXTBOX, TextBox);
+    RPGUICanvasMap.Add(ERPG_UI::TEXTBOX, CanvasSlot);
 
     GetRPGUI(ERPG_UI::INVENTORY)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::SHOP)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::EQUIPMENT)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::NPCTALK)->SetVisibility(ESlateVisibility::Collapsed);
+    GetRPGUI(ERPG_UI::TEXTBOX)->SetVisibility(ESlateVisibility::Collapsed);
 
     //ZOreder Setting
     GetCanvasPanel(ERPG_UI::QUICKSLOTS)->SetZOrder(HUDZOrder);
@@ -66,14 +72,7 @@ URPGMainUserWidget::~URPGMainUserWidget()
 void URPGMainUserWidget::SetViewSize(FVector2D Size)
 {
     ViewSize = Size;
-   // //UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetViewportSize(X, Y);
-   // GEngine->GameViewport->GetViewportSize(ViewSize);
-   // GetWorld()->GetGameViewport();
-   // ViewSize = ViewSize / UWidgetLayoutLibrary::GetViewportScale(GetWorld());
-   // //ViewSize = ViewSize * GEngine->GameViewport->GetDPIScale();
-   ////ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
-   //
-
+  
 }
 
 URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)

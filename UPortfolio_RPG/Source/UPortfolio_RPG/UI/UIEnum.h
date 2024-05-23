@@ -11,9 +11,15 @@ enum class ERPG_UI : uint8
 	SHOP,
 	EQUIPMENT,
 	NPCTALK,
+
+	TEXTBOX,
 };
 
+static int TextZOrder = 6;
 static int  TopZOrder = 5;
 static int  PopupZOrder = 4;
 static int  NPCZOrder = 2;
 static int  HUDZOrder = 1;
+
+//typedef void(*ButtonCallBack)();
+DECLARE_DELEGATE(FOnButtonCallBack);

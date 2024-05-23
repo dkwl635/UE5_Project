@@ -6,7 +6,8 @@
 #include "UI/RPGUserWidget.h"
 #include "Item/ItemData.h"
 #include "Components/CanvasPanelSlot.h"
-#include	"Skill/Skill_MainWidget.h"
+#include "Skill/Skill_MainWidget.h"
+#include "UI/RPGTextBox.h"
 
 
 TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
@@ -40,18 +41,6 @@ void AUIManager::BeginPlay()
 	
 }
 
-void AUIManager::Tick(float DeltaSeconds)
-{
-	if (PlayerUI)
-	{
-		FVector2D OutViewportSize;
-		GEngine->GameViewport->GetViewportSize(OutViewportSize);
-		float scale = GEngine->GameViewport->GetDPIScale();
-		UE_LOG(LogTemp, Log, TEXT("Viewport Size: %s"), *OutViewportSize.ToString());
-	}
-
-
-}
 
 void AUIManager::ShowUI(ERPG_UI Type)
 {
@@ -61,6 +50,11 @@ void AUIManager::ShowUI(ERPG_UI Type)
 	if (UIList.Num() > 0)
 	{
 		ERPG_UI TopUIType = UIList[0];
+		if (TopUIType == ERPG_UI::TEXTBOX)
+		{
+			return;
+		}
+
 		GetCanvasPanel(TopUIType)->SetZOrder(PopupZOrder);
 	}
 
@@ -73,6 +67,11 @@ void AUIManager::ShowUI(ERPG_UI Type)
 
 	UCanvasPanelSlot* Current = GetCanvasPanel(UserWidget->UI_Type);
 	Current->SetZOrder(TopZOrder);
+
+	if (Type == ERPG_UI::TEXTBOX)
+	{
+		Current->SetZOrder(TextZOrder);
+	}
 
 	if (UserWidget->GetVisibility() == ESlateVisibility::Collapsed)
 	{
@@ -143,6 +142,15 @@ void AUIManager::RefreshUI(ERPG_UI UIType)
 void AUIManager::SetSkillUI()
 {
 	PlayerUI->SkillWidget->SetUIInfo();
+}
+
+void AUIManager::SetYesNoButton(FOnButtonCallBack YesButtonFunc, FOnButtonCallBack NoButtonFunc, FText BoxText)
+{
+
+	if (PlayerUI)
+	{
+		PlayerUI->TextBox->SetYesNoButton(YesButtonFunc, NoButtonFunc, BoxText);
+	}
 }
 
 

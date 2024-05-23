@@ -8,6 +8,7 @@
 #include "UIManager.generated.h"
 
 
+
 UCLASS()
 class UPORTFOLIO_RPG_API AUIManager : public AActor
 {
@@ -21,7 +22,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	 void Tick(float DeltaSeconds) override ;
+	
 
 public :
 	TSubclassOf<UUserWidget> MainUIBP;
@@ -54,5 +55,6 @@ public:
 	void HideItemBox();
 	void RefreshUI(ERPG_UI UIType);
 	void SetSkillUI();
+	void SetYesNoButton(FOnButtonCallBack YesButtonFunc, FOnButtonCallBack NoButtonFunc, FText BoxText);
 	
 };

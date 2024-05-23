@@ -62,4 +62,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HideItemInfo();
 
+public:
+	UFUNCTION()
+	void RemoveOrginSlotData();
+
+
 };
