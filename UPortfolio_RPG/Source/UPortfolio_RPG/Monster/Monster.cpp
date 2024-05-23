@@ -14,6 +14,7 @@
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Monster/Actor/AttackRangeActor.h"
 #include "DrawDebugHelpers.h"
+#include "Monster/AI/MonsterAIController.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -30,6 +31,11 @@ AMonster::AMonster()
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+
+	Movement->MaxSpeed = 100.0f;
+	Movement->Acceleration = 500.0f;
+	Movement->Deceleration = 500.0f;
 
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/FourEvilDragonsHP/Meshes/DragonTheTerrorBringer/DragonTheTerrorBringerSK.DragonTheTerrorBringerSK'"));
@@ -99,6 +105,7 @@ AMonster::AMonster()
 			TimelineFinishCallback.BindUFunction(this, FName("FinishFire"));
 			ScreamTimeline.SetTimelineFinishedFunc(TimelineFinishCallback);
 		}
+		
 }
 
 // Called when the game starts or when spawned
@@ -111,6 +118,9 @@ void AMonster::BeginPlay()
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FireScream();
 	//AttackRange();
+
+	Super::BeginPlay();
+
 }
 
 // Called every frame

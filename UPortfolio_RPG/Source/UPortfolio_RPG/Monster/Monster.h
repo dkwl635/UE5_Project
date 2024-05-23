@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/TimelineComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
 #include "Monster/Animation/MonsterAnimInstance.h"
 #include "NiagaraFunctionLibrary.h"
@@ -52,6 +53,9 @@ private:
 	float MaxHP = 10000;
 	float CurrentHP = 0;
 
+public:
+	UPROPERTY(EditAnywhere)             //animInstance에서 가져다 쓰기위해서..
+		UFloatingPawnMovement* Movement;
 
 
 private:
