@@ -7,11 +7,14 @@
 #include "Actors/Controller/BasicPlayerController.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Components/StatusComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "Engine/DamageEvents.h"
 
 ARedDust::ARedDust()
 {
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	Effect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	SetRootComponent(StaticMesh);
 	{
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
@@ -19,9 +22,14 @@ ARedDust::ARedDust()
 		StaticMesh->SetStaticMesh(Asset.Object);
 	}
 	{
-		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/M_Crunch_Impact_02.M_Crunch_Impact_02'"));
+		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/MT_Invisible.MT_Invisible'"));
 		ensure(Asset.Object);
 		StaticMesh->SetMaterial(0, Asset.Object);
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Asset(TEXT("/Script/Niagara.NiagaraSystem'/Game/KSH/Character/Skill/Effect/Slash.Slash'"));
+		ensure(Asset.Object);
+		Effect->SetAsset(Asset.Object);
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/RedDust_Montage.RedDust_Montage'"));
@@ -42,6 +50,9 @@ ARedDust::ARedDust()
 	StaticMesh->SetRelativeScale3D(FVector(5., 0.5, 1.75));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;
+	Effect->SetupAttachment(StaticMesh);
+	Effect->SetRelativeLocation(FVector(-50, 0, 105));
+	Effect->SetRelativeRotation(FRotator(-60, 0, 90));
 
 	Sk_Name = TEXT("Red Dust");
 	Sk_Desc = FText::FromString(TEXT("검을 올려쳐 공격한다."));

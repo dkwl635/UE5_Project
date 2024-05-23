@@ -7,6 +7,7 @@
 #include "SkillBase.generated.h"
 
 class UAnimInstance;
+class UNiagaraComponent;
 
 enum class ESkillState
 {
@@ -21,6 +22,10 @@ class UPORTFOLIO_RPG_API ASkillBase : public AActor
 	
 public:
 	virtual void ActiveSkill(UAnimInstance* AnimInstance);
+
+protected:
+	UPROPERTY(EditAnywhere)
+	UNiagaraComponent* Effect;
 
 public:
 	UPROPERTY(EditAnywhere)

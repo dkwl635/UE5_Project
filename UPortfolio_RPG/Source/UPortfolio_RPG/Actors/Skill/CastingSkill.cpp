@@ -7,12 +7,12 @@ ACastingSkill::ACastingSkill()
 {
 	TargetingCircleInstance = nullptr;
     {
-        static ConstructorHelpers::FClassFinder<AActor> CircleActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/CastingSkillCircle.CastingSkillCircle_C'"));
+        static ConstructorHelpers::FClassFinder<AActor> CircleActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/SpawnedActor/CastingSkillCircle.CastingSkillCircle_C'"));
         ensure(CircleActor.Class);
         TargetingCircleActor = CircleActor.Class;
     }
     {
-        static ConstructorHelpers::FClassFinder<AActor> EffectActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/EffectActor.EffectActor_C'"));
+        static ConstructorHelpers::FClassFinder<AActor> EffectActor(TEXT("/Script/Engine.Blueprint'/Game/KSH/Character/Skill/SpawnedActor/EffectActor.EffectActor_C'"));
         ensure(EffectActor.Class);
         AreaEffectActor = EffectActor.Class;
     }
