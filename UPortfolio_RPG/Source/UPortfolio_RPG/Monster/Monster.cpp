@@ -209,17 +209,11 @@ void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (OtherActor && OtherActor != this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
-		ACharacter* Player = Cast<ACharacter>(OtherActor);
-		if (Player)
-		{
-			float Damage = AttackDamage;
-			UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
-		}
-
+		float Damage = FireAttackDamage; // Example damage value
+		MonsterAttackDamage(OtherActor, Damage);
 	}
 }
 
@@ -236,6 +230,15 @@ void AMonster::FinishFire()
 		++TimeLineCnt;
 		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ÃÊ Áö¿¬
 		ScreamTimeline.PlayFromStart();
+	}
+}
+
+void AMonster::MonsterAttackDamage(AActor* OtherActor, float Damage)
+{
+	ACharacter* Player = Cast<ACharacter>(OtherActor);
+	if (Player)
+	{
+		UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
 	}
 }
 

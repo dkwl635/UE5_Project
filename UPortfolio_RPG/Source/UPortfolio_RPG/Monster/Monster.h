@@ -33,12 +33,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	//공격 데미지 변수
+public:
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void MonsterAttackDamage(AActor* OtherActor, float Damage);
+
+	float FireAttackDamage = 100;
+	float RayAttackDamage = 100;
+	float RangeAttackDamage = 50;
+
 private:
 	void DisplayDamage(float InDamage);
 
 	float MaxHP = 10000;
 	float CurrentHP = 0;
-	float AttackDamage = 100;
 
 	//UPROPERTY(EditAnywhere)
 	//UWidgetComponent* StatusWidget;
