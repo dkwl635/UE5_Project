@@ -56,6 +56,7 @@ public:
 public:
 	void OnSkill_Q(const FVector& HitPoint);
 	void OnSkill_W(const FVector& HitPoint);
+	void OnSkill_E(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	UFUNCTION()
 	void OnSpaceMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -66,6 +67,7 @@ public:
 	void DefaultAttackCheck();
 
 public:
+	UFUNCTION(BlueprintCallable)
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 	USkillComponent* GetSkillComponent() { return SkillComponent; }
 	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }

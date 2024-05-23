@@ -43,4 +43,5 @@ public:
 	bool bSuperArmor = false;	// 피면
 	bool bSuperStance = false;	// 경면
 
+	ESkillState CurrentSkillState = ESkillState::Idle;
 };

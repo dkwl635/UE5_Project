@@ -38,6 +38,7 @@ protected:
 	void OnDefaultAttack();
 	void OnSkill_Q();
 	void OnSkill_W();
+	void OnSkill_E();
 	void OnSpace();
 
 	void OnZoomWheel(const FInputActionValue& InputActionValue);

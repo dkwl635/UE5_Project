@@ -115,6 +115,7 @@ void APlayerCharacter::BeginPlay()
 
 }
 
+#include "Actors/Skill/CastingSkill.h"
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -124,6 +125,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	else
 		bIsDead = false;
 	GetCharacterMovement()->MaxWalkSpeed = StatusComponent->GetSpeed();
+
+	ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]);
+	if (Skill->CurrentSkillState == ESkillState::Targeting)
+	{
+		Skill->Tick(DeltaTime);
+	}
 }
 
 // Called to bind functionality to input
@@ -184,6 +191,38 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	}
 }
 
+void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
+{
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+	ASkillBase* Skill = GetSkillComponent()->Skills[2];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (Manager->IsSkillCool(Skill))
+		{
+			return;
+		}
+		else
+		{
+			PlayerController->StopMovement();
+			LookAtMouseCursor(HitPoint);
+			
+			if (Skill->CurrentSkillState == ESkillState::Idle)
+			{
+				Skill->ActiveSkill(Animation);
+			}
+			else
+			{
+				Skill->ActiveSkill(Animation);
+				Manager->SetSkillTimer(Skill);
+			}
+		}
+	}
+}
+
 void APlayerCharacter::OnSpace(const FVector& HitPoint)
 {
 	if (!bIsSpace)
@@ -234,8 +273,8 @@ void APlayerCharacter::DefaultAttackCheck()
 	TSet<AActor*> AlreadyDamagedActors;
 
 	bool bIsHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, Start, Radius,
-		ETraceTypeQuery::TraceTypeQuery1, false,
-		IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true);
+		ETraceTypeQuery::TraceTypeQuery2, false,
+		IgnoreActors, EDrawDebugTrace::None, HitResult, true);
 	if (bIsHit)
 	{
 		for (auto& Hit : HitResult)

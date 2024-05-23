@@ -9,12 +9,11 @@ void UStatusbarUserWidget::SetHP(AEnemy* InEnemy)
 {
 	Owner = InEnemy;
 	UStatusComponent* Status = InEnemy->GetStatusComponent();
-	if (FMath::IsNearlyZero(Status->GetMaxHP()))
+	if (Status->GetMaxHP()!=0.f)
 	{
-		ensure(false);
+		const float Percent = Status->GetCurrentHP() / Status->GetMaxHP();
+		HPBar->SetPercent(Percent);
 	}
-	const float Percent = Status->GetCurrentHP() / Status->GetMaxHP();
-	HPBar->SetPercent(Percent);
 }
 
 void UStatusbarUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -23,6 +23,11 @@ bool UCoolTimeSubsystem::IsSkillCool(ASkillBase* Skill)
 		bool bIsSkillCool = GetWorld()->GetTimerManager().IsTimerActive(Skill_W_Timer);
 		return bIsSkillCool;
 	}
+	else if (Skill->Sk_Name == TEXT("신의 율법"))
+	{
+		bool bIsSkillCool = GetWorld()->GetTimerManager().IsTimerActive(Skill_E_Timer);
+		return bIsSkillCool;
+	}
 	else
 	{
 		return false;
@@ -49,6 +54,10 @@ void UCoolTimeSubsystem::SetSkillTimer(ASkillBase* Skill)
 	{
 		GetWorld()->GetTimerManager().SetTimer(Skill_W_Timer, Skill->Sk_CoolTime, false);
 	}
+	else if (Skill->Sk_Name == TEXT("신의 율법"))
+	{
+		GetWorld()->GetTimerManager().SetTimer(Skill_E_Timer, Skill->Sk_CoolTime, false);
+	}
 }
 
 float UCoolTimeSubsystem::GetSkillRemainingTime(ASkillBase* Skill)
@@ -61,6 +70,10 @@ float UCoolTimeSubsystem::GetSkillRemainingTime(ASkillBase* Skill)
 	else if (Skill->Sk_Name == TEXT("Spinning Attack"))
 	{
 		return GetWorld()->GetTimerManager().GetTimerRemaining(Skill_W_Timer);
+	}
+	else if (Skill->Sk_Name == TEXT("신의 율법"))
+	{
+		return GetWorld()->GetTimerManager().GetTimerRemaining(Skill_E_Timer);
 	}
 	else
 	{
