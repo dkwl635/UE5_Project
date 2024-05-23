@@ -49,19 +49,29 @@ void AAttackRangeActor::BeginPlay()
 void AAttackRangeActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+    if (IsOverlapping)
+    {
+        ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+        AMonster* Monster = Cast<AMonster>(GetOwner());
+        if (Monster)
+        {
+            AActor* ActorToDamage = Cast<AActor>(PlayerCharacter);
+            float Damage = Monster->RangeAttackDamage; // Example damage value
+            Monster->MonsterAttackDamage(ActorToDamage, Damage);
+        }
+    }
 }
 
 void AAttackRangeActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BoxCollision Overlapped"));
-
+    IsOverlapping = true;
     // Assuming AAttackRangeActor has access to an instance of AMonster
-    AMonster* Monster = Cast<AMonster>(GetOwner());
-    if (Monster)
-    {
-        float Damage = Monster->RangeAttackDamage; // Example damage value
-        Monster->MonsterAttackDamage(OtherActor, Damage);
-    }
+    
+}
+
+void AAttackRangeActor::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    IsOverlapping = false;
 }
 

@@ -41,6 +41,10 @@ public:
 	float FireAttackDamage = 100;
 	float RayAttackDamage = 100;
 	float RangeAttackDamage = 50;
+	float HitAttackDamage = 200;
+
+private:
+
 
 private:
 	void DisplayDamage(float InDamage);
@@ -48,8 +52,7 @@ private:
 	float MaxHP = 10000;
 	float CurrentHP = 0;
 
-	//UPROPERTY(EditAnywhere)
-	//UWidgetComponent* StatusWidget;
+
 
 private:
 	// Root component
@@ -70,8 +73,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UWidgetComponent* StatusWidget;
 	UPROPERTY()
-	UStatusbarUserWidget* EnemyStatusUserWidget;
-
+	UStatusbarUserWidget* MonsterStatusUserWidget;
 
 public: //공격 패턴 함수
 	// FireScream Event
@@ -82,6 +84,8 @@ public: //공격 패턴 함수
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void AttackRange();
 
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void MonsterHitAttackTrace(FName SocketName, FVector Location);
 
 //FireScream 이용 변수
 private: 
@@ -154,6 +158,7 @@ private:
 	void ScreamDelay();
 	void RangeSpawnDelay();
 	void DestroyRangeActor();
+	
 
 
 public:  //Animation Bool

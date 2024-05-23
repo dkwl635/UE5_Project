@@ -4,6 +4,7 @@
 #include "Monster/Monster.h"
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -12,6 +13,7 @@
 #include "Curves/CurveFloat.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Monster/Actor/AttackRangeActor.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -192,12 +194,52 @@ void AMonster::AttackRange()
 
 }
 
+void AMonster::MonsterHitAttackTrace(FName SocketName, FVector Location)
+{
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this); // Ignore sel
+
+	if (SkeletalMeshComponent)
+	{
+		FVector SocketLocation = SkeletalMeshComponent->GetSocketLocation(SocketName);
+		FVector SphereLocation = SocketLocation + Location; // Move 200 units in the negative Z direction
+
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionQueryParams(NAME_None, false, this);
+		bool bHit = UKismetSystemLibrary::SphereTraceSingle(
+			GetWorld(),
+			SphereLocation,
+			SphereLocation,
+			100.f,
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2), // Adjust to your specific trace channel
+			false, // bTraceComplex
+			ActorsToIgnore, // Actors to ignore
+			EDrawDebugTrace::ForDuration, // Debug draw type
+			HitResult,
+			true // Ignore self
+		);
+
+		// Debug visualization
+	//	
+
+		if (bHit && HitResult.GetActor())
+		{
+			AActor* HitActor = HitResult.GetActor();
+			if (HitActor->IsA<ACharacter>())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Mouth attack hit: %s"), *HitActor->GetName());
+				float Damage = HitAttackDamage; 
+				MonsterAttackDamage(HitActor, Damage);
+			}
+		}
+	}
+}
+
 void AMonster::HandleScreamProgress(float Value)
 {
 	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
 	//충돌 디버그박스
 	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), FColor::Red, false, -1, 0, 2);
-
 	
 }
 
