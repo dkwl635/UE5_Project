@@ -76,7 +76,7 @@ void ACastingSkill::ApplyDamage()
         {
             if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
             {
-                float Damage = Player->GetStatusComponent()->GetAttackDamage();
+                float Damage = FMath::RandRange(Player->GetStatusComponent()->GetMinAttackDamage(), Player->GetStatusComponent()->GetMaxAttackDamage());
                 Damage += Sk_Damage;
                 FDamageEvent Event;
                 Enemy->TakeDamage(Damage, Event, Player->GetController(), Player);

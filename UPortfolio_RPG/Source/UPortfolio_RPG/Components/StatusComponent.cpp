@@ -33,6 +33,8 @@ void UStatusComponent::SetStatusData(const FStatusDataTableRow* InData)
 	MaxMP = InData->MaxMP;
 	CurrentMP = MaxMP;
 	AttackDamage = InData->AttackDamage;
+	MinAttackDamage = AttackDamage * 0.9;
+	MaxAttackDamage = AttackDamage * 1.1;
 	Speed = InData->Speed;
 }
 

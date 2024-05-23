@@ -59,6 +59,8 @@ public:
 		else { CurrentMP = InMP; }
 	}
 	inline float GetAttackDamage() { return AttackDamage; }
+	inline float GetMinAttackDamage() { return MinAttackDamage; }
+	inline float GetMaxAttackDamage() { return MaxAttackDamage; }
 	inline void SetAttackDamage(float Damage) { AttackDamage = Damage; }
 	inline float GetSpeed() { return Speed; }
 	inline void SetSpeed(float InSpeed) { Speed = InSpeed; }
@@ -76,6 +78,9 @@ protected:
 	float CurrentMP;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float AttackDamage;
+	float MinAttackDamage;
+	float MaxAttackDamage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Speed;
 		

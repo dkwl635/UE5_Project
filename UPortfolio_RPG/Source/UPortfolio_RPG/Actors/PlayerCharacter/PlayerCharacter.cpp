@@ -310,8 +310,9 @@ void APlayerCharacter::DefaultAttackCheck()
 			AActor* DamagedActor = Hit.GetActor();
 			if (IsValid(DamagedActor) && !AlreadyDamagedActors.Contains(DamagedActor))
 			{
+				float Damage = FMath::RandRange(StatusComponent->GetMinAttackDamage(), StatusComponent->GetMaxAttackDamage());
 				FDamageEvent DamageEvent;
-				DamagedActor->TakeDamage(StatusComponent->GetAttackDamage(), DamageEvent, GetController(), this);
+				DamagedActor->TakeDamage(Damage, DamageEvent, GetController(), this);
 				AlreadyDamagedActors.Add(DamagedActor); // 공격한 대상을 세트에 추가
 			}
 		}
@@ -367,7 +368,8 @@ void APlayerCharacter::DisplayDamage(float InDamage)
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float InDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float Damage = FMath::RandRange(InDamage * 0.9f, InDamage * 1.1f);
 	float CurrentHP = StatusComponent->GetCurrentHP();
 	float NewHP = CurrentHP - Damage;
 	DisplayDamage(Damage);

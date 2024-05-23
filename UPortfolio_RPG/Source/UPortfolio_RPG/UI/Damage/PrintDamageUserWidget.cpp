@@ -12,13 +12,11 @@ void UPrintDamageUserWidget::NativeConstruct()
 	Delegate.BindUFunction(this, FName("OnAnimFinished"));
 	BindToAnimationFinished(FloatingText_Enemy, Delegate);
 	BindToAnimationFinished(FloatingText_Player, Delegate);
-
-	
 }
 
 void UPrintDamageUserWidget::SetDamage(float InDamage)
 {
-	FText Damage = FText::AsNumber(InDamage);
+	FText Damage = FText::AsNumber(int(InDamage));
 	if(DamageText)
 	{
 		DamageText->SetText(Damage);

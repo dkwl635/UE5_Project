@@ -42,7 +42,7 @@ AEnemy::AEnemy()
         if (UI_HUD.Succeeded())
         {
             StatusWidget->SetWidgetClass(UI_HUD.Class);
-            StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+            StatusWidget->SetDrawSize(FVector2D(100.f, 50.0f));
         }
     }
 
