@@ -8,15 +8,13 @@
 #include "Components/DropItemManager.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
-
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 
 void URPGGameInstance::Init()
 {
 	Super::Init();
 }
-
-
 
 
 UDataSubsystem* URPGGameInstance::GetDataSubsyetem()
@@ -38,4 +36,11 @@ ADropItemManager* URPGGameInstance::GetDropItemManager()
 {
 	return ADropItemManager::DropItemManager.Get();
 }
+
+APlayerCharacter* URPGGameInstance::GetPlayerCharacter()
+{
+	return nullptr;
+}
+
+
 

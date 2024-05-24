@@ -2,24 +2,37 @@
 
 
 #include "Item/Item.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Components/StatusComponent.h"
+#include "DataSubsystem/DataSubsystem.h"
 
-UDataSubsystem* UItem::DataSubsystem = nullptr;
+
 TMap<FName, FPotionData*> UItem::PotionDatas;
 
-bool UItem::UseItem(AActor* Target, FItemData* ItemData)
+bool UItem::UseItem(FItemData* ItemData)
 {
 
-	if (!ItemData || !DataSubsystem)
+	if (!ItemData)
 	{
 		return false;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("My Item: %s"), *ItemData->ItemName.ToString());
-	if (ItemData->ItemType == EITEMTYPE::POTION)
+	
+	switch (ItemData->ItemType)
 	{
-		FPotionData* PotionData =	GetPotionData(ItemData->StatusData.RowName);
-		bool result =  UsePotion(PotionData);
+	case EITEMTYPE::POTION:
+	{
+		FPotionData* PotionData = GetPotionData(ItemData->StatusData.RowName);
+		bool result = UsePotion(PotionData);
 		return result;
+		break;
 	}
+
+	default:
+		break;
+	}
+
+
 
 	
 	return false;
@@ -30,7 +43,7 @@ FPotionData* UItem::GetPotionData(FName Name)
 
 	if (!PotionDatas.Contains(Name))
 	{
-		FPotionData* GetData = DataSubsystem->FindPotionData(Name);
+		FPotionData* GetData = UDataSubsystem::DataSubsystem->FindPotionData(Name);
 		UE_LOG(LogTemp, Warning, TEXT("NewItemData: %s"), *Name.ToString());
 		PotionDatas.Add(Name, GetData);		
 	}
@@ -46,8 +59,25 @@ bool UItem::UsePotion(FPotionData* PotionData)
 	{
 		return false;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), PotionData->EPotionType , PotionData->PotionValue);
-
+	//UE_LOG(LogTemp, Warning, TEXT("My Name: %d ,: %d"), PotionData->EPotionType , PotionData->PotionValue);
 	
+	if (PotionData->EPotionType & static_cast<uint8>(EPOTIONTYPE::HP))
+	{
+		UWorld* World = GEngine->GetWorldContextFromGameViewport(GEngine->GameViewport)->World();
+		APlayerCharacter* Character =	Cast<APlayerCharacter>(World->GetFirstPlayerController()->GetPawn());
+		UStatusComponent* Status = Character->GetStatusComponent();
+		float CurrentHp = Status->GetCurrentHP();
+		CurrentHp += PotionData->PotionValue;
+
+		if (CurrentHp >= Status->GetMaxHP())
+		{
+			Status->SetCurrentHP(Status->GetMaxHP());
+		}
+		else
+		{
+			Status->SetCurrentHP(CurrentHp);
+		}
+	}
+
 	return true;
 }

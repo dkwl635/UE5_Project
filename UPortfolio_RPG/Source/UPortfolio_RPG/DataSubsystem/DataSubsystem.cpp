@@ -55,8 +55,7 @@ UDataSubsystem::UDataSubsystem()
 
 UDataSubsystem::~UDataSubsystem()
 {
-	UItem::DataSubsystem = nullptr;
-	
+		
 	DataSubsystem = nullptr;
 	//DT_Item = nullptr;
 	//DT_Potion = nullptr;

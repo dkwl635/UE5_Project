@@ -301,7 +301,7 @@ void UPlayerInventorySubsystem::RemoveItem(EITEMTYPE ItemType, int8 InventoryInd
 
 void UPlayerInventorySubsystem::UseItem(FItemData* ItemData, int8 Count)
 {
-	ItemClass->UseItem(nullptr, ItemData);
+	ItemClass->UseItem(ItemData);
 }
 
 TWeakPtr<FItemData> UPlayerInventorySubsystem::GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex)
