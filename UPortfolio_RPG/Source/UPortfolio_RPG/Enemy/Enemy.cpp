@@ -59,6 +59,7 @@ AEnemy::~AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+    DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
     Init();
     UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
     if (StatusUserWidget)
@@ -108,11 +109,12 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    float NewHP = EnemyState->GetCurrentHP() - Damage;
-
-    DisplayDamage(Damage);
-    EnemyState->SetCurrentHP(NewHP);
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
+    if (!IsDead)
+    {
+        DisplayDamage(Damage);
+        EnemyState->DamageToCurrentHP(Damage);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
+    }
 
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
@@ -150,7 +152,7 @@ void AEnemy::AttackCheck()
             ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
             if (Player)
             {
-                float Damage = EnemyState->GetAttackDamage();
+                float Damage = EnemyState->GetRandDamage();
                 UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
             }
         }
@@ -193,26 +195,15 @@ void AEnemy::DisplayDamage(float InDamage)
 
 bool AEnemy::Init()
 {
-    DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
-
     AddEnemy(EnemyTypes[FMath::RandRange(0, EnemyTypes.Num()-1)]);
     return true;
-}
-
-void AEnemy::Reset()
-{
-    IsAttacking = false;
-    IsDead = false;
-    IsSpawn = false;
-    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
-    StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Visible);
-    PurificationScore = FMath::RandRange(100, 200);
 }
 
 bool AEnemy::AddEnemy(const FName& InKey)
 {
     FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
-    if (!InData)
+    FStatusDataTableRow* InStatus = DataSubsystem->FindEnemyStatusData(InKey);
+    if (!InData && !InStatus)
     {
         check(false);
         return false;
@@ -221,16 +212,14 @@ bool AEnemy::AddEnemy(const FName& InKey)
     {
         CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
         CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
-
+        
         SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
         SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
         SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
 
-        EnemyState->SetMaxHP(InData->EnemyHP);
-        EnemyState->SetCurrentHP(InData->EnemyHP);
-        EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
+        EnemyState->SetStatusData(InStatus);
 
-        Movement->MaxSpeed = InData->EnemySpeed;
+        Movement->MaxSpeed = EnemyState->GetSpeed();
         PurificationScore = FMath::RandRange(100, 200);
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
@@ -250,6 +239,15 @@ bool AEnemy::AddEnemy(const FName& InKey)
         return true;
     }
 
+}
+
+void AEnemy::Reset()
+{
+    IsDead = false;
+    IsSpawn = false;
+    IsAttacking = false;
+    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+    StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Visible);
 }
 //Impact
 

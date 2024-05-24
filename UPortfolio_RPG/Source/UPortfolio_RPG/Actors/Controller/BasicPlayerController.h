@@ -39,6 +39,7 @@ protected:
 	void OnSkill_Q();
 	void OnSkill_W();
 	void OnSkill_E();
+	void OnSkill_R();
 	void OnSpace();
 
 	void OnZoomWheel(const FInputActionValue& InputActionValue);

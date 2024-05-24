@@ -74,6 +74,7 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_Q);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_W);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_E, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_E);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_R, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_R);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->ZoomWheel, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnZoomWheel);
 	}
@@ -162,6 +163,16 @@ void ABasicPlayerController::OnSkill_E()
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 		PlayerCharacter->OnSkill_E(Hit.Location);
+	}
+}
+
+void ABasicPlayerController::OnSkill_R()
+{
+	if (!PlayerCharacter->bIsDead)
+	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		PlayerCharacter->OnSkill_R(Hit.Location);
 	}
 }
 

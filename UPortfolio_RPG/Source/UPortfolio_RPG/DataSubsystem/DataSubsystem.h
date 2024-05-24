@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Item/ItemData.h"
 #include "Enemy/EnemyData.h"
+#include "Components/StatusComponent.h"
 #include "DataSubsystem.generated.h"
 
 /**
@@ -31,6 +32,7 @@ public:
 	FItemData* FindItem(const FName& InKey);
 	FPotionData* FindPotionData(const FName& InKey);
 	FEnemyData* FindEnemyData(const FName& InKey);
+	FStatusDataTableRow* FindEnemyStatusData(const FName& InKey);
 	FGearData* FindGearData(const FName& InKey);
 
 protected:
@@ -51,5 +53,8 @@ protected:
 // Enemy
 	UPROPERTY()
 	UDataTable* DT_Enemy;
+
+	UPROPERTY()
+	UDataTable* DT_EnemyStatus;
 
 };

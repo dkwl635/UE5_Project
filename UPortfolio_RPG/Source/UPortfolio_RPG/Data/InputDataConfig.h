@@ -25,6 +25,7 @@ public:
 	UInputAction* Skill_Q = nullptr;
 	UInputAction* Skill_W = nullptr;
 	UInputAction* Skill_E = nullptr;
+	UInputAction* Skill_R = nullptr;
 	UInputAction* Space = nullptr;
 	UInputAction* ZoomWheel = nullptr;
 };

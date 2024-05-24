@@ -35,7 +35,6 @@ UDataSubsystem::UDataSubsystem()
 		}
 	}
 
-
 	//Enemy
 	{
 		ConstructorHelpers::FObjectFinder<UDataTable> Asset{ TEXT("/Script/Engine.DataTable'/Game/LJY/DT_Enemy2.DT_Enemy2'") };
@@ -43,11 +42,16 @@ UDataSubsystem::UDataSubsystem()
 		DT_Enemy = Asset.Object;
 		if (Asset.Object)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Succens DT_Enemy"));
+			UE_LOG(LogTemp, Warning, TEXT("Success DT_Enemy"));
+		}
+		ConstructorHelpers::FObjectFinder<UDataTable> StatusAsset{ TEXT("/Script/Engine.DataTable'/Game/LJY/DT_EnemyStatus.DT_EnemyStatus'") };
+		ensure(StatusAsset.Object);
+		DT_EnemyStatus = StatusAsset.Object;
+		if (StatusAsset.Object)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Success DT_EnemyStatus"));
 		}
 	}
-
-
 }
 
 UDataSubsystem::~UDataSubsystem()
@@ -95,10 +99,24 @@ FEnemyData* UDataSubsystem::FindEnemyData(const FName& InKey)
 	return Row;
 }
 
+FStatusDataTableRow* UDataSubsystem::FindEnemyStatusData(const FName& InKey)
+{
+	FStatusDataTableRow* Row = DT_EnemyStatus->FindRow<FStatusDataTableRow>(InKey, TEXT(""));
+	ensure(Row);
+	if (!Row)
+		UE_LOG(LogTemp, Warning, TEXT("No DT_EnemyStatus"));
+
+	return Row;
+}
+
+
+
 FGearData* UDataSubsystem::FindGearData(const FName& InKey)
 {
 	FGearData* Row = DT_Gear->FindRow<FGearData>(InKey, TEXT(""));
 	ensure(Row);
 	return Row;
 }
+
+
 

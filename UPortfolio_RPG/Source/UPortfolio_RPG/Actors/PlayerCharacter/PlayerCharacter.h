@@ -57,6 +57,7 @@ public:
 	void OnSkill_Q(const FVector& HitPoint);
 	void OnSkill_W(const FVector& HitPoint);
 	void OnSkill_E(const FVector& HitPoint);
+	void OnSkill_R(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	UFUNCTION()
 	void OnSpaceMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -126,7 +127,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
 	class UMaterialInterface* PostProcessSkill;
-	
 
 protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
@@ -138,6 +138,7 @@ private:
 	void LookAtMouseCursor(const FVector& HitPoint);
 	FVector GetMouseWorldPosition();
 	void DisplayDamage(float InDamage);
+	void ShowSkillDistance();
 
 public:
 	virtual float TakeDamage(

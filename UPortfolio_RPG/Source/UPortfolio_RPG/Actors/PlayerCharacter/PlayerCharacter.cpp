@@ -17,6 +17,8 @@
 #include "Subsystem/CoolTimeSubsystem.h"
 #include "UI/UIManager.h"
 #include "Components/PostProcessComponent.h"
+#include "UI/Skill/CoolTimerUserWidget.h"
+#include "Actors/Skill/CastingSkill.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -133,39 +135,13 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-#include "Actors/Skill/CastingSkill.h"
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (StatusComponent->GetCurrentHP() <= 0.f)
-		bIsDead = true;
-	else
-		bIsDead = false;
 	GetCharacterMovement()->MaxWalkSpeed = StatusComponent->GetSpeed();
 
-	ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]);
-	if (Skill->CurrentSkillState == ESkillState::Targeting)
-	{
-		PostProcessComponent->bEnabled = true;
-		FVector MouseWorldPosition = GetMouseWorldPosition();
-		FVector CenterLocation = GetActorLocation();
-		float Distance = FVector::Dist(CenterLocation, MouseWorldPosition);
-		UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>(PostProcessComponent->Settings.WeightedBlendables.Array[0].Object);
-		if (DynamicMaterial)
-		{
-			DynamicMaterial->SetVectorParameterValue("CharacterPosition", FLinearColor(CenterLocation.X, CenterLocation.Y, CenterLocation.Z));
-			DynamicMaterial->SetScalarParameterValue("SkillRange", Skill->Sk_MaxDistance);
-			if (Skill->Sk_MaxDistance >= Distance)
-			{
-				TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
-			}
-		}
-	}
-	else
-	{
-		PostProcessComponent->bEnabled = false;
-	}
+	ShowSkillDistance();
 }
 
 // Called to bind functionality to input
@@ -174,7 +150,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-#include "UI/Skill/CoolTimerUserWidget.h"
+
 void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 {
 	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
@@ -190,11 +166,7 @@ void APlayerCharacter::OnSkill_Q(const FVector& HitPoint)
 	if (PlayerController)
 	{
 		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
-		if (Manager->IsSkillCool(Skill))
-		{
-			return;
-		}
-		else
+		if (!Manager->IsSkillCool(Skill) && StatusComponent->GetCurrentMP() >= Skill->Sk_ManaUsage)
 		{
 			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
@@ -220,11 +192,7 @@ void APlayerCharacter::OnSkill_W(const FVector& HitPoint)
 	if (PlayerController)
 	{
 		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
-		if (Manager->IsSkillCool(Skill))
-		{
-			return;
-		}
-		else
+		if (!Manager->IsSkillCool(Skill) && StatusComponent->GetCurrentMP() >= Skill->Sk_ManaUsage)
 		{
 			PlayerController->StopMovement();
 			Manager->SetSkillTimer(Skill);
@@ -245,12 +213,8 @@ void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
 	if (PlayerController)
 	{
 		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
-		if (Manager->IsSkillCool(Skill))
+		if (!Manager->IsSkillCool(Skill) && StatusComponent->GetCurrentMP() >= Skill->Sk_ManaUsage)
 		{
-			return;
-		}
-		else
-		{	
 			if (Skill->CurrentSkillState == ESkillState::Idle)
 			{
 				Skill->ActiveSkill(Animation);
@@ -263,6 +227,34 @@ void APlayerCharacter::OnSkill_E(const FVector& HitPoint)
 				TargetingCircleInstance->SetActorHiddenInGame(true);
 				Skill->ActiveSkill(Animation);
 				Manager->SetSkillTimer(Skill);
+			}
+		}
+	}
+}
+
+void APlayerCharacter::OnSkill_R(const FVector& HitPoint)
+{
+	UAnimInstance* Animation = GetMesh()->GetAnimInstance();
+	ensure(Animation);
+	if (Animation->Montage_IsPlaying(nullptr)) { return; }
+	if (ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]))
+	{
+		TargetingCircleInstance->SetActorHiddenInGame(true);
+		Skill->CurrentSkillState = ESkillState::Idle;
+	}
+	ASkillBase* Skill = GetSkillComponent()->Skills[3];
+	ABasicPlayerController* PlayerController = Cast<ABasicPlayerController>(GetController());
+	if (PlayerController)
+	{
+		UCoolTimeSubsystem* Manager = PlayerController->GetCoolTimeManager();
+		if (!Manager->IsSkillCool(Skill) && StatusComponent->GetCurrentMP() >= Skill->Sk_ManaUsage)
+		{
+			PlayerController->StopMovement();
+			LookAtMouseCursor(HitPoint);
+			Manager->SetSkillTimer(Skill);
+			if (Skill)
+			{
+				Skill->ActiveSkill(Animation);
 			}
 		}
 	}
@@ -339,7 +331,7 @@ void APlayerCharacter::DefaultAttackCheck()
 			AActor* DamagedActor = Hit.GetActor();
 			if (IsValid(DamagedActor) && !AlreadyDamagedActors.Contains(DamagedActor))
 			{
-				float Damage = FMath::RandRange(StatusComponent->GetMinAttackDamage(), StatusComponent->GetMaxAttackDamage());
+				float Damage = StatusComponent->GetRandDamage();
 				FDamageEvent DamageEvent;
 				DamagedActor->TakeDamage(Damage, DamageEvent, GetController(), this);
 				AlreadyDamagedActors.Add(DamagedActor); // 공격한 대상을 세트에 추가
@@ -386,23 +378,51 @@ FVector APlayerCharacter::GetMouseWorldPosition()
 #include "Actors/Damage/PrintDamageTextActor.h"
 void APlayerCharacter::DisplayDamage(float InDamage)
 {
-	const float RandX = FMath::RandRange(0, 50);
-	const float RandY = FMath::RandRange(0, 50);
-	const float RandZ = FMath::RandRange(0, 50);
+	const float RandX = FMath::RandRange(0, 100);
+	const float RandY = FMath::RandRange(0, 100);
+	const float RandZ = FMath::RandRange(0, 100);
 	const FVector RandVector = FVector(RandX, RandY, RandZ);
 	APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
 		(APrintDamageTextActor::StaticClass());
 	Actor->SetWidgetText(this, InDamage, GetActorLocation() + RandVector);
 }
 
+void APlayerCharacter::ShowSkillDistance()
+{
+	ACastingSkill* Skill = Cast<ACastingSkill>(GetSkillComponent()->Skills[2]);
+	if (Skill->CurrentSkillState == ESkillState::Targeting)
+	{
+		PostProcessComponent->bEnabled = true;
+		FVector MouseWorldPosition = GetMouseWorldPosition();
+		FVector CenterLocation = GetActorLocation();
+		float Distance = FVector::Dist(CenterLocation, MouseWorldPosition);
+		UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>(PostProcessComponent->Settings.WeightedBlendables.Array[0].Object);
+		if (DynamicMaterial)
+		{
+			DynamicMaterial->SetVectorParameterValue("CharacterPosition", FLinearColor(CenterLocation.X, CenterLocation.Y, CenterLocation.Z));
+			DynamicMaterial->SetScalarParameterValue("SkillRange", Skill->Sk_MaxDistance);
+			if (Skill->Sk_MaxDistance >= Distance)
+			{
+				TargetingCircleInstance->SetActorLocation(MouseWorldPosition);
+			}
+		}
+	}
+	else
+	{
+		PostProcessComponent->bEnabled = false;
+	}
+}
+
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float InDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	float Damage = FMath::RandRange(InDamage * 0.9f, InDamage * 1.1f);
-	float CurrentHP = StatusComponent->GetCurrentHP();
-	float NewHP = CurrentHP - Damage;
 	DisplayDamage(Damage);
-	StatusComponent->SetCurrentHP(NewHP);
+	StatusComponent->DamageToCurrentHP(Damage);
+	if (StatusComponent->GetCurrentHP() <= 0.f)
+	{
+		bIsDead = true;
+	}
 
 	return Damage;
 }

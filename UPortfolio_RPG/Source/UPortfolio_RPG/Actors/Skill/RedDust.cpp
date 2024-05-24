@@ -78,7 +78,7 @@ void ARedDust::OnAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 {
 	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
-	float Damage = FMath::RandRange(Player->GetStatusComponent()->GetMinAttackDamage(), Player->GetStatusComponent()->GetMaxAttackDamage());
+	float Damage = Player->GetStatusComponent()->GetRandDamage();
 	Damage += Sk_Damage;
 
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);

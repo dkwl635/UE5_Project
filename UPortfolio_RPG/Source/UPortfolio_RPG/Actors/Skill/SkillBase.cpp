@@ -15,9 +15,8 @@ void ASkillBase::ActiveSkill(UAnimInstance* AnimInstance)
 	}
 	else
 	{
-		float MP = Player->GetStatusComponent()->GetCurrentMP() - Sk_ManaUsage;
-		Player->GetStatusComponent()->SetCurrentMP(MP);
+		Player->GetStatusComponent()->UseCurrentMP(Sk_ManaUsage);
 	}
 	if(Montage)
-		AnimInstance->Montage_Play(Montage, 1.2f);
+		AnimInstance->Montage_Play(Montage, 1.0f);
 }

@@ -43,6 +43,12 @@ UInputDataConfig::UInputDataConfig()
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Skill_R.IA_Skill_R'") };
+		check(Asset.Succeeded());
+		Skill_R = Asset.Object;
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
 		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KSH/Character/Input/IA_Space.IA_Space'") };
 		check(Asset.Succeeded());
 		Space = Asset.Object;

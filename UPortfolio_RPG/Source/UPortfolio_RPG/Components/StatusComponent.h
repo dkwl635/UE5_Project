@@ -33,39 +33,51 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, 
+		FActorComponentTickFunction* ThisTickFunction) override;
+	
 public:	
 	void SetStatusData(const FStatusDataTableRow* InData);
 
 public:
-	inline float GetMaxHP() { return MaxHP; }
-	inline float GetCurrentHP() { return CurrentHP; }
-	inline void SetMaxHP(float InHP)
+	float GetMaxHP() { return MaxHP; }
+	float GetCurrentHP() { return CurrentHP; }
+	void SetMaxHP(float InHP){ MaxHP = InHP; }
+	void SetCurrentHP(float InHP) { CurrentHP = InHP; }
+	void AddToCurrentHP(float InHP)
 	{
-		if (MaxHP <= 0) { MaxHP = 0; }
-		else { MaxHP = InHP; }
+		CurrentHP += InHP;
 	}
-	inline void SetCurrentHP(float InHP)
+	void DamageToCurrentHP(float InHP)
 	{
-		if (CurrentHP <= 0) { CurrentHP = 0; }
-		else { CurrentHP = InHP; }
+		CurrentHP -= InHP;
+		if (CurrentHP <= 0.f)
+			CurrentHP = 0.f;
 	}
-	inline float GetMaxMP() { return MaxMP; }
-	inline float GetCurrentMP() { return CurrentMP; }
-	inline void SetMaxMP(float InMP) { MaxMP = InMP; }
-	inline void SetCurrentMP(float InMP)
+	
+	float GetMaxMP() { return MaxMP; }
+	float GetCurrentMP() { return CurrentMP; }
+	void SetMaxMP(float InMP) { MaxMP = InMP; }
+	void AddToCurrentMP(float InMP)
 	{
-		if (CurrentMP <= 0) { CurrentMP = 0; }
-		else { CurrentMP = InMP; }
+		CurrentMP += InMP;
 	}
-	inline float GetAttackDamage() { return AttackDamage; }
-	inline float GetMinAttackDamage() { return MinAttackDamage; }
-	inline float GetMaxAttackDamage() { return MaxAttackDamage; }
-	inline void SetAttackDamage(float Damage) { AttackDamage = Damage; }
-	inline float GetSpeed() { return Speed; }
-	inline void SetSpeed(float InSpeed) { Speed = InSpeed; }
-	inline void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
-	inline void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
+	void UseCurrentMP(float InMP)
+	{
+		CurrentMP -= InMP;
+		if (CurrentMP <= 0.f)
+			CurrentMP = 0.f;
+	}
+
+	float GetAttackDamage() { return AttackDamage; }
+	void SetAttackDamage(float Damage) { AttackDamage = Damage; }
+	float GetRandDamage() { return FMath::RandRange(MinAttackDamage, MaxAttackDamage); }
+
+	float GetSpeed() { return Speed; }
+	void SetSpeed(float InSpeed) { Speed = InSpeed; }
+
+	void SetSuperArmor(bool InSuperArmor) { bSuperArmor = InSuperArmor; }
+	void SetSuperStance(bool InSuperStance) { bSuperStance = InSuperStance; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -24,12 +24,6 @@ struct UPORTFOLIO_RPG_API FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	FTransform SkeletalMeshTransform;   //enemy 상대적 위치
 
-	UPROPERTY(EditAnywhere, Category = "Status")
-	float EnemyHP;
-
-	UPROPERTY(EditAnywhere, Category = "Status")
-	float EnemyAttackDamage;
-
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	TSubclassOf<UAnimInstance> AnimClass;   //애니메이션
 
@@ -41,10 +35,4 @@ struct UPORTFOLIO_RPG_API FEnemyData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
 	FTransform ParticleTransform;
-
-	UPROPERTY(EditAnywhere, Category = "Status")
-	float EnemySpeed;              //enemy speed
-
-
-
 };

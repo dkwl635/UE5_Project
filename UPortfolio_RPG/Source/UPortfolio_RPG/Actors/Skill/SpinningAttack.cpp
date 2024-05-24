@@ -76,14 +76,18 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 {
 	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
-	float Damage = FMath::RandRange(Player->GetStatusComponent()->GetMinAttackDamage(), Player->GetStatusComponent()->GetMaxAttackDamage());
-	Damage += Sk_Damage;
+	
 	
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if(Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spinning Attack Hit!"));
 		FDamageEvent DamageEvent;
-		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+		for (int32 i = 0; i < 3; ++i)
+		{
+			float Damage = Player->GetStatusComponent()->GetRandDamage();
+			Damage += Sk_Damage;
+			Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+		}
 	}
 }
