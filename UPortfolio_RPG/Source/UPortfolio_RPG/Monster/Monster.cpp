@@ -33,7 +33,7 @@ AMonster::AMonster()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 
-	Movement->MaxSpeed = 100.0f;
+	Movement->MaxSpeed = 300.0f;
 	Movement->Acceleration = 500.0f;
 	Movement->Deceleration = 500.0f;
 
@@ -54,7 +54,7 @@ AMonster::AMonster()
 			FireScreamEffect = Asset.Object;
 		}
 		{
-			static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
+			static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/Animation/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
 			ensure(Asset.Object);
 			FireScreamMontage = Asset.Object;
 		}
@@ -119,8 +119,6 @@ void AMonster::BeginPlay()
 	//FireScream();
 	//AttackRange();
 
-	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -128,6 +126,19 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ScreamTimeline.TickTimeline(DeltaTime);
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController && IsMove)
+	{
+		FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
+		FVector MonsterLocation = GetActorLocation();
+		FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
+		DirectionToPlayer.Z = 0.f;
+
+		FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
+		MonsterRotation.Yaw -= 90.0f;
+
+		SetActorRotation(MonsterRotation);
+	}
 }
 
 float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

@@ -173,5 +173,7 @@ public:  //Animation Bool
 	bool IsDetach = false;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
 	bool IsRange = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
+	bool IsMove = false;
 	
 };
