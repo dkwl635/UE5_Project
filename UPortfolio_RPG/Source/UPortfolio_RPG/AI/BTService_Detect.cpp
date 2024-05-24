@@ -34,7 +34,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		Center,
 		Center + FVector(0.f, 0.f, 1.f), // ������ ���������� �ణ ���� �������� �����Ͽ� ������ �浹�� �����մϴ�.
 		DetectRadius,
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //�浹ä��
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel12),           //�浹ä��
 		false, //bTraceComplex
 		TArray<AActor*>(), //������ ���͵�
 		EDrawDebugTrace::None, //����� Ʈ���̽�
@@ -51,7 +51,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	{
 		// �÷��̾ �������� ������ ���� ���� ����
 		OwnerComp.GetBlackboardComponent()->ClearValue(AEnemyAIController::TargetActorKey);
-	//	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
+		//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 1.0f);
 
 	}
 

@@ -127,7 +127,7 @@ void AMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	ScreamTimeline.TickTimeline(DeltaTime);
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController && IsMove)
+	if (PlayerController && (IsMove || IsRange))
 	{
 		FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
 		FVector MonsterLocation = GetActorLocation();
@@ -209,7 +209,7 @@ void AMonster::AttackRange()
 	AttackRangeLocation = AttackRangeActor->GetActorLocation();
 	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::RangeSpawnDelay, 2.0f, false);
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::RangeSpawnDelay, 1.0f, false);
 
 	
 
@@ -318,9 +318,9 @@ void AMonster::RangeSpawnDelay()
 	
 	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackRangeEffect, AttackRangeLocation, FRotator::ZeroRotator, FVector(0.5,0.5,0.5), true, true, ENCPoolMethod::None, true);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackRangeEffect, AttackRangeLocation, FRotator::ZeroRotator, FVector(1.0,1.0,1.0), true, true, ENCPoolMethod::None, true);
 
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 2.0f, false);
 }
 
 void AMonster::DestroyRangeActor()
