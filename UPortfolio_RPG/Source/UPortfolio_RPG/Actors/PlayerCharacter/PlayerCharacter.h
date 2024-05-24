@@ -12,6 +12,7 @@ class USkillComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UAnimMontage;
+class UPlayerInvectorySubsystem;
 struct FSkillDataTableRow;
 struct FStatusDataTableRow;
 
@@ -139,6 +140,10 @@ private:
 	FVector GetMouseWorldPosition();
 	void DisplayDamage(float InDamage);
 	void ShowSkillDistance();
+	// When Gear Changed
+	void SetGearData();
+
+	UPlayerInventorySubsystem* Inventory;
 
 public:
 	virtual float TakeDamage(

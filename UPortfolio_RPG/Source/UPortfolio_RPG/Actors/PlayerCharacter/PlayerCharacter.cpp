@@ -19,6 +19,7 @@
 #include "Components/PostProcessComponent.h"
 #include "UI/Skill/CoolTimerUserWidget.h"
 #include "Actors/Skill/CastingSkill.h"
+#include "Item/PlayerInventorySubsystem.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -411,6 +412,16 @@ void APlayerCharacter::ShowSkillDistance()
 	{
 		PostProcessComponent->bEnabled = false;
 	}
+}
+
+// When Gear Changed
+void APlayerCharacter::SetGearData()
+{
+	Inventory = GetWorld()->GetSubsystem<UPlayerInventorySubsystem>();
+
+	const int32 AddHP = Inventory->GetPlayerAddMaxHp();
+	const float CurrentMaxHP = StatusComponent->GetMaxHP();
+	StatusComponent->SetMaxHP(CurrentMaxHP + AddHP);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

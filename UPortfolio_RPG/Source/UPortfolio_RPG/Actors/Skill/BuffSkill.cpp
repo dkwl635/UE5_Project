@@ -35,7 +35,7 @@ ABuffSkill::ABuffSkill()
     Sk_Name = TEXT("Buff");
     Sk_CoolTime = 12.f;
     Sk_Desc = FText::FromString(TEXT("6초 동안 공격력을 50% 올려준다"));
-    Sk_Damage = 0.5f;
+    Sk_Damage = 1.5f;
     Sk_ManaUsage = 50.f;
     Sk_MaxDistance = 0.f;
 }

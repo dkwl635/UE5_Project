@@ -47,6 +47,8 @@ public:
 	void AddToCurrentHP(float InHP)
 	{
 		CurrentHP += InHP;
+		if (MaxHP <= CurrentHP)
+			CurrentHP = MaxHP;
 	}
 	void DamageToCurrentHP(float InHP)
 	{
@@ -61,6 +63,8 @@ public:
 	void AddToCurrentMP(float InMP)
 	{
 		CurrentMP += InMP;
+		if (MaxMP <= CurrentMP)
+			CurrentMP = MaxMP;
 	}
 	void UseCurrentMP(float InMP)
 	{
