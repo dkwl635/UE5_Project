@@ -11,9 +11,10 @@
 #include "UI/RPGShop.h"
 #include "UI/UIManager.h"
 #include	"Item/ItemData.h"
+#include "GameInstance/RPGGameInstance.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "Actors/Controller/BasicPlayerController.h"
 
-
-ANPCManager* ANPCManager::NPCManager = nullptr;
 ANPCManager::ANPCManager()
 {
  	PrimaryActorTick.bCanEverTick = false;
@@ -24,7 +25,6 @@ ANPCManager::ANPCManager()
 void ANPCManager::BeginPlay()
 {
 	Super::BeginPlay();
-	NPCManager = this;
 }
 
 void ANPCManager::BeginOverlapPlayer(ANPC* Target)
@@ -53,6 +53,9 @@ void ANPCManager::StartInteractiorNPC()
 	{
 		return;
 	}
+
+	RPGGameInstance->GetPlayerBasicController()->StopMovement();
+
 	ReceiveStartInteractiorNPC();
 
 }
@@ -64,9 +67,9 @@ void ANPCManager::EndInteractiorNPC()
 		return;
 	}
 	
-	if (AUIManager::UIManager->IsShowUI(ERPG_UI::NPCTALK))
+	if (RPGGameInstance->GetUIManager()->IsShowUI(ERPG_UI::NPCTALK))
 	{
-		AUIManager::UIManager->HideUI(ERPG_UI::NPCTALK);
+		RPGGameInstance->GetUIManager()->HideUI(ERPG_UI::NPCTALK);
 	}
 	
 	ReceiveEndInteractiorNPC();
@@ -79,7 +82,7 @@ void ANPCManager::InteractiorNPC()
 		bInteractior = true;
 		CurrentNPC->StartInteraction();
 
-		AUIManager::UIManager->ShowUI(ERPG_UI::NPCTALK);
+		RPGGameInstance->GetUIManager()->ShowUI(ERPG_UI::NPCTALK);
 		return;
 	}
 	else
@@ -103,14 +106,14 @@ void ANPCManager::OpenShopUI()
 		return;
 	}
 	
-	URPGShop* ShopUI = Cast<URPGShop>(AUIManager::UIManager->GetRPGUI(ERPG_UI::SHOP));
+	URPGShop* ShopUI = Cast<URPGShop>(RPGGameInstance->GetUIManager()->GetRPGUI(ERPG_UI::SHOP));
 	ShopUI->SetShopData(CurrentNPC.Get()->ShopBuyData);
 
-	AUIManager::UIManager->ShowUI(ERPG_UI::SHOP);
-	AUIManager::UIManager->ShowUI(ERPG_UI::INVENTORY);
+	RPGGameInstance->GetUIManager()->ShowUI(ERPG_UI::SHOP);
+	RPGGameInstance->GetUIManager()->ShowUI(ERPG_UI::INVENTORY);
 
-	AUIManager::UIManager->GetCanvasPanel(ERPG_UI::SHOP)->SetPosition(FVector2D(311, 140));
-	AUIManager::UIManager->GetCanvasPanel(ERPG_UI::INVENTORY)->SetPosition(FVector2D(1000, 165));
+	RPGGameInstance->GetUIManager()->GetCanvasPanel(ERPG_UI::SHOP)->SetPosition(FVector2D(311, 140));
+	RPGGameInstance->GetUIManager()->GetCanvasPanel(ERPG_UI::INVENTORY)->SetPosition(FVector2D(1000, 165));
 	
 
 }

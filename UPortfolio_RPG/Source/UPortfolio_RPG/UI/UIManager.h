@@ -17,14 +17,11 @@ class UPORTFOLIO_RPG_API AUIManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AUIManager();
-
-	static TWeakObjectPtr<AUIManager> UIManager;
-
 protected:
 	virtual void BeginPlay() override;
-	
 
 public :
+	virtual void SpawnUI();
 	TSubclassOf<UUserWidget> MainUIBP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class URPGMainUserWidget* PlayerUI;

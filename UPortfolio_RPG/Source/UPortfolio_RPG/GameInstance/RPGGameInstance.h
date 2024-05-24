@@ -15,11 +15,15 @@ class UPORTFOLIO_RPG_API URPGGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-
 	void Init() override;
-
-
+	void FinishDestroy() override;
+private:
+	TWeakObjectPtr<UPlayerInventorySubsystem> PlayerInventorySubsystem;
+	TWeakObjectPtr<UDataSubsystem> DataSubsystem;
 public:
+
+	UFUNCTION(BlueprintCallable)
+	class UPlayerInventorySubsystem* GetPlayerInventorySubsystem();
 
 	UFUNCTION(BlueprintCallable)
 	class UDataSubsystem* GetDataSubsyetem();
@@ -35,9 +39,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class APlayerCharacter* GetPlayerCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	class ABasicPlayerController* GetPlayerBasicController();
 	
+	UFUNCTION(BlueprintCallable)
+	UWorld* GetCurrentWorld();
 
 
 
 
 };
+extern TWeakObjectPtr<URPGGameInstance> RPGGameInstance;

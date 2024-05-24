@@ -31,6 +31,8 @@ public:
 private:
 	TWeakObjectPtr<class URPGMainUserWidget> PlayerUI;
 	class URPGMainUserWidget* GetPlayerUI();
+
+	class UPlayerInventorySubsystem* PlayerInven;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* BuyButton;

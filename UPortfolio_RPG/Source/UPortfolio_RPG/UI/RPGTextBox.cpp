@@ -27,7 +27,7 @@ void URPGTextBox::OnClickedYesButton()
 		YesButtonFunc.Execute();
 	}
 	
-	AUIManager::UIManager->HideUI(this->UI_Type);
+	RPGGameInstance->GetUIManager()->HideUI(this->UI_Type);
 
 }
 
@@ -40,6 +40,6 @@ void URPGTextBox::OnClickedNoButton()
 
 
 
-	AUIManager::UIManager->HideUI(this->UI_Type);
+	RPGGameInstance->GetUIManager()->HideUI(this->UI_Type);
 
 }

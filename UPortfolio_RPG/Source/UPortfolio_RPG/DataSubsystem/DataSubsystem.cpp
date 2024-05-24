@@ -4,7 +4,6 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Item/Item.h"
 
-UDataSubsystem* UDataSubsystem::DataSubsystem = nullptr;
 UDataSubsystem::UDataSubsystem()
 {
 	{
@@ -56,7 +55,7 @@ UDataSubsystem::UDataSubsystem()
 UDataSubsystem::~UDataSubsystem()
 {
 		
-	DataSubsystem = nullptr;
+	//DataSubsystem = nullptr;
 	//DT_Item = nullptr;
 	//DT_Potion = nullptr;
 	//DT_Gear = nullptr;
@@ -67,7 +66,7 @@ void UDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	DataSubsystem = this;
+	//DataSubsystem = this;
 }
 
 void UDataSubsystem::Init()

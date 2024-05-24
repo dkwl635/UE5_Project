@@ -3,21 +3,25 @@
 
 #include "Item/Item.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Components/StatusComponent.h"
 #include "DataSubsystem/DataSubsystem.h"
+#include "Engine/World.h"
 
 
-TMap<FName, FPotionData*> UItem::PotionDatas;
-
-bool UItem::UseItem(FItemData* ItemData)
+TMap<FName, FPotionData*> UItem::PotionDatas ;
+TWeakObjectPtr<UWorld> UItem::CurrentWorld = nullptr;
+bool UItem::UseItem(UWorld* World ,FItemData* ItemData)
 {
 
-	if (!ItemData)
+	if (!ItemData || !World)
 	{
 		return false;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("My Item: %s"), *ItemData->ItemName.ToString());
 	
+	
+	CurrentWorld = World;
+
 	switch (ItemData->ItemType)
 	{
 	case EITEMTYPE::POTION:
@@ -43,7 +47,7 @@ FPotionData* UItem::GetPotionData(FName Name)
 
 	if (!PotionDatas.Contains(Name))
 	{
-		FPotionData* GetData = UDataSubsystem::DataSubsystem->FindPotionData(Name);
+		FPotionData* GetData = RPGGameInstance->GetDataSubsyetem()->FindPotionData(Name);
 		UE_LOG(LogTemp, Warning, TEXT("NewItemData: %s"), *Name.ToString());
 		PotionDatas.Add(Name, GetData);		
 	}
@@ -63,8 +67,8 @@ bool UItem::UsePotion(FPotionData* PotionData)
 	
 	if (PotionData->EPotionType & static_cast<uint8>(EPOTIONTYPE::HP))
 	{
-		UWorld* World = GEngine->GetWorldContextFromGameViewport(GEngine->GameViewport)->World();
-		APlayerCharacter* Character =	Cast<APlayerCharacter>(World->GetFirstPlayerController()->GetPawn());
+		URPGGameInstance* GameInstance = Cast<URPGGameInstance>(CurrentWorld->GetGameInstance());
+		APlayerCharacter* Character = GameInstance->GetPlayerCharacter();
 		UStatusComponent* Status = Character->GetStatusComponent();
 		float CurrentHp = Status->GetCurrentHP();
 		CurrentHp += PotionData->PotionValue;

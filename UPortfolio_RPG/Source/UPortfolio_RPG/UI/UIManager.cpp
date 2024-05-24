@@ -10,35 +10,31 @@
 #include "UI/RPGTextBox.h"
 
 
-TWeakObjectPtr<AUIManager> AUIManager::UIManager = nullptr;
 // Sets default values
 AUIManager::AUIManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FClassFinder<URPGMainUserWidget> FindUI(TEXT("Script/UMGEditor.WidgetBlueprint'/Game/KJW/UI/BPUI_MainUI.BPUI_MainUI_C'"));
  	MainUIBP = FindUI.Class;
+}
 
+void AUIManager::SpawnUI()
+{
+	if (MainUIBP)
+	{
+		auto Widget = CreateWidget<UUserWidget>(GetWorld(), MainUIBP);
+		PlayerUI = Cast<URPGMainUserWidget>(Widget);
+		PlayerUI->Init();
+		PlayerUI->AddToViewport();
+	}
 }
 
 // Called when the game starts or when spawned
 void AUIManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	UIManager = this;
 
-	if (MainUIBP)
-	{
-		auto Widget = CreateWidget<UUserWidget>(GetWorld(), MainUIBP);
-		PlayerUI = Cast<URPGMainUserWidget>(Widget);
 
-		ensure(PlayerUI);
-		PlayerUI->Init();
-		PlayerUI->AddToViewport();
-
-	}
-
-	
 }
 
 

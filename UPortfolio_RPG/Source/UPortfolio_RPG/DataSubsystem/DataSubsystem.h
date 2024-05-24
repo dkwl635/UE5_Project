@@ -21,7 +21,7 @@ public:
 	~UDataSubsystem();
 	
 public:
-	static UDataSubsystem* DataSubsystem;// = nullptr;
+//	static UDataSubsystem* DataSubsystem;// = nullptr;
 
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 

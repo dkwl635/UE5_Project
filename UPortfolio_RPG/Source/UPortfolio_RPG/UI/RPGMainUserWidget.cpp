@@ -2,6 +2,7 @@
 
 
 #include "UI/RPGMainUserWidget.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
@@ -110,8 +111,9 @@ URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 
 void URPGMainUserWidget::PlayerGoodsRefresh()
 {
-    int32 PlayerGold = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerGold();
-    int32 PlayerCoin = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerCoin();
+    UPlayerInventorySubsystem* Inven = RPGGameInstance->GetPlayerInventorySubsystem();
+    int32 PlayerGold = Inven->GetPlayerGold();
+    int32 PlayerCoin = Inven->GetPlayerCoin();
 
     GoldTextBlock->SetText(FText::AsNumber(PlayerGold));
     CoinTextBlock->SetText(FText::AsNumber(PlayerCoin));
@@ -152,7 +154,7 @@ FVector2D URPGMainUserWidget::GetViewSize()
 
 void URPGMainUserWidget::UIMoveStart(ERPG_UI Type)
 {
-    AUIManager::UIManager->ShowUI(Type);
+    RPGGameInstance->GetUIManager()->ShowUI(Type);
     MoveTargetCanvasSlot = GetCanvasPanel(Type);
     
     MousePotion = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld())- MoveTargetCanvasSlot->GetPosition();
@@ -180,5 +182,5 @@ void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)
 
 void URPGMainUserWidget::UIButtonFunc(ERPG_UI Type)
 {
-    AUIManager::UIManager->GetRPGUIToggle(Type);
+    RPGGameInstance->GetUIManager()->GetRPGUIToggle(Type);
 }

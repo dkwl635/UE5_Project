@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "DropItem.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "DataSubsystem/DataSubsystem.h"
 #include "UI/UIManager.h"
@@ -39,7 +38,7 @@ void ADropItem::SetDropItem(FName ItemRowName, int Count)
 
 FText ADropItem::SetItemText()
 {
-	FItemData* data = UDataSubsystem::DataSubsystem->FindItem(ItemHande);
+	FItemData* data = RPGGameInstance->GetDataSubsyetem()->FindItem(ItemHande);
 	FText ItemNameText = FText::FromName(data->ItemName);
 	if (data == nullptr) { return FText(); }
 	if (ItemCount >= 1)
@@ -61,13 +60,14 @@ void ADropItem::AddItem()
 		return;
 	}
 
-	if (UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ItemHande, ItemCount) == false)
+	UPlayerInventorySubsystem* Inven = RPGGameInstance->GetPlayerInventorySubsystem();
+	if (Inven->AddItem(ItemHande, ItemCount) == false)
 	{
 		return;
 	}
 
-	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
-	AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
+	RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::INVENTORY);
+	RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::QUICKSLOTS);
 
 	RetrunItem();
 }

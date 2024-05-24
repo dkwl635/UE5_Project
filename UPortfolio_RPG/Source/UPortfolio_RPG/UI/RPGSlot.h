@@ -37,8 +37,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> DragUserWidget;
-
+private:
+	class UPlayerInventorySubsystem* GetInven();
+	class UDataSubsystem* GetData();
 public:
+	
+
 	void RefreshSlotUI();
 
 	UFUNCTION(BlueprintCallable)

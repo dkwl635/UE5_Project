@@ -15,7 +15,7 @@ class UPORTFOLIO_RPG_API UPlayerInventorySubsystem : public UGameInstanceSubsyst
 	GENERATED_BODY()
 
 public:
-	static UPlayerInventorySubsystem* PlayerInventorySubsystem; //= nullptr;
+	//static UPlayerInventorySubsystem* PlayerInventorySubsystem; //= nullptr;
 	typedef  TArray<TSharedPtr<struct FItemData>>* Inventory;
 private:
 	const int8 MaxInvenSize = 30;
@@ -83,9 +83,6 @@ public:
 	UUserWidget* DragSlot;
 
 private:
-	UPROPERTY()
-	TArray<TWeakObjectPtr<class URPGSlot>> QuickItemSlots;
-
 	TArray<int> QuickItemSlotsPointer;
 	
 
@@ -96,9 +93,7 @@ public:
 	void Load();
 	
 public:
-
-	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);
-	void AttachSlot(ERPGSLOTTYPE SlotType, class URPGSlot* Slot);
+	void SetAttachQuickSlot(int QuickSlotIndex, int ItemIndex);	
 	int GetQuickSlotFromIndex(int QuickSlotIndex);
 	int CheckQuickSlotItem(int ItemIndex);
 	void QuickSlotClear(int8 QuickSlotIndex);

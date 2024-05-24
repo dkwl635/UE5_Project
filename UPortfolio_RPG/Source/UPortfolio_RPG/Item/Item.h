@@ -16,17 +16,14 @@ public:
 	friend class UDataSubsystem;
 private:
 	static TMap<FName, FPotionData*> PotionDatas;
-
+	static TWeakObjectPtr<UWorld> CurrentWorld;
 private:
 
 	FPotionData* GetPotionData(FName Name);
-
-
+	
 public:
 	
-
-
-	bool UseItem( FItemData* ItemData);
+	bool UseItem(UWorld* World ,FItemData* ItemData);
 
 private:
 
