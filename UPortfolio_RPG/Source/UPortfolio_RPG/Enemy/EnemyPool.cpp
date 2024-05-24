@@ -14,9 +14,8 @@ UEnemyPool::UEnemyPool()
 void UEnemyPool::Create(UWorld* World, uint32 Count)
 {
     Pool.Reserve(Count);
-    ControllerPool.Reserve(Count);
     ActiveEnemies.Reserve(Count);
-    CachedWorld = World;
+    CDSubsystem = World->GetSubsystem<UChaosDungeonSubsystem>();
 
     for (uint32 i = 0; i < Count; ++i)
     {
@@ -26,10 +25,9 @@ void UEnemyPool::Create(UWorld* World, uint32 Count)
             NewEnemy->SetActorHiddenInGame(true); // Render off
             NewEnemy->SetActorEnableCollision(false); // Collision off
             NewEnemy->SetActorTickEnabled(false); // Tick off
-            AEnemyAIController* EnemyController = Cast<AEnemyAIController>(NewEnemy->GetController());
-            ControllerPool.Add(EnemyController);
-
-            EnemyController->UnPossess();
+            NewEnemy->OwningController->UnPossess();
+            
+            //EnemyController->pause();
             Pool.Add(NewEnemy);
         }
     }
@@ -53,26 +51,16 @@ void UEnemyPool::Destroy()
             It = nullptr;
         }
     }
-    for (auto* It : ControllerPool)
-    {
-        if (It)
-        {
-            It->Destroy();
-            It = nullptr;
-        }
-    }
 }
 
 AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollision, AActor* Owner, APawn* Instigator)
 {
     AEnemy* Enemy = nullptr;
-    AEnemyAIController* EnemyController = nullptr;
 
     if (Pool.Num() > 0)
     {
         Enemy = Pool.Pop(false);
-        EnemyController = ControllerPool.Pop(false);
-        if(Enemy && EnemyController)
+        if(Enemy)
         {
             ActiveEnemies.Add(Enemy);
             Enemy->SetPool(this);
@@ -81,7 +69,8 @@ AEnemy* UEnemyPool::SpawnEnemy(const FTransform& InTransform, bool bEnableCollis
             Enemy->SetActorTickEnabled(true);
             Enemy->PurificationScore = FMath::RandRange(100, 200);
             Enemy->SetActorTransform(InTransform);
-            EnemyController->OnPossess(Enemy);
+            Enemy->IsDead = false;
+            Enemy->OwningController->Possess(Enemy);
 
             UEnemyAnimInstance* AnimInstance = Enemy->GetAnimInstance();
             if (AnimInstance)
@@ -98,10 +87,7 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
     {
         if(InEnemy)
         {
-            AEnemyAIController* EnemyController = Cast<AEnemyAIController>(InEnemy->GetController());
-            if(EnemyController)
-                ControllerPool.Add(EnemyController);
-            EnemyController->UnPossess();
+            InEnemy->GetController()->UnPossess();
             InEnemy->SetActorHiddenInGame(true);
             InEnemy->SetActorEnableCollision(false);
             InEnemy->SetActorTickEnabled(false);
@@ -109,14 +95,10 @@ void UEnemyPool::Delete(AEnemy* InEnemy)
                 ActiveEnemies.RemoveAt(Index);
             InEnemy->Reset();
             Pool.Add(InEnemy);
-            if (IsValid(CachedWorld))
+            
+            if (CDSubsystem)
             {
-                UChaosDungeonSubsystem* CDSubsystem = CachedWorld->GetSubsystem<UChaosDungeonSubsystem>();
-                ensure(CDSubsystem);
-                if (CDSubsystem)
-                {
-                    CDSubsystem->AddPurification(InEnemy->PurificationScore);
-                }
+                CDSubsystem->AddPurification(InEnemy->PurificationScore);
             }
         }
     }

@@ -20,6 +20,8 @@
 #include "UI/Skill/CoolTimerUserWidget.h"
 #include "Actors/Skill/CastingSkill.h"
 #include "Item/PlayerInventorySubsystem.h"
+#include "Actors/Damage/PrintDamageTextActor.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -313,7 +315,6 @@ void APlayerCharacter::OnDefaultAttack(const FVector& HitPoint)
 	}
 }
 
-#include "Engine/DamageEvents.h"
 void APlayerCharacter::DefaultAttackCheck()
 {
 	float Radius = 150.f;
@@ -333,6 +334,7 @@ void APlayerCharacter::DefaultAttackCheck()
 			if (IsValid(DamagedActor) && !AlreadyDamagedActors.Contains(DamagedActor))
 			{
 				float Damage = StatusComponent->GetRandDamage();
+				
 				FDamageEvent DamageEvent;
 				DamagedActor->TakeDamage(Damage, DamageEvent, GetController(), this);
 				AlreadyDamagedActors.Add(DamagedActor); // 공격한 대상을 세트에 추가
@@ -376,7 +378,6 @@ FVector APlayerCharacter::GetMouseWorldPosition()
 	return FVector::ZeroVector;
 }
 
-#include "Actors/Damage/PrintDamageTextActor.h"
 void APlayerCharacter::DisplayDamage(float InDamage)
 {
 	const float RandX = FMath::RandRange(0, 100);
@@ -417,7 +418,7 @@ void APlayerCharacter::ShowSkillDistance()
 // When Gear Changed
 void APlayerCharacter::SetGearData()
 {
-	Inventory = GetWorld()->GetSubsystem<UPlayerInventorySubsystem>();
+	Inventory = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 
 	const int32 AddHP = Inventory->GetPlayerAddMaxHp();
 	const float CurrentMaxHP = StatusComponent->GetMaxHP();

@@ -60,6 +60,7 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
     DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
+    
     Init();
     UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
     if (StatusUserWidget)
@@ -236,6 +237,8 @@ bool AEnemy::AddEnemy(const FName& InKey)
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
         ensure(EnemyAnim);
 
+        OwningController = Cast<AEnemyAIController>(GetController());
+
         return true;
     }
 
@@ -243,7 +246,6 @@ bool AEnemy::AddEnemy(const FName& InKey)
 
 void AEnemy::Reset()
 {
-    IsDead = false;
     IsSpawn = false;
     IsAttacking = false;
     EnemyState->SetCurrentHP(EnemyState->GetMaxHP());

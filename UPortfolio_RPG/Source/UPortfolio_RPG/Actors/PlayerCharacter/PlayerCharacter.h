@@ -12,7 +12,7 @@ class USkillComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UAnimMontage;
-class UPlayerInvectorySubsystem;
+class UPlayerInventorySubsystem;
 struct FSkillDataTableRow;
 struct FStatusDataTableRow;
 

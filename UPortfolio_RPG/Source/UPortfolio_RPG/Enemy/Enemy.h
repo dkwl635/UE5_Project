@@ -18,6 +18,7 @@
 
 class UEnemyPool;
 class UWidgetComponent;
+class AEnemyAIController;
 
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
@@ -100,6 +101,6 @@ public:
 
 	UPROPERTY()
 	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Green"), TEXT("Black") };
-
+	AEnemyAIController* OwningController = nullptr;
 	UEnemyPool* Pool = nullptr;
 };
