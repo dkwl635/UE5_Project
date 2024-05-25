@@ -8,6 +8,7 @@
 #include "StatusbarUserWidget.generated.h"
 
 class AEnemy;
+class AMonster;
 
 UCLASS()
 class UPORTFOLIO_RPG_API UStatusbarUserWidget : public UUserWidget
@@ -15,6 +16,7 @@ class UPORTFOLIO_RPG_API UStatusbarUserWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	void SetHP(AEnemy* InEnemy);
+	void SetMonsterHP(AMonster* InMonster);
 
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -24,4 +26,5 @@ protected:
 	UProgressBar* HPBar = nullptr;
 
 	AEnemy* Owner = nullptr;
+	AMonster* MonsterOwner = nullptr;
 };

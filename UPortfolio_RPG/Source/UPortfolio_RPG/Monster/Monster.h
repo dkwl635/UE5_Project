@@ -50,7 +50,8 @@ private:
 private:
 	void DisplayDamage(float InDamage);
 
-	float MaxHP = 10000;
+public:
+	float MaxHP = 4000;
 	float CurrentHP = 0;
 
 public:

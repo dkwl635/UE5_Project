@@ -32,16 +32,29 @@ AMonster::AMonster()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+	StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
 
 	Movement->MaxSpeed = 300.0f;
 	Movement->Acceleration = 500.0f;
 	Movement->Deceleration = 500.0f;
+
+	StatusWidget->SetupAttachment(SkeletalMeshComponent);
+
+	StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+	if (UI_HUD.Succeeded())
+	{
+		StatusWidget->SetWidgetClass(UI_HUD.Class);
+		StatusWidget->SetDrawSize(FVector2D(300.f, 100.0f));
+	}
 
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/FourEvilDragonsHP/Meshes/DragonTheTerrorBringer/DragonTheTerrorBringerSK.DragonTheTerrorBringerSK'"));
 		ensure(Asset.Object);
 		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
+
 
 	 
 
@@ -115,6 +128,23 @@ void AMonster::BeginPlay()
 	{
 		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
 	}
+	FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
+	StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 60.0f));
+
+	UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+	if (StatusUserWidget)
+	{
+		MonsterStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+		if (MonsterStatusUserWidget)
+		{
+			MonsterStatusUserWidget->SetMonsterHP(this);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Error"));
+		}
+	}
+
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FireScream();
 	//AttackRange();
@@ -149,6 +179,10 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 
 	DisplayDamage(Damage);
 	UE_LOG(LogTemp, Warning, TEXT("Boss_HP : %f"), CurrentHP);
+	if (MonsterStatusUserWidget)
+	{
+		MonsterStatusUserWidget->SetMonsterHP(this);
+	}
 
 	if (CurrentHP <= 0.f)
 	{
