@@ -18,10 +18,7 @@ bool UItem::UseItem(UWorld* World ,FItemData* ItemData)
 	{
 		return false;
 	}
-	
-	
 	CurrentWorld = World;
-
 	switch (ItemData->ItemType)
 	{
 	case EITEMTYPE::POTION:
@@ -35,8 +32,6 @@ bool UItem::UseItem(UWorld* World ,FItemData* ItemData)
 	default:
 		break;
 	}
-
-
 
 	
 	return false;

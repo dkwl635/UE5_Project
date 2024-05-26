@@ -15,6 +15,7 @@ class UPORTFOLIO_RPG_API URPGGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	URPGGameInstance();
 	void Init() override;
 	void FinishDestroy() override;
 private:
@@ -45,9 +46,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	UWorld* GetCurrentWorld();
-
-
-
 
 };
 extern TWeakObjectPtr<URPGGameInstance> RPGGameInstance;

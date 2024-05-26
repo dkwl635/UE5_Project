@@ -18,9 +18,8 @@ private:
 	static TMap<FName, FPotionData*> PotionDatas;
 	static TWeakObjectPtr<UWorld> CurrentWorld;
 private:
-
 	FPotionData* GetPotionData(FName Name);
-	
+
 public:
 	
 	bool UseItem(UWorld* World ,FItemData* ItemData);

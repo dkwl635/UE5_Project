@@ -7,7 +7,7 @@
 #include "UI/UIEnum.h"
 #include "Json.h"
 #include "JsonUtilities.h"
-
+#include "GameInstance/RPGGameInstance.h"
 
 int32 UPlayerInventorySubsystem::GetPlayerCoin()
 {
@@ -42,15 +42,6 @@ void UPlayerInventorySubsystem::SetPlayerEnchantStone(int32 Value)
 	RPGGameInstance->GetUIManager()->PlayerGoodsUIRefresh();
 }
 
-UPlayerInventorySubsystem::UPlayerInventorySubsystem()
-{
-
-}
-
-UPlayerInventorySubsystem::~UPlayerInventorySubsystem()
-{
-	
-}
 
 void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -62,7 +53,6 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	EquipmentInventory.Init(nullptr,7);
 	QuickItemSlotsPointer.Init(-1, 8);
 
-	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
 
 	//Load
@@ -70,14 +60,10 @@ void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 }
 
-bool UPlayerInventorySubsystem::Init()
-{	
-	return true;
-}
 
 void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 Index)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	
 	if (Data->ItemType == EITEMTYPE::COIN)
 	{
@@ -100,7 +86,7 @@ void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 
 
 bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int Count)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	if (!Data) { return false; }
 
 	if (Data->ItemType == EITEMTYPE::COIN)
@@ -383,7 +369,7 @@ bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int
 
 void UPlayerInventorySubsystem::AddInitGear(const FName& InKey, EGEARTYPE GearType)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
 
 	NewItemData->CurrentBundleCount = 1;
@@ -439,32 +425,16 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 	else { return &NormalInventory; }
 }
 
-int32 UPlayerInventorySubsystem::GetPlayerAddAttack()
-{
-	int32 Result = 0;
-	for (int i = 0; i < EquipmentInventory.Num(); i++)
-	{
-		if (!EquipmentInventory[i]){continue;}
 
-		FGearData* data  = DataSubsystem->FindGearData( EquipmentInventory[i]->StatusData.RowName);
-		if (data->EStat == ESTAT::ATK)
-		{
-			Result += data->GearValue;
-		}
-	}
-
-	return Result;
-}
-
-int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
+int32 UPlayerInventorySubsystem::GetEquipmentValue(ESTAT StatType)
 {
 	int32 Result = 0;
 	for (int i = 0; i < EquipmentInventory.Num(); i++)
 	{
 		if (!EquipmentInventory[i]) { continue; }
 
-		FGearData* data = DataSubsystem->FindGearData(EquipmentInventory[i]->StatusData.RowName);
-		if (data->EStat == ESTAT::HP)
+		FGearData* data = RPGGameInstance->GetDataSubsyetem()->FindGearData(EquipmentInventory[i]->StatusData.RowName);
+		if (data->EStat == StatType)
 		{
 			Result += data->GearValue;
 		}

@@ -58,10 +58,8 @@ void URPGMainUserWidget::Init()
 
     IsPush = false;
     bInteraction = false;
-
-    
-
 }
+
 
 URPGMainUserWidget::~URPGMainUserWidget()
 {

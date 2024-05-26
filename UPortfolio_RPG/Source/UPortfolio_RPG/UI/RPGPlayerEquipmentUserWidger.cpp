@@ -68,8 +68,8 @@ URPGSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 void URPGPlayerEquipmentUserWidger::SetAddStat()
 {
 	UPlayerInventorySubsystem* Invne = RPGGameInstance->GetPlayerInventorySubsystem();
-	int32 AddAtk = Invne->GetPlayerAddAttack();
-	int32 AddHp = Invne->GetPlayerAddMaxHp();
+	int32 AddAtk = Invne->GetEquipmentValue(ESTAT::ATK);
+	int32 AddHp = Invne->GetEquipmentValue(ESTAT::HP);
 	
 	AddHpText->SetText(FText::AsNumber(AddHp));
 	AddAtkText->SetText(FText::AsNumber(AddAtk));

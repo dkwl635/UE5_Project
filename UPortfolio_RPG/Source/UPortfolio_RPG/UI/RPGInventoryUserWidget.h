@@ -24,9 +24,6 @@ public:
 	virtual void RefreshUI() override;
 	void GearInventoryRefresh();
 	void NormalInventoryRefresh();
-
-	
-
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* GearButton;

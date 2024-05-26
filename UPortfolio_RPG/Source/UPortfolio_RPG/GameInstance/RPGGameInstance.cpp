@@ -16,12 +16,15 @@
 
 
 TWeakObjectPtr<URPGGameInstance> RPGGameInstance = nullptr;
+URPGGameInstance::URPGGameInstance()
+{
+	RPGGameInstance = this;
+}
 void URPGGameInstance::Init()
 {
 	Super::Init();
-	RPGGameInstance = this;
-}
 
+}
 void URPGGameInstance::FinishDestroy()
 {
 	RPGGameInstance = nullptr;
@@ -29,14 +32,12 @@ void URPGGameInstance::FinishDestroy()
 	Super::FinishDestroy();
 }
 
-
 UPlayerInventorySubsystem* URPGGameInstance::GetPlayerInventorySubsystem()
 {
 	if (PlayerInventorySubsystem == nullptr)
 	{
 		PlayerInventorySubsystem = GetSubsystem<UPlayerInventorySubsystem>();
 	}
-
 	return PlayerInventorySubsystem.Get();
 }
 
@@ -51,21 +52,20 @@ UDataSubsystem* URPGGameInstance::GetDataSubsyetem()
 
 AUIManager* URPGGameInstance::GetUIManager()
 {
-	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->UIManager; //RPGGameInstance->GetUIManager().Get();
+	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->UIManager;
 }
 ANPCManager* URPGGameInstance::GetNPCManager()
 {
-	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->NPCManager; // ANPCManager::NPCManager;
+	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->NPCManager;
 }
 
 ADropItemManager* URPGGameInstance::GetDropItemManager()
 {
-	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->DropItemManager;// ADropItemManager::DropItemManager.Get();
+	return GetCurrentWorld()->GetSubsystem<URPGWorldSubsystem>()->DropItemManager;
 }
 
 APlayerCharacter* URPGGameInstance::GetPlayerCharacter()
 {
-	//UWorld* World = GEngine->GetWorldContextFromGameViewport(GEngine->GameViewport)->World();
 	UWorld* World = GetCurrentWorld();
 	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetCurrentWorld(), 0);
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Character);
