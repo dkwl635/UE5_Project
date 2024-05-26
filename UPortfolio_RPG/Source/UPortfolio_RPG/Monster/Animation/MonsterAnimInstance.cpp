@@ -17,6 +17,7 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsDetach = Pawn->IsDetach;
 		IsRange = Pawn->IsRange;
 		IsMove = Pawn->IsMove;
+		IsDead = Pawn->IsDead;
 
 	}
 }

@@ -39,14 +39,14 @@ AMonster::AMonster()
 	Movement->Deceleration = 500.0f;
 
 	StatusWidget->SetupAttachment(SkeletalMeshComponent);
-
 	StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_MonsterHPBar.UI_MonsterHPBar_C'"));
 	if (UI_HUD.Succeeded())
 	{
 		StatusWidget->SetWidgetClass(UI_HUD.Class);
 		StatusWidget->SetDrawSize(FVector2D(300.f, 100.0f));
+		StatusWidget->SetVisibility(false);
 	}
 
 	{
@@ -186,7 +186,7 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 
 	if (CurrentHP <= 0.f)
 	{
-		Destroy();
+		IsDead = true;
 	}
 
 	return Damage;

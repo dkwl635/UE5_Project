@@ -75,7 +75,8 @@ private:
 	UPROPERTY(Transient)
 	UMonsterAnimInstance* MonsterAnim;
 
-	UPROPERTY(VisibleAnywhere)
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Visiable", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* StatusWidget;
 	UPROPERTY()
 	UStatusbarUserWidget* MonsterStatusUserWidget;
@@ -176,5 +177,8 @@ public:  //Animation Bool
 	bool IsRange = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
 	bool IsMove = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterAnim, Meta = (AllowPrivateAccess = true))
+	bool IsDead = false;
 	
 };

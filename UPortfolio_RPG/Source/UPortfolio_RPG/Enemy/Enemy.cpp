@@ -140,7 +140,6 @@ void AEnemy::AttackCheck()
     {
         FVector PlayerLocation = PlayerCharacter->GetActorLocation();
         FVector EnemyLocation = GetActorLocation();
-
         // 플레이어와 Enemy 사이의 거리 계산
         float Distance = FVector::Distance(PlayerLocation, EnemyLocation);
 
