@@ -81,6 +81,9 @@ public:
 	UPROPERTY()
 	UStatusbarUserWidget* MonsterStatusUserWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Visiable")
+	TSubclassOf<UUserWidget> SuccessWidgetClass;
+
 public: //공격 패턴 함수
 	// FireScream Event
 	UFUNCTION(BlueprintCallable, Category = "Attack")
@@ -164,6 +167,8 @@ private:
 	void ScreamDelay();
 	void RangeSpawnDelay();
 	void DestroyRangeActor();
+
+	void SetDeadMonster();
 	
 
 

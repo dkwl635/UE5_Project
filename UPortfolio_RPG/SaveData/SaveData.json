@@ -1,0 +1,93 @@
+{
+	"Gold": 10000,
+	"Coin": 10000,
+	"EnchantStone": 0,
+	"GearItem": [
+		{
+			"RowName": "Sword_0",
+			"SlotIndex": 0,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 1,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 2,
+			"Count": 1
+		},
+		{
+			"RowName": "Head_0",
+			"SlotIndex": 3,
+			"Count": 1
+		},
+		{
+			"RowName": "Armor_0",
+			"SlotIndex": 4,
+			"Count": 1
+		},
+		{
+			"RowName": "Pants_0",
+			"SlotIndex": 5,
+			"Count": 1
+		},
+		{
+			"RowName": "Shoes_1",
+			"SlotIndex": 6,
+			"Count": 1
+		},
+		{
+			"RowName": "Gloves_1",
+			"SlotIndex": 7,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_0",
+			"SlotIndex": 8,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 9,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 10,
+			"Count": 1
+		},
+		{
+			"RowName": "Head_0",
+			"SlotIndex": 11,
+			"Count": 1
+		},
+		{
+			"RowName": "Armor_0",
+			"SlotIndex": 12,
+			"Count": 1
+		},
+		{
+			"RowName": "Pants_0",
+			"SlotIndex": 13,
+			"Count": 1
+		},
+		{
+			"RowName": "Shoes_1",
+			"SlotIndex": 14,
+			"Count": 1
+		},
+		{
+			"RowName": "Gloves_1",
+			"SlotIndex": 15,
+			"Count": 1
+		}
+	],
+	"NormalItem": [],
+	"Equipment": [],
+	"QuickItemSlot1": -1,
+	"QuickItemSlot2": -1,
+	"QuickItemSlot3": -1,
+	"QuickItemSlot4": -1
+}

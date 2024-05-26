@@ -45,8 +45,8 @@ AMonster::AMonster()
 	if (UI_HUD.Succeeded())
 	{
 		StatusWidget->SetWidgetClass(UI_HUD.Class);
-		StatusWidget->SetDrawSize(FVector2D(300.f, 100.0f));
-		StatusWidget->SetVisibility(false);
+		StatusWidget->SetDrawSize(FVector2D(400.f, 100.0f));
+		StatusWidget->SetVisibility(false); 
 	}
 
 	{
@@ -54,7 +54,6 @@ AMonster::AMonster()
 		ensure(Asset.Object);
 		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
-
 
 	 
 
@@ -157,7 +156,7 @@ void AMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	ScreamTimeline.TickTimeline(DeltaTime);
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController && (IsMove || IsRange))
+	if (PlayerController && (IsMove || IsRange) && !IsDead)
 	{
 		FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
 		FVector MonsterLocation = GetActorLocation();
@@ -187,6 +186,8 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 	if (CurrentHP <= 0.f)
 	{
 		IsDead = true;
+		GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::SetDeadMonster, 3.0f, false);
+		
 	}
 
 	return Damage;
@@ -372,6 +373,19 @@ void AMonster::DestroyRangeActor()
 		++RangeCnt;
 		AttackRange();
 	}
+}
+
+void AMonster::SetDeadMonster()
+{
+	if (SuccessWidgetClass)
+	{
+		UUserWidget* SuccessWidget = CreateWidget<UUserWidget>(GetWorld(), SuccessWidgetClass);
+		if (SuccessWidget)
+		{
+			SuccessWidget->AddToViewport();
+		}
+	}
+	Destroy();
 }
 
 
