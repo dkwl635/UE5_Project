@@ -16,17 +16,13 @@ class UPORTFOLIO_RPG_API URPGTextBox : public URPGUserWidget
 {
 	GENERATED_BODY()
 
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bindwidget))
 	class UButton* YesButton;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bindwidget))
 	class UButton* NoButton;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bindwidget))
 	class UTextBlock* BoxInfo;
-
-
 private:
 	virtual void NativeConstruct();
 public:

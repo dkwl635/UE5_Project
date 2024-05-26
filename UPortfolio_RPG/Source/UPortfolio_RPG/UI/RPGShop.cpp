@@ -269,17 +269,12 @@ void URPGShop::RefreshBuySlot()
 void URPGShop::OpenTextBox()
 {
 	RPGGameInstance->GetUIManager()->ShowUI(ERPG_UI::TEXTBOX);
-
-	//DECLARE_DELEGATE(FOnButtonCallBack);
 	FOnButtonCallBack YesButtonFunc;
 	YesButtonFunc.BindUObject(this, &URPGShop::SellItem);
 	FOnButtonCallBack NoButtonFunc;
-
 	FStringData* data = RPGGameInstance->GetDataSubsyetem()->FindStringData(ShopSellStringRowName);
 	FText Text = data->ItemDesc;
-//	FText Text = FText::FromString(TEXT("Shop"));
 	RPGGameInstance->GetUIManager()->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
-	//RPGGameInstance->GetUIManager()->SetYesNoButton(YesButtonFunc, NoButtonFunc, FText::FromString(TEXT("")));
 
 
 }

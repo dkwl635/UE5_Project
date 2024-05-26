@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/RPGTextBox.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "UObject/UnrealType.h"
 #include "UI/UIManager.h"
+#include "GameInstance/RPGGameInstance.h"
 
 void URPGTextBox::NativeConstruct()
 {
