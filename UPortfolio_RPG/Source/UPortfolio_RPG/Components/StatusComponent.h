@@ -31,8 +31,6 @@ public:
 	UStatusComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, 
 		FActorComponentTickFunction* ThisTickFunction) override;
 	

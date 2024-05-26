@@ -13,16 +13,6 @@ UStatusComponent::UStatusComponent()
 	// ...
 }
 
-
-// Called when the game starts
-void UStatusComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
 void UStatusComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
