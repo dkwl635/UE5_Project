@@ -33,7 +33,7 @@ ACastingSkill::ACastingSkill()
     Sk_CoolTime = 10.f;
     Sk_Damage = 70.f;
     Sk_ManaUsage = 20.f;
-    Sk_MaxDistance = 1500.f;
+    Sk_MaxDistance = 1000.f;
 }
 
 void ACastingSkill::BeginPlay()

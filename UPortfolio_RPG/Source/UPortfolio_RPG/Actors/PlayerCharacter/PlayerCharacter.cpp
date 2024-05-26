@@ -396,6 +396,7 @@ void APlayerCharacter::ShowSkillDistance()
 	{
 		PostProcessComponent->bEnabled = true;
 		FVector MouseWorldPosition = GetMouseWorldPosition();
+		MouseWorldPosition.Z = 300.f;
 		FVector CenterLocation = GetActorLocation();
 		float Distance = FVector::Dist(CenterLocation, MouseWorldPosition);
 		UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>(PostProcessComponent->Settings.WeightedBlendables.Array[0].Object);

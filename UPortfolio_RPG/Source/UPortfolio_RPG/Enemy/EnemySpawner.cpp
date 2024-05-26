@@ -43,7 +43,7 @@ void AEnemySpawner::SpawnEnemy()
 			if (EnemyPool->ActiveEnemies.Num() == MaxPoolNum)
 				break;
 			UNavigationSystemV1::K2_GetRandomReachablePointInRadius(GetWorld(), Origin, RandomLocation, 2000.f);
-			RandomLocation.Z = 100;
+			RandomLocation.Z = 300.f;
 			FTransform Transform = FTransform(FRotator::ZeroRotator, RandomLocation, FVector(1, 1, 1));
 			EnemyPool->SpawnEnemy(Transform, true);
 		}
