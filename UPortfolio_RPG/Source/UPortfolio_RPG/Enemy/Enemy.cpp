@@ -26,7 +26,7 @@ AEnemy::AEnemy()
     Movement->MaxSpeed = 100.0f;
     Movement->Acceleration = 500.0f;
     Movement->Deceleration = 500.0f;
-
+   
     SetRootComponent(CapsuleComponent);
     SkeletalMeshComponent->SetupAttachment(GetRootComponent());
     ParticleAttackSystemComponent->SetupAttachment(GetRootComponent());
@@ -37,16 +37,18 @@ AEnemy::AEnemy()
     
     StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
-    if (UI_HUD.Succeeded())
     {
-        StatusWidget->SetWidgetClass(UI_HUD.Class);
-        StatusWidget->SetDrawSize(FVector2D(150.f, 50.0f));
+        static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_EnemyHPBar.UI_EnemyHPBar_C'"));
+        if (UI_HUD.Succeeded())
+        {
+            StatusWidget->SetWidgetClass(UI_HUD.Class);
+            StatusWidget->SetDrawSize(FVector2D(100.f, 50.0f));
+        }
     }
 
     //AIController설정
     AIControllerClass = AEnemyAIController::StaticClass(); //나중에 데이터 테이블화 시키기
-    AutoPossessAI = EAutoPossessAI::Spawned;
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 AEnemy::~AEnemy()
@@ -57,6 +59,8 @@ AEnemy::~AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+    DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
+    
     Init();
     UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
     if (StatusUserWidget)
@@ -106,19 +110,18 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
     // Call the base class version of TakeDamage
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    float NewHP = EnemyState->GetCurrentHP() - Damage;
-
-    EnemyState->SetCurrentHP(NewHP);
-    UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
+    if (!IsDead)
+    {
+        DisplayDamage(Damage);
+        EnemyState->DamageToCurrentHP(Damage);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy_HP : %f"), EnemyState->GetCurrentHP());
+    }
 
     if (EnemyState->GetCurrentHP() <= 0.f)
     {
-        if (GetController())
-        {
-         //   GetController()->StopMovement();
-          //  EnemyAnim->Montage_Stop(0.1f);
-        }
+        StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
         IsDead = true;
+        EnemyAnim->Montage_Stop(0.1f);
     }
 
     return Damage;
@@ -140,6 +143,7 @@ void AEnemy::AttackCheck()
     {
         FVector PlayerLocation = PlayerCharacter->GetActorLocation();
         FVector EnemyLocation = GetActorLocation();
+
         // 플레이어와 Enemy 사이의 거리 계산
         float Distance = FVector::Distance(PlayerLocation, EnemyLocation);
 
@@ -149,7 +153,7 @@ void AEnemy::AttackCheck()
             ACharacter* Player = Cast<ACharacter>(PlayerCharacter);
             if (Player)
             {
-                float Damage = EnemyState->GetAttackDamage();
+                float Damage = EnemyState->GetRandDamage();
                 UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
             }
         }
@@ -159,12 +163,6 @@ void AEnemy::AttackCheck()
         }
     }
 }
-
-//void AEnemy::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-//{
-//    IsAttacking = false;
-//    UE_LOG(LogTemp, Warning, TEXT("AttackMontageEnd"));
-//}
 
 void AEnemy::PlayAttackParticle()
 {
@@ -182,27 +180,31 @@ void AEnemy::PlayAttackParticle()
         );
     }
 }
-bool AEnemy::Init()
-{
-    DataSubsystem = GetGameInstance()->GetSubsystem<UDataSubsystem>();
 
-    AddEnemy(EnemyTypes[FMath::RandRange(0, EnemyTypes.Num()-1)]);
-    return true;
+#include "UI/Damage/PrintDamageUserWidget.h"
+#include "Actors/Damage/PrintDamageTextActor.h"
+void AEnemy::DisplayDamage(float InDamage)
+{
+    const float RandX = FMath::RandRange(0, 50);
+    const float RandY = FMath::RandRange(0, 50);
+    const float RandZ = FMath::RandRange(0, 50);
+    const FVector RandVector = FVector(RandX, RandY, RandZ);
+    APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+        (APrintDamageTextActor::StaticClass());
+    Actor->SetWidgetText(this, InDamage, GetActorLocation() + RandVector);
 }
 
-void AEnemy::Reset()
+bool AEnemy::Init()
 {
-    IsAttacking = false;
-    IsDead = false;
-    IsSpawn = false;
-    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
-    PurificationScore = FMath::RandRange(100, 200);
+    AddEnemy(EnemyTypes[FMath::RandRange(0, EnemyTypes.Num()-1)]);
+    return true;
 }
 
 bool AEnemy::AddEnemy(const FName& InKey)
 {
     FEnemyData* InData = DataSubsystem->FindEnemyData(InKey);
-    if (!InData)
+    FStatusDataTableRow* InStatus = DataSubsystem->FindEnemyStatusData(InKey);
+    if (!InData && !InStatus)
     {
         check(false);
         return false;
@@ -211,16 +213,14 @@ bool AEnemy::AddEnemy(const FName& InKey)
     {
         CapsuleComponent->SetCapsuleRadius(InData->CapsuleRadius);
         CapsuleComponent->SetCapsuleHalfHeight(InData->CapsuleHalfHeight);
-
+        
         SkeletalMeshComponent->SetSkeletalMesh(InData->SkeletalMesh);
         SkeletalMeshComponent->SetAnimClass(InData->AnimClass);
         SkeletalMeshComponent->SetRelativeTransform(InData->SkeletalMeshTransform);
 
-        EnemyState->SetMaxHP(InData->EnemyHP);
-        EnemyState->SetCurrentHP(InData->EnemyHP);
-        EnemyState->SetAttackDamage(InData->EnemyAttackDamage);
+        EnemyState->SetStatusData(InStatus);
 
-        Movement->MaxSpeed = InData->EnemySpeed;
+        Movement->MaxSpeed = EnemyState->GetSpeed();
         PurificationScore = FMath::RandRange(100, 200);
 
         FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
@@ -235,12 +235,21 @@ bool AEnemy::AddEnemy(const FName& InKey)
         ParticleAttackSystemComponent->SetRelativeTransform(InData->ParticleTransform);
 
         EnemyAnim = Cast<UEnemyAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-
         ensure(EnemyAnim);
+
+        OwningController = Cast<AEnemyAIController>(GetController());
 
         return true;
     }
 
+}
+
+void AEnemy::Reset()
+{
+    IsSpawn = false;
+    IsAttacking = false;
+    EnemyState->SetCurrentHP(EnemyState->GetMaxHP());
+    StatusWidget->GetWidget()->SetVisibility(ESlateVisibility::Visible);
 }
 //Impact
 

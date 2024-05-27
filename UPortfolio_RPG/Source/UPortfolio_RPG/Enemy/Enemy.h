@@ -18,8 +18,7 @@
 
 class UEnemyPool;
 class UWidgetComponent;
-
-
+class AEnemyAIController;
 
 UCLASS()
 class UPORTFOLIO_RPG_API AEnemy : public APawn
@@ -69,14 +68,13 @@ public:
 public:
 	void Attack();
 	void AttackCheck();
+	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
-	//// montage
-	//UFUNCTION()
-	//void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
 	// particle
 	void PlayAttackParticle();
+
+private:
+	void DisplayDamage(float InDamage);
 
 public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
@@ -98,11 +96,11 @@ public:
 	void SetPool(UEnemyPool* InPool) { Pool = InPool; }
 	void Reset();
 
-	UPROPERTY(EditAnywhere, Category = "Enemy")
-	FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
+	//UPROPERTY(EditAnywhere, Category = "Enemy")
+	//FName SpawnEnemyName = "Lane"; // Lane 이름의 접두사를 설정하기 위한 변수
 
 	UPROPERTY()
 	TArray<FName> EnemyTypes = { TEXT("Lane"), TEXT("Prime"), TEXT("Green"), TEXT("Black") };
-
+	AEnemyAIController* OwningController = nullptr;
 	UEnemyPool* Pool = nullptr;
 };
