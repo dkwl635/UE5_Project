@@ -8,19 +8,17 @@ UStatusComponent::UStatusComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
 }
 
-
-// Called when the game starts
-void UStatusComponent::BeginPlay()
+void UStatusComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::BeginPlay();
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
-	
+	MinAttackDamage = AttackDamage * 0.9;
+	MaxAttackDamage = AttackDamage * 1.1;
 }
 
 void UStatusComponent::SetStatusData(const FStatusDataTableRow* InData)
@@ -35,4 +33,3 @@ void UStatusComponent::SetStatusData(const FStatusDataTableRow* InData)
 	AttackDamage = InData->AttackDamage;
 	Speed = InData->Speed;
 }
-

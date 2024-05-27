@@ -16,6 +16,9 @@ class UPORTFOLIO_RPG_API URPGShop : public URPGUserWidget
 	GENERATED_BODY()
 
 protected:
+	const	FName ShopSellStringRowName = "ItemRemoCheckString";
+
+protected:
 	virtual void Init() override;
 
 public:
@@ -28,6 +31,8 @@ public:
 private:
 	TWeakObjectPtr<class URPGMainUserWidget> PlayerUI;
 	class URPGMainUserWidget* GetPlayerUI();
+
+	class UPlayerInventorySubsystem* PlayerInven;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* BuyButton;
@@ -70,5 +75,6 @@ public:
 	void SetSellPrice();
 	void RefreshSellSlot();
 	void RefreshBuySlot();
-
+	UFUNCTION(BlueprintCallable)
+	void OpenTextBox();
 };

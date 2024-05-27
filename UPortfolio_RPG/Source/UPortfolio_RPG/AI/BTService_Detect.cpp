@@ -6,6 +6,8 @@
 #include "Enemy/Enemy.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameInstance/RPGGameInstance.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 
 UBTService_Detect::UBTService_Detect()
 {
@@ -34,7 +36,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		Center,
 		Center + FVector(0.f, 0.f, 1.f), // ������ ���������� �ణ ���� �������� �����Ͽ� ������ �浹�� �����մϴ�.
 		DetectRadius,
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2),           //�浹ä��
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),           //�浹ä��
 		false, //bTraceComplex
 		TArray<AActor*>(), //������ ���͵�
 		EDrawDebugTrace::None, //����� Ʈ���̽�
@@ -42,10 +44,11 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		true
 	);
 	auto Enemy = Cast<AEnemy>(OwnerComp.GetAIOwner()->GetPawn());
-	if (bResult && HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<APlayerCharacter>()) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
+	APawn* Char =	RPGGameInstance->GetPlayerCharacter();
+	if (bResult && HitResult.GetActor() != nullptr && Char) //APawn�� �÷��̾�(ACharacter)�� �ٲٱ�
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetActorKey, HitResult.GetActor()); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
-		//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AEnemyAIController::TargetActorKey, Char); //HitResult.Player(ĳ���ͷ� �ٲٱ�)
+	//	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 1.0f);
 	}
 	else
 	{

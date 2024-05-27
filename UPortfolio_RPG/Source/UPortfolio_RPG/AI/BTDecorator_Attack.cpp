@@ -3,6 +3,7 @@
 
 #include "AI/BTDecorator_Attack.h"
 #include "EnemyAIController.h"
+#include "Enemy/Enemy.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTDecorator_Attack::UBTDecorator_Attack()
@@ -14,8 +15,10 @@ bool UBTDecorator_Attack::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 {
 	bool bResult = Super::CalculateRawConditionValue(OwnerComp, NodeMemory);    //공격범위에 있는지 판정
 
-	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	AEnemy* ControllingPawn = Cast<AEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == ControllingPawn)
+		return false;
+	if (ControllingPawn->IsDead)
 		return false;
 
 	// 액터기반
@@ -24,7 +27,7 @@ bool UBTDecorator_Attack::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 		return false;
 
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= 200.0f);
-//	UE_LOG(LogTemp, Warning, TEXT("bResult: %d"), bResult);
+	UE_LOG(LogTemp, Warning, TEXT("bResult: %d"), bResult);
 	return bResult;
 
 	/*FVector TargetVector = OwnerComp.GetBlackboardComponent()->GetValueAsVector(AEnemyAIController::TargetKey);

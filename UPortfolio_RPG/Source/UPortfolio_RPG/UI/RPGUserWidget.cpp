@@ -7,7 +7,7 @@
 
 void URPGUserWidget::HideUI()
 {
-    AUIManager::UIManager->HideUI(this->UI_Type);
+    RPGGameInstance->GetUIManager()->HideUI(this->UI_Type);
 
 }
 

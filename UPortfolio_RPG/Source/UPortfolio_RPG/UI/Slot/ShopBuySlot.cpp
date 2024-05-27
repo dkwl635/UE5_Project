@@ -36,12 +36,12 @@ void UShopBuySlot::ShowItemInfo()
 	Data.ItemImage = BuyItemInfo->ItemImage;
 
 	FVector2D mousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
-	AUIManager::UIManager->ShowItemBox(mousePos, Data);
+	RPGGameInstance->GetUIManager()->ShowItemBox(mousePos, Data);
 }
 
 void UShopBuySlot::HideItemInfo()
 {
-	AUIManager::UIManager->HideItemBox();
+	RPGGameInstance->GetUIManager()->HideItemBox();
 }
 
 void UShopBuySlot::SetShopBuySlot(FItemData* BuyItem,FName RowName,int32 Price, int32 Count)

@@ -48,7 +48,7 @@ void ABasicPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	PlayerCharacter = Cast<APlayerCharacter>(aPawn);
-	if (IsValid(PlayerCharacter))
+	//if (IsValid(PlayerCharacter))
 	{
 		/*UDataSubsystem* DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 		const FCharacterDataTableRow* CharacterDataTableRow = DataSubsystem->FindChacter(TEXT("Soldier3"));
@@ -73,6 +73,8 @@ void ABasicPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnDefaultAttack);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_Q);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_W);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_E, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_E);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_R, ETriggerEvent::Started, this, &ABasicPlayerController::OnSkill_R);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &ABasicPlayerController::OnSpace);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->ZoomWheel, ETriggerEvent::Triggered, this, &ABasicPlayerController::OnZoomWheel);
 	}
@@ -85,6 +87,10 @@ UCoolTimeSubsystem* ABasicPlayerController::GetCoolTimeManager() const
 
 	return GetLocalPlayer()->GetSubsystem<UCoolTimeSubsystem>();
 }
+
+#include "Actors/Skill/SkillBase.h"
+#include "Actors/Skill/CastingSkill.h"
+#include "Components/SkillComponent.h"
 
 void ABasicPlayerController::OnSetDestinationTriggered()
 {
@@ -99,6 +105,11 @@ void ABasicPlayerController::OnSetDestinationTriggered()
 
 	if (PlayerCharacter != nullptr && !PlayerCharacter->bIsDead)
 	{
+		if (ACastingSkill* Skill = Cast<ACastingSkill>(PlayerCharacter->GetSkillComponent()->GetSkills()[2]))
+		{
+			PlayerCharacter->GetTargetingActor()->SetActorHiddenInGame(true);
+			Skill->CurrentSkillState = ESkillState::Idle;
+		}
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 	}
 }
@@ -120,7 +131,6 @@ void ABasicPlayerController::OnDefaultAttack()
 		StopMovement();
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		PlayerCharacter->OnDefaultAttack(Hit.Location);
 	}
 }
@@ -146,6 +156,26 @@ void ABasicPlayerController::OnSkill_W()
 	}
 }
 
+void ABasicPlayerController::OnSkill_E()
+{
+	if (!PlayerCharacter->bIsDead)
+	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		PlayerCharacter->OnSkill_E(Hit.Location);
+	}
+}
+
+void ABasicPlayerController::OnSkill_R()
+{
+	if (!PlayerCharacter->bIsDead)
+	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		PlayerCharacter->OnSkill_R(Hit.Location);
+	}
+}
+
 void ABasicPlayerController::OnSpace()
 {
 	if (!PlayerCharacter->bIsDead)
@@ -166,5 +196,5 @@ void ABasicPlayerController::OnZoomWheel(const FInputActionValue& InputActionVal
 	const float ActionValue = InputActionValue.Get<float>();
 
 	TargetArmLength += ActionValue * -50.f;
-	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1200.f);
+	TargetArmLength = FMath::Clamp(TargetArmLength, 250.f, 1400.f);
 }

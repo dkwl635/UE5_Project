@@ -2,12 +2,13 @@
 
 
 #include "UI/RPGQuickSlotsUserWidget.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
 
 void URPGQuickSlotsUserWidget::Init()
 {
-	UPlayerInventorySubsystem* Inven = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
+	UPlayerInventorySubsystem* Inven = RPGGameInstance->GetPlayerInventorySubsystem();
 	auto Childs =  CanvasPanel->GetSlots();
 	
 	for (int i = 0; i < Childs.Num(); i++)
@@ -22,9 +23,6 @@ void URPGQuickSlotsUserWidget::Init()
 		SlotWidget->SlotIndex = i;
 		SlotWidget->RefreshSlotUI();
 		QuickSlotsIndex.Add(i, SlotWidget);
-	
-		UPlayerInventorySubsystem::PlayerInventorySubsystem->AttachSlot(ERPGSLOTTYPE::QUICK_ITEM, SlotWidget);
-
 	}
 
 

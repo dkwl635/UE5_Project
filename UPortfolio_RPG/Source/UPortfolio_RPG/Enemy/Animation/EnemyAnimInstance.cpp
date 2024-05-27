@@ -20,12 +20,13 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Speed = FVector(Velocity.X, Velocity.Y, 0).Size();
 		IsDead = Pawn->IsDead;
 		IsSpawn = Pawn->IsSpawn;
-		IsAttacking = Pawn->IsAttacking;
+		//IsAttacking = Pawn->IsAttacking;
 	}
 }
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
+	//Montage_Play(AttackMontage, 1.0f);
 	if (AttackMontage)
 	{
 		FOnMontageEnded AttackMontageDelegate;
@@ -56,6 +57,7 @@ void UEnemyAnimInstance::OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterr
 
 void UEnemyAnimInstance::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsAttacking = false;
+	AEnemy* Enemy = Cast<AEnemy>(TryGetPawnOwner());
+	Enemy->IsAttacking = false;
 	UE_LOG(LogTemp, Warning, TEXT("Attack Ended"));
 }

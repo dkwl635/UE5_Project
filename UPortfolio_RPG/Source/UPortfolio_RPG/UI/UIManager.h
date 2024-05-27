@@ -8,6 +8,7 @@
 #include "UIManager.generated.h"
 
 
+
 UCLASS()
 class UPORTFOLIO_RPG_API AUIManager : public AActor
 {
@@ -16,14 +17,13 @@ class UPORTFOLIO_RPG_API AUIManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AUIManager();
-
-	static TWeakObjectPtr<AUIManager> UIManager;
-
 protected:
 	virtual void BeginPlay() override;
 
 public :
+	virtual void SpawnUI();
 	TSubclassOf<UUserWidget> MainUIBP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class URPGMainUserWidget* PlayerUI;
 	TWeakObjectPtr<class UCanvasPanelSlot> TopPopupUI;
 
@@ -52,5 +52,6 @@ public:
 	void HideItemBox();
 	void RefreshUI(ERPG_UI UIType);
 	void SetSkillUI();
+	void SetYesNoButton(FOnButtonCallBack YesButtonFunc, FOnButtonCallBack NoButtonFunc, FText BoxText);
 	
 };

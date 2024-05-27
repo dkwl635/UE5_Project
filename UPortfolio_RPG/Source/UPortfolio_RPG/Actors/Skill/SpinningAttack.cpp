@@ -7,21 +7,30 @@
 #include "Actors/Controller/BasicPlayerController.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Components/StatusComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "Monster/Monster.h"
 #include "Engine/DamageEvents.h"
 
 ASpinningAttack::ASpinningAttack()
 {
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Effect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	SetRootComponent(StaticMesh);
 	{
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Torus.Shape_Torus'"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(TEXT("/Script/Engine.StaticMesh'/Game/KSH/Character/Skill/Mesh/SM_Torus_Simple.SM_Torus_Simple'"));
 		ensure(Asset.Object);
 		StaticMesh->SetStaticMesh(Asset.Object);
 	}
 	{
-		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/M_Crunch_Impact_02.M_Crunch_Impact_02'"));
+		static ConstructorHelpers::FObjectFinder<UMaterial> Asset(TEXT("/Script/Engine.Material'/Game/KSH/Character/Skill/Material/MT_Invisible.MT_Invisible'"));
 		ensure(Asset.Object);
 		StaticMesh->SetMaterial(0, Asset.Object);
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Asset(TEXT("/Script/Niagara.NiagaraSystem'/Game/KSH/Character/Skill/Effect/Spinning.Spinning'"));
+		ensure(Asset.Object);
+		Effect->SetAsset(Asset.Object);
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/KSH/Character/Animation/Skill/SpinningAttack_Montage.SpinningAttack_Montage'"));
@@ -39,11 +48,11 @@ ASpinningAttack::ASpinningAttack()
 		this->Sk_Image_Cool = Asset.Object;
 	}
 	
-	StaticMesh->SetRelativeLocation(FVector(0., 0., -44.));
-	StaticMesh->SetRelativeRotation(FRotator(0., 0., 0.));
-	StaticMesh->SetRelativeScale3D(FVector(5.750000, 5.000000, 1.660000));
+	//StaticMesh->SetRelativeLocation(FVector(0., 0., 196.));
+	StaticMesh->SetRelativeScale3D(FVector(3.5, 3.5, 3.5));
 	StaticMesh->SetCollisionProfileName(TEXT("PlayerSkill"));
 	StaticMesh->bHiddenInGame = false;
+	Effect->SetupAttachment(StaticMesh);
 
 	Sk_Name = TEXT("Spinning Attack");
 	Sk_Desc = FText::FromString(TEXT("검을 크게 휘둘러 공격한다."));
@@ -68,13 +77,30 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 {
 	ABasicPlayerController* Controller = Cast<ABasicPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	APlayerCharacter* Player = Cast<APlayerCharacter>(Controller->GetPawn());
-	float Damage = Sk_Damage + Player->GetStatusComponent()->GetAttackDamage();
+	
 	
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if(Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spinning Attack Hit!"));
 		FDamageEvent DamageEvent;
-		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+		for (int32 i = 0; i < 3; ++i)
+		{
+			float Damage = Player->GetStatusComponent()->GetRandDamage();
+			Damage += Sk_Damage;
+			Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+		}
+	}
+	AMonster* Monster = Cast<AMonster>(OtherActor);
+	if (Monster)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spinning Attack Hit!"));
+		FDamageEvent DamageEvent;
+		for (int32 i = 0; i < 3; ++i)
+		{
+			float Damage = Player->GetStatusComponent()->GetRandDamage();
+			Damage += Sk_Damage;
+			Monster->TakeDamage(Damage, DamageEvent, Controller, Player);
+		}
 	}
 }

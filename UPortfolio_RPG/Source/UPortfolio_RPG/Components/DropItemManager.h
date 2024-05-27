@@ -12,8 +12,6 @@ class UPORTFOLIO_RPG_API ADropItemManager : public AActor
 {
 	GENERATED_BODY()
 
-public:
-	static TWeakObjectPtr<ADropItemManager> DropItemManager; 
 public:	
 	// Sets default values for this component's properties
 	ADropItemManager();
@@ -35,4 +33,3 @@ public:
 
 };
 
-extern ADropItemManager* DropItemManager = nullptr;

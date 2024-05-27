@@ -8,6 +8,7 @@
 #include "EnemyPool.generated.h"
 
 class AEnemyAIController;
+class UChaosDungeonSubsystem;
 
 UCLASS()
 class UPORTFOLIO_RPG_API UEnemyPool : public UObject
@@ -24,13 +25,12 @@ public:
     void Delete(AEnemy* InEnemy);
 
     TArray<AEnemy*> Pool;
-    TArray<AEnemyAIController*> ControllerPool;
     TArray<AEnemy*> ActiveEnemies;
 
 private:
     //list로 액터 관리.. 
     TSubclassOf<AEnemy> EnemyClass; 
 
-    UWorld* CachedWorld = nullptr;
+    UChaosDungeonSubsystem* CDSubsystem;
 };
 	

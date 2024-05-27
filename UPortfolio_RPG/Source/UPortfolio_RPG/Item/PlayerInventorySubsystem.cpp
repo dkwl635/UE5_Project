@@ -7,8 +7,8 @@
 #include "UI/UIEnum.h"
 #include "Json.h"
 #include "JsonUtilities.h"
+#include "GameInstance/RPGGameInstance.h"
 
-UPlayerInventorySubsystem* UPlayerInventorySubsystem::PlayerInventorySubsystem = nullptr;
 int32 UPlayerInventorySubsystem::GetPlayerCoin()
 {
 	return PlayerCoin;
@@ -27,69 +27,43 @@ int32 UPlayerInventorySubsystem::GetEnchantStone()
 void UPlayerInventorySubsystem::SetPlayerCoin(int32 Value)
 {
 	PlayerCoin = Value;
-	AUIManager::UIManager->PlayerGoodsUIRefresh();
+	RPGGameInstance->GetUIManager()->PlayerGoodsUIRefresh();
 }
 
 void UPlayerInventorySubsystem::SetPlayerGold(int32 Value)
 {
 	PlayerGold = Value;
-	AUIManager::UIManager->PlayerGoodsUIRefresh();
+	RPGGameInstance->GetUIManager()->PlayerGoodsUIRefresh();
 }
 
 void UPlayerInventorySubsystem::SetPlayerEnchantStone(int32 Value)
 {
 	EnchantStone = Value;
-	AUIManager::UIManager->PlayerGoodsUIRefresh();
+	RPGGameInstance->GetUIManager()->PlayerGoodsUIRefresh();
 }
 
-UPlayerInventorySubsystem::UPlayerInventorySubsystem()
-{
-
-}
-
-UPlayerInventorySubsystem::~UPlayerInventorySubsystem()
-{
-	PlayerInventorySubsystem = nullptr;
-}
 
 void UPlayerInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	PlayerInventorySubsystem = this;
+	
 
 	NormalInventory.Init(nullptr, MaxInvenSize);
 	GearInventory.Init(nullptr, MaxInvenSize);
 	EquipmentInventory.Init(nullptr,7);
 	QuickItemSlotsPointer.Init(-1, 8);
 
-	DataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UDataSubsystem>();
 	if (ItemClass) { ItemClass = UItem::StaticClass()->GetDefaultObject<UItem>(); }
 
 	//Load
 	Load();
 
-	PlayerGold = 10000;
-	PlayerCoin = 10000;
-	/*AddItem(TEXT("HP100"), 12);
-	AddItem(TEXT("HP500"), 3);*/
-	AddItem(TEXT("Sword_0"), 1);
-	AddItem(TEXT("Sword_1"), 1);
-	AddItem(TEXT("Sword_1"), 1);
-	AddItem(TEXT("Head_0"), 1);
-	AddItem(TEXT("Armor_0"), 1);
-	AddItem(TEXT("Pants_0"), 1);
-	AddItem(TEXT("Shoes_1"), 1);
-	AddItem(TEXT("Gloves_1"), 1);
 }
 
-bool UPlayerInventorySubsystem::Init()
-{	
-	return true;
-}
 
 void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 Index)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	
 	if (Data->ItemType == EITEMTYPE::COIN)
 	{
@@ -112,7 +86,7 @@ void UPlayerInventorySubsystem::AddInitItem(const FName& InKey, int Count, int8 
 
 bool UPlayerInventorySubsystem::AddItem(const FName& InKey, int Count)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	if (!Data) { return false; }
 
 	if (Data->ItemType == EITEMTYPE::COIN)
@@ -256,7 +230,7 @@ bool UPlayerInventorySubsystem::MoveItemToInventory(Inventory Inventory ,FItemDa
 
 void UPlayerInventorySubsystem::RefreshUI(ERPG_UI UIType)
 {
-	AUIManager::UIManager->RefreshUI(UIType);
+	RPGGameInstance->GetUIManager()->RefreshUI(UIType);
 }
 
 void UPlayerInventorySubsystem::UseItem(EITEMTYPE ItemType, int8 InventoryIndex , int8 Count)
@@ -299,18 +273,21 @@ void UPlayerInventorySubsystem::RemoveItem(EITEMTYPE ItemType, int8 InventoryInd
 
 	if (ItemType != EITEMTYPE::GEAR)
 	{
-		if (int QuickSlot = CheckQuickSlotItem(InventoryIndex) != -1)
+		int QuickSlot = CheckQuickSlotItem(InventoryIndex);
+		if (QuickSlot != -1)
 		{
 			QuickSlotClear(QuickSlot);
-			AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
+			RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::QUICKSLOTS);
 		}
 	}
+
+	RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::INVENTORY);
 }
 
 
 void UPlayerInventorySubsystem::UseItem(FItemData* ItemData, int8 Count)
 {
-	ItemClass->UseItem(nullptr, ItemData);
+	ItemClass->UseItem(GetWorld(), ItemData);
 }
 
 TWeakPtr<FItemData> UPlayerInventorySubsystem::GetItemInfo(EITEMTYPE ItemType, int8 InventoryIndex)
@@ -358,7 +335,7 @@ void UPlayerInventorySubsystem::SwapItem(EITEMTYPE ItemType, int8 Index1, int8 I
 		}
 	}
 
-	AUIManager::UIManager->RefreshUI(ERPG_UI::QUICKSLOTS);
+	RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::QUICKSLOTS);
 }
 
 bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int8 Index2)
@@ -392,7 +369,7 @@ bool UPlayerInventorySubsystem::CombineItem(EITEMTYPE ItemType ,int8 Index1, int
 
 void UPlayerInventorySubsystem::AddInitGear(const FName& InKey, EGEARTYPE GearType)
 {
-	FItemData* Data = DataSubsystem->FindItem(InKey);
+	FItemData* Data = RPGGameInstance->GetDataSubsyetem()->FindItem(InKey);
 	TSharedPtr<FItemData> NewItemData = MakeShared<FItemData>(*Data);
 
 	NewItemData->CurrentBundleCount = 1;
@@ -448,32 +425,16 @@ TArray<TSharedPtr<FItemData>>* UPlayerInventorySubsystem::GetInventory(EITEMTYPE
 	else { return &NormalInventory; }
 }
 
-int32 UPlayerInventorySubsystem::GetPlayerAddAttack()
-{
-	int32 Result = 0;
-	for (int i = 0; i < EquipmentInventory.Num(); i++)
-	{
-		if (!EquipmentInventory[i]){continue;}
 
-		FGearData* data  = DataSubsystem->FindGearData( EquipmentInventory[i]->StatusData.RowName);
-		if (data->EStat == ESTAT::ATK)
-		{
-			Result += data->GearValue;
-		}
-	}
-
-	return Result;
-}
-
-int32 UPlayerInventorySubsystem::GetPlayerAddMaxHp()
+int32 UPlayerInventorySubsystem::GetEquipmentValue(ESTAT StatType)
 {
 	int32 Result = 0;
 	for (int i = 0; i < EquipmentInventory.Num(); i++)
 	{
 		if (!EquipmentInventory[i]) { continue; }
 
-		FGearData* data = DataSubsystem->FindGearData(EquipmentInventory[i]->StatusData.RowName);
-		if (data->EStat == ESTAT::HP)
+		FGearData* data = RPGGameInstance->GetDataSubsyetem()->FindGearData(EquipmentInventory[i]->StatusData.RowName);
+		if (data->EStat == StatType)
 		{
 			Result += data->GearValue;
 		}
@@ -648,19 +609,7 @@ void UPlayerInventorySubsystem::SetAttachQuickSlot(int QuickSlotIndex, int ItemI
 	QuickItemSlotsPointer[QuickSlotIndex] = ItemIndex;
 }
 
-void UPlayerInventorySubsystem::AttachSlot(ERPGSLOTTYPE SlotType , URPGSlot* slot)
-{
-	switch (SlotType)
-	{
-	case ERPGSLOTTYPE::QUICK_ITEM:
-	{
-		QuickItemSlots.Add(slot);
-		break;
-	}
-	default:
-		break;
-	}
-}
+
 
 int UPlayerInventorySubsystem::GetQuickSlotFromIndex(int QuickSlotIndex)
 {
@@ -674,9 +623,14 @@ void UPlayerInventorySubsystem::QuickSlotClear(int8 QuickSlotIndex)
 
 int UPlayerInventorySubsystem::CheckQuickSlotItem(int ItemIndex)
 {
+	int select = -1;
 	for (int8 i = 0; i < QuickItemSlotsPointer.Num(); i++)
 	{
-		if (QuickItemSlotsPointer[i] == ItemIndex) { return i; }
+		if (QuickItemSlotsPointer[i] == ItemIndex)
+		{
+			select = i;
+			return select;
+		}
 	}
 
 	return -1;

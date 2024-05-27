@@ -8,6 +8,7 @@
 
 struct FSkillInfoDataTableRow;
 
+
 UCLASS()
 class UPORTFOLIO_RPG_API ARedDust : public ASkillBase
 {

@@ -39,7 +39,7 @@ void AEnemyAIController::OnUnPossess()
 	GetWorld()->GetTimerManager().ClearTimer(RepeatTimerHandle);
 }
 
-void AEnemyAIController::OnRepeatTimer()
+void AEnemyAIController::OnRepeatTimer() //랜덤하게 이동하는 코드 쓰이지 않음
 {
 	auto CurrentPawn = GetPawn();
 	ensure(CurrentPawn);
@@ -50,7 +50,7 @@ void AEnemyAIController::OnRepeatTimer()
 	if (NavSystem == nullptr) return;
 
 	FNavLocation NextLocation;         //AI���� �̵��� ���� ��ġ ����
-	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, NextLocation)) 
+	if (NavSystem->GetRandomPointInNavigableRadius(FVector::ZeroVector, 500.f, NextLocation) && !(Enemy->IsDead))
 	{
 		MoveToLocation(NextLocation.Location);     //AIMoveTo ���, ���� ��ġ�� �̵�
 	}

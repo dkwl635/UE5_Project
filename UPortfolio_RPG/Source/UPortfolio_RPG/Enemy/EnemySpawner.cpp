@@ -12,7 +12,6 @@ AEnemySpawner::AEnemySpawner()
 	PrimaryActorTick.bCanEverTick = false;
 
 	EnemyPool = NewObject<UEnemyPool>();
-	EnemyPool->Pool.Reserve(MaxPoolNum);
 }
 
 // Called when the game starts or when spawned
@@ -21,7 +20,6 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 	
 	EnemyPool->Create(GetWorld(), MaxPoolNum);
-
 }
 
 void AEnemySpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -45,7 +43,7 @@ void AEnemySpawner::SpawnEnemy()
 			if (EnemyPool->ActiveEnemies.Num() == MaxPoolNum)
 				break;
 			UNavigationSystemV1::K2_GetRandomReachablePointInRadius(GetWorld(), Origin, RandomLocation, 2000.f);
-			RandomLocation.Z = 100;
+			RandomLocation.Z = 300.f;
 			FTransform Transform = FTransform(FRotator::ZeroRotator, RandomLocation, FVector(1, 1, 1));
 			EnemyPool->SpawnEnemy(Transform, true);
 		}

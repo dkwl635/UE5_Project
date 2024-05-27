@@ -15,20 +15,14 @@ class UPORTFOLIO_RPG_API UItem : public UObject
 public:
 	friend class UDataSubsystem;
 private:
-
-	static UDataSubsystem* DataSubsystem;
 	static TMap<FName, FPotionData*> PotionDatas;
-
+	static TWeakObjectPtr<UWorld> CurrentWorld;
 private:
-
 	FPotionData* GetPotionData(FName Name);
-
 
 public:
 	
-
-
-	bool UseItem(AActor* Target , FItemData* ItemData);
+	bool UseItem(UWorld* World ,FItemData* ItemData);
 
 private:
 

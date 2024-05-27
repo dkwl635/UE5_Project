@@ -2,6 +2,7 @@
 
 
 #include "UI/RPGPlayerEquipmentUserWidger.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
 #include "Components/TextBlock.h"
@@ -66,8 +67,9 @@ URPGSlot* URPGPlayerEquipmentUserWidger::GetEquipmentSlot(EGEARTYPE Type)
 
 void URPGPlayerEquipmentUserWidger::SetAddStat()
 {
-	int32 AddAtk = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerAddAttack();
-	int32 AddHp = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerAddMaxHp();
+	UPlayerInventorySubsystem* Invne = RPGGameInstance->GetPlayerInventorySubsystem();
+	int32 AddAtk = Invne->GetEquipmentValue(ESTAT::ATK);
+	int32 AddHp = Invne->GetEquipmentValue(ESTAT::HP);
 	
 	AddHpText->SetText(FText::AsNumber(AddHp));
 	AddAtkText->SetText(FText::AsNumber(AddAtk));

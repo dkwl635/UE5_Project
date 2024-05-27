@@ -28,6 +28,8 @@ private:
 	FTimerHandle SpaceTimer;
 	FTimerHandle Skill_Q_Timer;
 	FTimerHandle Skill_W_Timer;
+	FTimerHandle Skill_E_Timer;
+	FTimerHandle Skill_R_Timer;
 	
 private:
 	float SpaceCoolTime = 5.f;

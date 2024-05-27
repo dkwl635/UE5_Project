@@ -12,6 +12,7 @@ class USkillComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UAnimMontage;
+class UPlayerInventorySubsystem;
 struct FSkillDataTableRow;
 struct FStatusDataTableRow;
 
@@ -56,6 +57,8 @@ public:
 public:
 	void OnSkill_Q(const FVector& HitPoint);
 	void OnSkill_W(const FVector& HitPoint);
+	void OnSkill_E(const FVector& HitPoint);
+	void OnSkill_R(const FVector& HitPoint);
 	void OnSpace(const FVector& HitPoint);
 	UFUNCTION()
 	void OnSpaceMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -66,10 +69,11 @@ public:
 	void DefaultAttackCheck();
 
 public:
+	UFUNCTION(BlueprintCallable)
 	UStatusComponent* GetStatusComponent() { return StatusComponent; }
 	USkillComponent* GetSkillComponent() { return SkillComponent; }
 	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }
-
+	AActor* GetTargetingActor() { return TargetingCircleInstance; }
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
@@ -114,6 +118,18 @@ public:
 	bool bIsDead = false;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	TSubclassOf<AActor> TargetingCircleActor;
+
+	AActor* TargetingCircleInstance = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
+	class UPostProcessComponent* PostProcessComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
+	class UMaterialInterface* PostProcessSkill;
+
+protected:
 	class UPlayerAnimInstance* PlayerAnim = nullptr;
 	const FCharacterAnimDataTableRow* AnimDataTableRow = nullptr;
 	const FSkillDataTableRow* SkillDataTableRow = nullptr;
@@ -121,6 +137,13 @@ protected:
 
 private:
 	void LookAtMouseCursor(const FVector& HitPoint);
+	FVector GetMouseWorldPosition();
+	void DisplayDamage(float InDamage);
+	void ShowSkillDistance();
+	// When Gear Changed
+	void SetGearData();
+
+	UPlayerInventorySubsystem* Inventory;
 
 public:
 	virtual float TakeDamage(

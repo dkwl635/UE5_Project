@@ -19,8 +19,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-public:	
-	static ANPCManager* NPCManager;
+
 
 public:
 	void BeginOverlapPlayer(class ANPC* Target);
