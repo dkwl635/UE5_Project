@@ -1,0 +1,64 @@
+{
+	"Gold": 0,
+	"Coin": 0,
+	"EnchantStone": 0,
+	"GearItem": [
+		{
+			"RowName": "Shoes_1",
+			"SlotIndex": 0,
+			"Count": 1
+		},
+		{
+			"RowName": "Shoes_1",
+			"SlotIndex": 1,
+			"Count": 1
+		},
+		{
+			"RowName": "Sword_1",
+			"SlotIndex": 2,
+			"Count": 1
+		},
+		{
+			"RowName": "Head_0",
+			"SlotIndex": 3,
+			"Count": 1
+		},
+		{
+			"RowName": "Gloves_1",
+			"SlotIndex": 4,
+			"Count": 1
+		}
+	],
+	"NormalItem": [
+		{
+			"RowName": "HP100",
+			"SlotIndex": 0,
+			"Count": 2
+		},
+		{
+			"RowName": "HP1000",
+			"SlotIndex": 1,
+			"Count": 4
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 2,
+			"Count": 10
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 3,
+			"Count": 10
+		},
+		{
+			"RowName": "HP500",
+			"SlotIndex": 4,
+			"Count": 10
+		}
+	],
+	"Equipment": [],
+	"QuickItemSlot1": -1,
+	"QuickItemSlot2": -1,
+	"QuickItemSlot3": -1,
+	"QuickItemSlot4": -1
+}
