@@ -194,14 +194,14 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 }
 
 
-//#include "UI/Damage/PrintDamageUserWidget.h"
-//#include "Actors/Damage/PrintDamageTextActor.h"
+#include "UI/Damage/PrintDamageUserWidget.h"
+#include "Actors/Damage/PrintDamageTextActor.h"
 	void AMonster::DisplayDamage(float InDamage)
 	{
-	/*	FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+		FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
 		APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
 			(APrintDamageTextActor::StaticClass(), SpawnTransform);
-		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 100));*/
+		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 200));
 	}
 
 
@@ -362,7 +362,7 @@ void AMonster::DestroyRangeActor()
 {
 	AttackRangeActor->Destroy();
 
-	if (RangeCnt == 5) {
+	if (RangeCnt == 3) {
 		RangeCnt = 1;
 		IsRange = false;
 		IsAttackFinish = true;

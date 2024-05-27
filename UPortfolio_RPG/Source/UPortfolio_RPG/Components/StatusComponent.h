@@ -12,13 +12,13 @@ struct UPORTFOLIO_RPG_API FStatusDataTableRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	float MaxHP;
+	float MaxHP = 0;
 	UPROPERTY(EditAnywhere)
-	float MaxMP;
+	float MaxMP = 0;
 	UPROPERTY(EditAnywhere)
-	float AttackDamage;
+	float AttackDamage = 0;
 	UPROPERTY(EditAnywhere)
-	float Speed;
+	float Speed = 0;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
