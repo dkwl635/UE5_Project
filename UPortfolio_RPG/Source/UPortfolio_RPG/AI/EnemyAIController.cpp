@@ -39,7 +39,7 @@ void AEnemyAIController::OnUnPossess()
 	GetWorld()->GetTimerManager().ClearTimer(RepeatTimerHandle);
 }
 
-void AEnemyAIController::OnRepeatTimer()
+void AEnemyAIController::OnRepeatTimer() //랜덤하게 이동하는 코드 쓰이지 않음
 {
 	auto CurrentPawn = GetPawn();
 	ensure(CurrentPawn);
