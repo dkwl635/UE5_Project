@@ -3,6 +3,7 @@
 
 #include "UI/Damage/PrintDamageUserWidget.h"
 #include "Enemy/Enemy.h"
+#include "Monster/Monster.h"
 
 void UPrintDamageUserWidget::NativeConstruct()
 {
@@ -32,6 +33,10 @@ void UPrintDamageUserWidget::SetOwner(AActor* Owner)
 void UPrintDamageUserWidget::PlayAnimFromPawn(APawn* Pawn)
 {
 	if (AEnemy* Enemy = Cast<AEnemy>(Pawn))
+	{
+		PlayAnimation(FloatingText_Enemy);
+	}
+	else if (AMonster* Monster = Cast<AMonster>(Pawn))
 	{
 		PlayAnimation(FloatingText_Enemy);
 	}

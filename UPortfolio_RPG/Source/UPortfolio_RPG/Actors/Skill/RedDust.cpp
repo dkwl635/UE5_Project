@@ -9,6 +9,7 @@
 #include "Components/StatusComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "Monster/Monster.h"
 #include "Engine/DamageEvents.h"
 
 ARedDust::ARedDust()
@@ -87,5 +88,11 @@ void ARedDust::OnAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UE_LOG(LogTemp, Warning, TEXT("RedDust Hit!"));
 		FDamageEvent DamageEvent;
 		Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+	}
+	AMonster* Monster = Cast<AMonster>(OtherActor);
+	if(Monster)
+	{
+		FDamageEvent DamageEvent;
+		Monster->TakeDamage(Damage, DamageEvent, Controller, Player);
 	}
 }

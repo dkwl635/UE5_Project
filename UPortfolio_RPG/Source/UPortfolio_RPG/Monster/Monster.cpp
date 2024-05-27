@@ -14,6 +14,7 @@
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Monster/Actor/AttackRangeActor.h"
 #include "DrawDebugHelpers.h"
+#include "Components/WidgetComponent.h"
 #include "Monster/AI/MonsterAIController.h"
 
 // Sets default values
@@ -57,7 +58,7 @@ AMonster::AMonster()
 
 	 
 
-	//FireScream °ø°Ý °ü¸®
+	//FireScream ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{ 
 		
 		{
@@ -77,7 +78,7 @@ AMonster::AMonster()
 		}
 	}
 
-	// AttackRange °ø°Ý °ü¸®
+	// AttackRange ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 
 		{
@@ -100,7 +101,7 @@ AMonster::AMonster()
 	CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 	BoxCollision->SetCollisionProfileName(TEXT("MonsterActor"));
 
-	// BoxCollision ÄÄÆ÷³ÍÆ®¿¡ ¿À¹ö·¦ ÀÌº¥Æ® ÇÚµé·¯ ¹ÙÀÎµù
+	// BoxCollision ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½Úµé·¯ ï¿½ï¿½ï¿½Îµï¿½
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonster::OnBoxCollisionOverlap);
 
 	// Initialize timeline
@@ -110,8 +111,8 @@ AMonster::AMonster()
 			TimelineCallback.BindUFunction(this, FName("HandleScreamProgress"));
 			ScreamTimeline.AddInterpFloat(ScreamCurve, TimelineCallback);
 			//ScreamTimeline.SetLooping(true);
-			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // Å¸ÀÓ¶óÀÎ ±æÀÌ¸¦ ¸¶Áö¸· Å°ÇÁ·¹ÀÓ±îÁö·Î ¼³Á¤ÇÕ´Ï´Ù.
-			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // Å¸ÀÓ¶óÀÎÀÌ ¿Ï·áµÉ ¶§ È£ÃâµÉ ÇÔ¼ö ¼³Á¤
+			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 			
 			FOnTimelineEvent TimelineFinishCallback;
 			TimelineFinishCallback.BindUFunction(this, FName("FinishFire"));
@@ -294,14 +295,14 @@ void AMonster::MonsterHitAttackTrace(FName SocketName, FVector Location)
 void AMonster::HandleScreamProgress(float Value)
 {
 	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
-	//Ãæµ¹ µð¹ö±×¹Ú½º
+	//ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½×¹Ú½ï¿½
 	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), FColor::Red, false, -1, 0, 2);
 	
 }
 
 void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ÃÊ Áö¿¬
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	
 }
 
@@ -326,7 +327,7 @@ void AMonster::FinishFire()
 	else
 	{
 		++TimeLineCnt;
-		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ÃÊ Áö¿¬
+		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		ScreamTimeline.PlayFromStart();
 	}
 }

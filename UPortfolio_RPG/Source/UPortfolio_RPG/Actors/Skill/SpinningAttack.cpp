@@ -9,6 +9,7 @@
 #include "Components/StatusComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "Monster/Monster.h"
 #include "Engine/DamageEvents.h"
 
 ASpinningAttack::ASpinningAttack()
@@ -88,6 +89,18 @@ void ASpinningAttack::OnAttack(UPrimitiveComponent* OverlappedComp,
 			float Damage = Player->GetStatusComponent()->GetRandDamage();
 			Damage += Sk_Damage;
 			Enemy->TakeDamage(Damage, DamageEvent, Controller, Player);
+		}
+	}
+	AMonster* Monster = Cast<AMonster>(OtherActor);
+	if (Monster)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spinning Attack Hit!"));
+		FDamageEvent DamageEvent;
+		for (int32 i = 0; i < 3; ++i)
+		{
+			float Damage = Player->GetStatusComponent()->GetRandDamage();
+			Damage += Sk_Damage;
+			Monster->TakeDamage(Damage, DamageEvent, Controller, Player);
 		}
 	}
 }

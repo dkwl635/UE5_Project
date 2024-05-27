@@ -66,6 +66,7 @@ void ACastingSkill::ActiveSkill(UAnimInstance* AnimInstance)
 #include "Kismet/GameplayStatics.h"
 #include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Enemy/Enemy.h"
+#include "Monster/Monster.h"
 #include "Engine/DamageEvents.h"
 void ACastingSkill::ApplyDamage()
 {
@@ -84,6 +85,19 @@ void ACastingSkill::ApplyDamage()
                     Damage += Sk_Damage;
                     FDamageEvent Event;
                     Enemy->TakeDamage(Damage, Event, Player->GetController(), Player);
+                }
+            }
+        }
+        else if (AMonster* Monster = Cast<AMonster>(It))
+        {
+            if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+            {
+                for (int32 i = 0; i < 2; ++i)
+                {
+                    float Damage = Player->GetStatusComponent()->GetRandDamage();
+                    Damage += Sk_Damage;
+                    FDamageEvent Event;
+                    Monster->TakeDamage(Damage, Event, Player->GetController(), Player);
                 }
             }
         }

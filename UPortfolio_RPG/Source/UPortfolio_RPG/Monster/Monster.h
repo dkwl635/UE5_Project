@@ -34,7 +34,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	//°ø°Ý µ¥¹ÌÁö º¯¼ö
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 public:
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void MonsterAttackDamage(AActor* OtherActor, float Damage);
@@ -55,7 +55,7 @@ public:
 	float CurrentHP = 0;
 
 public:
-	UPROPERTY(EditAnywhere)             //animInstance¿¡¼­ °¡Á®´Ù ¾²±âÀ§ÇØ¼­..
+	UPROPERTY(EditAnywhere)             //animInstanceï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½..
 		UFloatingPawnMovement* Movement;
 
 
@@ -84,7 +84,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI_Visiable")
 	TSubclassOf<UUserWidget> SuccessWidgetClass;
 
-public: //°ø°Ý ÆÐÅÏ ÇÔ¼ö
+public: //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	// FireScream Event
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void FireScream();
@@ -96,7 +96,7 @@ public: //°ø°Ý ÆÐÅÏ ÇÔ¼ö
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void MonsterHitAttackTrace(FName SocketName, FVector Location);
 
-//FireScream ÀÌ¿ë º¯¼ö
+//FireScream ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 private: 
 	// Particle system
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
@@ -124,18 +124,18 @@ private:
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	// BoxCollisionÀÇ ¿À¹ö·¦ ÀÌº¥Æ® ÇÚµé·¯
+	// BoxCollisionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½Úµé·¯
 	UFUNCTION()
 	void OnBoxCollisionOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	//FireScream °ø°Ý ³¡
+	//FireScream ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	UFUNCTION()
 	void FinishFire();
 
 	int RangeCnt = 1;
 
 
-//AttackRange ÀÌ¿ë º¯¼ö
+//AttackRange ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Attack")
 	FVector AttackRangeLocation = FVector(0.f,0.f,0.f);
@@ -151,7 +151,7 @@ private:
 
 
 
-//°ø°Ý ³¡À» ¾Ë¸®´Â º¯¼ö
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	private:
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Finish, Meta = (AllowPrivateAccess = true))
 		bool IsAttackFinish = false;
@@ -160,7 +160,7 @@ private:
 
 
 
-//Delay °ü¸®
+//Delay ï¿½ï¿½ï¿½ï¿½
 private: 
 	// Delay timer handle
 	FTimerHandle DelayTimerHandle;
