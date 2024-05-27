@@ -3,7 +3,6 @@
 
 #include "Enemy/Animation/EnemyAnimInstance.h"
 #include "Enemy/Enemy.h"
-#include "Enemy/EnemyPool.h"
 
 UEnemyAnimInstance::UEnemyAnimInstance()	
 {
@@ -21,15 +20,15 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Speed = FVector(Velocity.X, Velocity.Y, 0).Size();
 		IsDead = Pawn->IsDead;
 		IsSpawn = Pawn->IsSpawn;
-		IsAttacking = Pawn->IsAttacking;
+		//IsAttacking = Pawn->IsAttacking;
 	}
 }
 
 void UEnemyAnimInstance::PlayAttackMontage()
 {
+	//Montage_Play(AttackMontage, 1.0f);
 	if (AttackMontage)
 	{
-		Montage_Stop(0.1f);
 		FOnMontageEnded AttackMontageDelegate;
 		AttackMontageDelegate.Unbind();
 		AttackMontageDelegate.BindUObject(this, &UEnemyAnimInstance::OnAttackMontageEnded);
@@ -59,8 +58,6 @@ void UEnemyAnimInstance::OnSpawnMontageEnded(UAnimMontage* Montage, bool bInterr
 void UEnemyAnimInstance::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	AEnemy* Enemy = Cast<AEnemy>(TryGetPawnOwner());
-	if (Enemy)
-	{
-		Enemy->IsAttacking = false;
-	}
+	Enemy->IsAttacking = false;
+	UE_LOG(LogTemp, Warning, TEXT("Attack Ended"));
 }

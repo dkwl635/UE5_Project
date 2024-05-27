@@ -12,8 +12,10 @@
 #include "UI/RPGMainUserWidget.h"
 #include "UI/UIManager.h"
 #include "Item/ItemData.h"
+#include "Data/TextTable.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "UI/RPGSlot.h"
+#include "GameInstance/RPGGameInstance.h"
 
 void URPGShop::Init()
 {
@@ -43,6 +45,7 @@ void URPGShop::Init()
 		SellShopSlotList.Add(ShopSlot);
 	}
 
+	PlayerInven = RPGGameInstance->GetPlayerInventorySubsystem();
 }
 
 void URPGShop::RefreshUI()
@@ -87,7 +90,7 @@ void URPGShop::RefreshUI()
 
 void URPGShop::ShowInitUI()
 {
-	AUIManager::UIManager->isShopOpen = true;
+	RPGGameInstance->GetUIManager()->isShopOpen = true;
 
 	for (int i = 0; i < SellShopSlotList.Num(); i++)
 	{
@@ -100,8 +103,8 @@ void URPGShop::ShowInitUI()
 
 void URPGShop::HideSetUI()
 {
-	AUIManager::UIManager->isShopOpen = false;
-	AUIManager::UIManager->RefreshUI(ERPG_UI::INVENTORY);
+	RPGGameInstance->GetUIManager()->isShopOpen = false;
+	RPGGameInstance->GetUIManager()->RefreshUI(ERPG_UI::INVENTORY);
 }
 
 void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
@@ -118,7 +121,7 @@ void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
 		else
 		{
 			FShopBuyItemData Data = ShopList[i];
-			FItemData* buyItem = UDataSubsystem::DataSubsystem->FindItem(Data.ItemInfo.RowName);
+			FItemData* buyItem = RPGGameInstance->GetDataSubsyetem()->FindItem(Data.ItemInfo.RowName);
 			int32 Price = Data.Price;
 			int32 Count = Data.Count;
 
@@ -131,15 +134,15 @@ void URPGShop::SetShopData(TArray<FShopBuyItemData> ShopList)
 
 void URPGShop::BuyItem(UShopBuySlot* ShopSlot)
 {
-		int32 PlayerCoin = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerCoin();
+		int32 PlayerCoin = PlayerInven->GetPlayerCoin();
 		if (PlayerCoin < ShopSlot->BuyPrice)
 		{
 			return;
 		}
 		PlayerCoin -= ShopSlot->BuyPrice;
-		UPlayerInventorySubsystem::PlayerInventorySubsystem->SetPlayerCoin(PlayerCoin);
+		PlayerInven->SetPlayerCoin(PlayerCoin);
 	
-		bool bBuy = UPlayerInventorySubsystem::PlayerInventorySubsystem->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
+		bool bBuy = PlayerInven->AddItem(ShopSlot->ItemRowName, ShopSlot->BuyCount);
 
 		GetPlayerUI()->GetRPGUI(ERPG_UI::INVENTORY)->RefreshUI();
 }
@@ -149,7 +152,7 @@ URPGMainUserWidget* URPGShop::GetPlayerUI()
 	if (!PlayerUI.IsValid())
 	{
 		auto PlayerControll = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		PlayerUI = AUIManager::UIManager->PlayerUI;
+		PlayerUI = RPGGameInstance->GetUIManager()->PlayerUI;
 	}
 
 	return PlayerUI.Get();
@@ -190,8 +193,8 @@ URPGSlot* URPGShop::GetEmptySellSlot()
 
 void URPGShop::SellItem()
 {
-	int32 PlayerCurrentCoin = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerCoin() + SellItemPrice;
-	UPlayerInventorySubsystem::PlayerInventorySubsystem->SetPlayerCoin(PlayerCurrentCoin);
+	int32 PlayerCurrentCoin = PlayerInven ->GetPlayerCoin() + SellItemPrice;
+	PlayerInven->SetPlayerCoin(PlayerCurrentCoin);
 	
 	int SellCount = SellShopSlotList.Num();
 	for (int i = 0; i < SellCount; i++)
@@ -199,7 +202,7 @@ void URPGShop::SellItem()
 		if (SellShopSlotList[i]->Option1 >= 0)
 		{
 			EITEMTYPE ItemType = (EITEMTYPE)SellShopSlotList[i]->Option2;
-			UPlayerInventorySubsystem::PlayerInventorySubsystem->RemoveItem(ItemType, SellShopSlotList[i]->Option1);
+			PlayerInven->RemoveItem(ItemType, SellShopSlotList[i]->Option1);
 			SellShopSlotList[i]->ClearSlot();
 			SellShopSlotList[i]->RefreshSlotUI();
 		}
@@ -228,11 +231,11 @@ void URPGShop::SetSellPrice()
 			FItemData* Data = nullptr;
 			if (ItemType == EITEMTYPE::GEAR)
 			{
-				Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetGearItem(SellShopSlotList[i]->Option1);
+				Data = PlayerInven->GetGearItem(SellShopSlotList[i]->Option1);
 			}
 			else
 			{
-				Data = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetNormalItem(SellShopSlotList[i]->Option1);
+				Data = PlayerInven->GetNormalItem(SellShopSlotList[i]->Option1);
 			}
 			int ItemCount = Data->CurrentBundleCount;
 			int ItemPrice = Data->SellPrice;
@@ -261,6 +264,19 @@ void URPGShop::RefreshBuySlot()
 	{
 		BuyShopSlotList[i]->RefreshUI();
 	}
+}
+
+void URPGShop::OpenTextBox()
+{
+	RPGGameInstance->GetUIManager()->ShowUI(ERPG_UI::TEXTBOX);
+	FOnButtonCallBack YesButtonFunc;
+	YesButtonFunc.BindUObject(this, &URPGShop::SellItem);
+	FOnButtonCallBack NoButtonFunc;
+	FStringData* data = RPGGameInstance->GetDataSubsyetem()->FindStringData(ShopSellStringRowName);
+	FText Text = data->ItemDesc;
+	RPGGameInstance->GetUIManager()->SetYesNoButton(YesButtonFunc, NoButtonFunc, Text);
+
+
 }
 
 

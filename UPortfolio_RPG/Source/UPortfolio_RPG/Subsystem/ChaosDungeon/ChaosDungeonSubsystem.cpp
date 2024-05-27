@@ -42,7 +42,7 @@ void UChaosDungeonSubsystem::AddPurification(int32 InValue)
 {
 	Purification += InValue;
 	UE_LOG(LogTemp, Warning, TEXT("Purification : %d"), Purification);
-	if (Purification >= 20000)
+	if (Purification >= 2000)
 	{
 		EndDungeon();
 	}

@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Item/ItemData.h"
 #include "Enemy/EnemyData.h"
+#include "Data/TextTable.h"
 #include "Components/StatusComponent.h"
 #include "DataSubsystem.generated.h"
 
@@ -21,10 +22,7 @@ public:
 	~UDataSubsystem();
 	
 public:
-	static UDataSubsystem* DataSubsystem;// = nullptr;
-
 	void Initialize(FSubsystemCollectionBase& Collection) override;
-
 	UFUNCTION(BlueprintCallable)
 	void Init();
 public:
@@ -34,27 +32,17 @@ public:
 	FEnemyData* FindEnemyData(const FName& InKey);
 	FStatusDataTableRow* FindEnemyStatusData(const FName& InKey);
 	FGearData* FindGearData(const FName& InKey);
+	FStringData* FindStringData(const FName& InKey);
 
 protected:
 
 	bool bInit = false;
 
-//ITEM
-	UPROPERTY()
 	UDataTable* DT_Item;
-
-	UPROPERTY()
 	UDataTable* DT_Potion;
-
-	UPROPERTY()
 	UDataTable* DT_Gear;
-
-
-// Enemy
-	UPROPERTY()
+	UDataTable* DT_String;
 	UDataTable* DT_Enemy;
-
-	UPROPERTY()
 	UDataTable* DT_EnemyStatus;
 
 };

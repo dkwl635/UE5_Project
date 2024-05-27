@@ -22,6 +22,7 @@
 #include "Item/PlayerInventorySubsystem.h"
 #include "Actors/Damage/PrintDamageTextActor.h"
 #include "Engine/DamageEvents.h"
+#include "GameInstance/RPGGameInstance.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -114,7 +115,7 @@ void APlayerCharacter::BeginPlay()
 
 		SkillComponent->SetSkillData(SkillDataTableRow);
 
-		if (AUIManager::UIManager != nullptr) { AUIManager::UIManager->SetSkillUI(); }
+		if (RPGGameInstance->GetUIManager()) { RPGGameInstance->GetUIManager()->SetSkillUI(); }
 
 	}
 	if (!AnimDataTableRowHandle.IsNull() && AnimDataTableRowHandle.RowName != NAME_None)
@@ -421,7 +422,7 @@ void APlayerCharacter::SetGearData()
 {
 	Inventory = GetGameInstance()->GetSubsystem<UPlayerInventorySubsystem>();
 
-	const int32 AddHP = Inventory->GetPlayerAddMaxHp();
+	const int32 AddHP = Inventory->GetEquipmentValue(ESTAT::HP);
 	const float CurrentMaxHP = StatusComponent->GetMaxHP();
 	StatusComponent->SetMaxHP(CurrentMaxHP + AddHP);
 }

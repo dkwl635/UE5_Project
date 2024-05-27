@@ -4,13 +4,17 @@
 #include "Monster/Monster.h"
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Curves/CurveFloat.h"
+#include "Actors/PlayerCharacter/PlayerCharacter.h"
 #include "Monster/Actor/AttackRangeActor.h"
+#include "DrawDebugHelpers.h"
+#include "Monster/AI/MonsterAIController.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -20,9 +24,30 @@ AMonster::AMonster()
 
 	IsScream = false;
 
+	CurrentHP = MaxHP;
+
+	SpawnedEffect = nullptr;
+
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
+	StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Hpbarwidget"));
+
+	Movement->MaxSpeed = 300.0f;
+	Movement->Acceleration = 500.0f;
+	Movement->Deceleration = 500.0f;
+
+	StatusWidget->SetupAttachment(SkeletalMeshComponent);
+	StatusWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/LJY/UI/UI_MonsterHPBar.UI_MonsterHPBar_C'"));
+	if (UI_HUD.Succeeded())
+	{
+		StatusWidget->SetWidgetClass(UI_HUD.Class);
+		StatusWidget->SetDrawSize(FVector2D(400.f, 100.0f));
+		StatusWidget->SetVisibility(false); 
+	}
 
 	{
 		static ConstructorHelpers::FObjectFinder<USkeletalMesh> Asset(TEXT("/Script/Engine.SkeletalMesh'/Game/AddContent/FourEvilDragonsHP/Meshes/DragonTheTerrorBringer/DragonTheTerrorBringerSK.DragonTheTerrorBringerSK'"));
@@ -30,14 +55,9 @@ AMonster::AMonster()
 		SkeletalMeshComponent->SetSkeletalMesh(Asset.Object);
 	}
 
-	{
-		static ConstructorHelpers::FClassFinder<UAnimInstance> Asset(TEXT("/Script/Engine.AnimBlueprint'/Game/LJY/BossMonster/BPA_DragonAnimBlueprint.BPA_DragonAnimBlueprint_C'"));
-		ensure(Asset.Class);
-		SkeletalMeshComponent->SetAnimInstanceClass(Asset.Class);
-		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
-	}
+	 
 
-	//FireScream ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//FireScream °ø°Ý °ü¸®
 	{ 
 		
 		{
@@ -46,7 +66,7 @@ AMonster::AMonster()
 			FireScreamEffect = Asset.Object;
 		}
 		{
-			static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
+			static ConstructorHelpers::FObjectFinder<UAnimMontage> Asset(TEXT("/Script/Engine.AnimMontage'/Game/LJY/BossMonster/Animation/MonsterScreamAnimMontage.MonsterScreamAnimMontage'"));
 			ensure(Asset.Object);
 			FireScreamMontage = Asset.Object;
 		}
@@ -57,7 +77,7 @@ AMonster::AMonster()
 		}
 	}
 
-	// AttackRange ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// AttackRange °ø°Ý °ü¸®
 	{
 
 		{
@@ -80,7 +100,7 @@ AMonster::AMonster()
 	CapsuleComponent->SetCollisionProfileName(TEXT("Enemy"));
 	BoxCollision->SetCollisionProfileName(TEXT("MonsterActor"));
 
-	// BoxCollision ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½Úµé·¯ ï¿½ï¿½ï¿½Îµï¿½
+	// BoxCollision ÄÄÆ÷³ÍÆ®¿¡ ¿À¹ö·¦ ÀÌº¥Æ® ÇÚµé·¯ ¹ÙÀÎµù
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonster::OnBoxCollisionOverlap);
 
 	// Initialize timeline
@@ -90,22 +110,44 @@ AMonster::AMonster()
 			TimelineCallback.BindUFunction(this, FName("HandleScreamProgress"));
 			ScreamTimeline.AddInterpFloat(ScreamCurve, TimelineCallback);
 			//ScreamTimeline.SetLooping(true);
-			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
-			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+			//ScreamTimeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame); // Å¸ÀÓ¶óÀÎ ±æÀÌ¸¦ ¸¶Áö¸· Å°ÇÁ·¹ÀÓ±îÁö·Î ¼³Á¤ÇÕ´Ï´Ù.
+			//ScreamTimeline->OnTimelineFinished.AddDynamic(this, &AMonster::OnFinishFire); // Å¸ÀÓ¶óÀÎÀÌ ¿Ï·áµÉ ¶§ È£ÃâµÉ ÇÔ¼ö ¼³Á¤
 			
 			FOnTimelineEvent TimelineFinishCallback;
 			TimelineFinishCallback.BindUFunction(this, FName("FinishFire"));
 			ScreamTimeline.SetTimelineFinishedFunc(TimelineFinishCallback);
 		}
+		
 }
 
 // Called when the game starts or when spawned
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
+	{
+		MonsterAnim = Cast<UMonsterAnimInstance>(SkeletalMeshComponent->GetAnimInstance());
+	}
+	FVector HeadPosition = SkeletalMeshComponent->GetBoneLocation(TEXT("head"));
+	StatusWidget->SetWorldLocation(HeadPosition + FVector(0.0f, 0.0f, 60.0f));
+
+	UUserWidget* StatusUserWidget = StatusWidget->GetWidget();
+	if (StatusUserWidget)
+	{
+		MonsterStatusUserWidget = Cast<UStatusbarUserWidget>(StatusUserWidget);
+		if (MonsterStatusUserWidget)
+		{
+			MonsterStatusUserWidget->SetMonsterHP(this);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Error"));
+		}
+	}
+
 	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FireScream();
-	AttackRange();
+	//AttackRange();
+
 }
 
 // Called every frame
@@ -113,13 +155,63 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ScreamTimeline.TickTimeline(DeltaTime);
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController && (IsMove || IsRange) && !IsDead)
+	{
+		FVector PlayerLocation = PlayerController->GetPawn()->GetActorLocation();
+		FVector MonsterLocation = GetActorLocation();
+		FVector DirectionToPlayer = PlayerLocation - MonsterLocation;
+		DirectionToPlayer.Z = 0.f;
+
+		FRotator MonsterRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
+		MonsterRotation.Yaw -= 90.0f;
+
+		SetActorRotation(MonsterRotation);
+	}
 }
+
+float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// Call the base class version of TakeDamage
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	CurrentHP = CurrentHP - Damage;
+
+	DisplayDamage(Damage);
+	UE_LOG(LogTemp, Warning, TEXT("Boss_HP : %f"), CurrentHP);
+	if (MonsterStatusUserWidget)
+	{
+		MonsterStatusUserWidget->SetMonsterHP(this);
+	}
+
+	if (CurrentHP <= 0.f)
+	{
+		IsDead = true;
+		GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::SetDeadMonster, 3.0f, false);
+		
+	}
+
+	return Damage;
+}
+
+
+#include "UI/Damage/PrintDamageUserWidget.h"
+#include "Actors/Damage/PrintDamageTextActor.h"
+	void AMonster::DisplayDamage(float InDamage)
+	{
+		FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector);
+		APrintDamageTextActor* Actor = GetWorld()->SpawnActor<APrintDamageTextActor>
+			(APrintDamageTextActor::StaticClass(), SpawnTransform);
+		Actor->SetWidgetText(this, InDamage, GetActorLocation() + FVector(0, 0, 200));
+	}
+
 
 void AMonster::FireScream()
 {
+	IsAttackFinish = false;
+
 	if (FireScreamEffect)
 	{
-		UGameplayStatics::SpawnEmitterAttached(FireScreamEffect, SkeletalMeshComponent, FName(TEXT("FireAttack")));
+		SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(FireScreamEffect, SkeletalMeshComponent, FName(TEXT("FireAttack")));
 	}
 
 	if (FireScreamMontage && SkeletalMeshComponent->GetAnimInstance())
@@ -136,6 +228,9 @@ void AMonster::FireScream()
 void AMonster::AttackRange()
 {
 	// Calculate spawn location
+	IsAttackFinish = false;
+	IsRange = true;
+
 	FVector SpawnLocation = GetActorLocation(); 
 	float RandomX = FMath::RandRange(SpawnLocation.X-1000.f, SpawnLocation.X +1000.f);
 	float RandomY = FMath::RandRange(SpawnLocation.Y+200.f, SpawnLocation.Y +1000.f);	
@@ -149,47 +244,99 @@ void AMonster::AttackRange()
 	AttackRangeLocation = AttackRangeActor->GetActorLocation();
 	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::RangeSpawnDelay, 2.0f, false);
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::RangeSpawnDelay, 1.0f, false);
 
 	
 
+}
+
+void AMonster::MonsterHitAttackTrace(FName SocketName, FVector Location)
+{
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this); // Ignore sel
+
+	if (SkeletalMeshComponent)
+	{
+		FVector SocketLocation = SkeletalMeshComponent->GetSocketLocation(SocketName);
+		FVector SphereLocation = SocketLocation + Location; // Move 200 units in the negative Z direction
+
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionQueryParams(NAME_None, false, this);
+		bool bHit = UKismetSystemLibrary::SphereTraceSingle(
+			GetWorld(),
+			SphereLocation,
+			SphereLocation,
+			100.f,
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel2), // Adjust to your specific trace channel
+			false, // bTraceComplex
+			ActorsToIgnore, // Actors to ignore
+			EDrawDebugTrace::ForDuration, // Debug draw type
+			HitResult,
+			true // Ignore self
+		);
+
+		// Debug visualization
+	//	
+
+		if (bHit && HitResult.GetActor())
+		{
+			AActor* HitActor = HitResult.GetActor();
+			if (HitActor->IsA<ACharacter>())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Mouth attack hit: %s"), *HitActor->GetName());
+				float Damage = HitAttackDamage; 
+				MonsterAttackDamage(HitActor, Damage);
+			}
+		}
+	}
 }
 
 void AMonster::HandleScreamProgress(float Value)
 {
 	BoxCollision->SetRelativeLocation(FVector(Value, 720, -100));
-	//ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½×¹Ú½ï¿½
+	//Ãæµ¹ µð¹ö±×¹Ú½º
 	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), FColor::Red, false, -1, 0, 2);
-
 	
 }
 
 void AMonster::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ÃÊ Áö¿¬
 	
 }
 
 void AMonster::OnBoxCollisionOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	if (OtherActor && OtherActor != this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BoxCollision overlapped with: %s"), *OtherActor->GetName());
+		float Damage = FireAttackDamage; // Example damage value
+		MonsterAttackDamage(OtherActor, Damage);
 	}
 }
 
 void AMonster::FinishFire()
 {
-	if (TimeLineCnt == 2) {
-		TimeLineCnt = 0;
+	if (TimeLineCnt == 1) {
 		IsScream = false;
+		SpawnedEffect->DestroyComponent();
+		IsAttackFinish = true;
+		TimeLineCnt = 0;
 	}
 	else
 	{
 		++TimeLineCnt;
-		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		//GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::ScreamDelay, 1.0f, false); // 1ÃÊ Áö¿¬
 		ScreamTimeline.PlayFromStart();
+	}
+}
+
+void AMonster::MonsterAttackDamage(AActor* OtherActor, float Damage)
+{
+	ACharacter* Player = Cast<ACharacter>(OtherActor);
+	if (Player)
+	{
+		UGameplayStatics::ApplyDamage(Player, Damage, GetController(), this, UDamageType::StaticClass());
 	}
 }
 
@@ -206,26 +353,39 @@ void AMonster::RangeSpawnDelay()
 	
 	AttackRangeActor->BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackRangeEffect, AttackRangeLocation, FRotator::ZeroRotator, FVector(0.5,0.5,0.5), true, true, ENCPoolMethod::None, true);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AttackRangeEffect, AttackRangeLocation, FRotator::ZeroRotator, FVector(1.0,1.0,1.0), true, true, ENCPoolMethod::None, true);
 
-	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 3.0f, false);
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &AMonster::DestroyRangeActor, 2.0f, false);
 }
 
-int cnt = 5; //ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½
 void AMonster::DestroyRangeActor()
 {
 	AttackRangeActor->Destroy();
 
-	//ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½à¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½Éµï¿½
-	
-	if (cnt == 5) {
-		cnt += 1;
-		AttackRange();
+	if (RangeCnt == 3) {
+		RangeCnt = 1;
+		IsRange = false;
+		IsAttackFinish = true;
+		return;
 	}
 	else
 	{
-
+		++RangeCnt;
+		AttackRange();
 	}
+}
+
+void AMonster::SetDeadMonster()
+{
+	if (SuccessWidgetClass)
+	{
+		UUserWidget* SuccessWidget = CreateWidget<UUserWidget>(GetWorld(), SuccessWidgetClass);
+		if (SuccessWidget)
+		{
+			SuccessWidget->AddToViewport();
+		}
+	}
+	Destroy();
 }
 
 

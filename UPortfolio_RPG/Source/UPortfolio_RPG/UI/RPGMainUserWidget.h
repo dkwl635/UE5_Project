@@ -33,6 +33,13 @@ public	:
 	class UCanvasPanel* RPGUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class USkill_MainWidget* SkillWidget;
+
+	//TextBox
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* TextBoxCanvas;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class URPGTextBox* TextBox;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -43,8 +50,8 @@ public:
 	void UIMoveEnd(ERPG_UI Type);
 
 public:
-
-	void SetViewSize();
+	UFUNCTION(BlueprintCallable)
+	void SetViewSize(FVector2D Size);
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -73,7 +80,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* CoinTextBlock;
 public:
-	void	PlayerGoodsRefresh();
+	void PlayerGoodsRefresh();
 
 public :
 	UPROPERTY(meta = (BindWidget))
@@ -91,4 +98,7 @@ public :
 public:
 	UFUNCTION(BlueprintCallable)
 	void UIButtonFunc(ERPG_UI Type);
+
+
+
 };

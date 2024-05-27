@@ -13,6 +13,8 @@ UCLASS()
 class UPORTFOLIO_RPG_API URPGSlot : public UUserWidget
 {
 	GENERATED_BODY()
+private:
+	const FName ItemRemoveCheckString = "ItemRemoveCheckString";
 
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -35,8 +37,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> DragUserWidget;
-
+private:
+	class UPlayerInventorySubsystem* GetInven();
+	class UDataSubsystem* GetData();
 public:
+	
+
 	void RefreshSlotUI();
 
 	UFUNCTION(BlueprintCallable)
@@ -61,5 +67,10 @@ public:
 	void ShowItemInfo();
 	UFUNCTION(BlueprintCallable)
 	void HideItemInfo();
+
+public:
+	UFUNCTION()
+	void RemoveOrginSlotData();
+
 
 };

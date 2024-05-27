@@ -2,6 +2,7 @@
 
 
 #include "UI/RPGMainUserWidget.h"
+#include "GameInstance/RPGGameInstance.h"
 #include "Item/PlayerInventorySubsystem.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
@@ -14,12 +15,14 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Math/UnrealMathUtility.h"
 #include "Skill/Skill_MainWidget.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/GameViewportClient.h"
+#include "UI/RPGTextBox.h"
+
 
 void URPGMainUserWidget::Init()
 {
-    SetViewSize();
-
-
     int UICount = RPGUI->GetChildrenCount();
     for (int i = 0; i < UICount; i++)
     {
@@ -31,14 +34,19 @@ void URPGMainUserWidget::Init()
         RPGUICanvasMap.Add(UI->UI_Type, CanvasSlot);
 
         UI->StartUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveStart);
-        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);
-        
+        UI->EndUIMove.AddDynamic(this, &URPGMainUserWidget::UIMoveEnd);   
     }
+
+    URPGUserWidget* widget = Cast<URPGUserWidget>(TextBox);
+    UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(TextBoxCanvas->Slot);
+    RPGUIMap.Add(ERPG_UI::TEXTBOX, TextBox);
+    RPGUICanvasMap.Add(ERPG_UI::TEXTBOX, CanvasSlot);
 
     GetRPGUI(ERPG_UI::INVENTORY)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::SHOP)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::EQUIPMENT)->SetVisibility(ESlateVisibility::Collapsed);
     GetRPGUI(ERPG_UI::NPCTALK)->SetVisibility(ESlateVisibility::Collapsed);
+    GetRPGUI(ERPG_UI::TEXTBOX)->SetVisibility(ESlateVisibility::Collapsed);
 
     //ZOreder Setting
     GetCanvasPanel(ERPG_UI::QUICKSLOTS)->SetZOrder(HUDZOrder);
@@ -50,10 +58,8 @@ void URPGMainUserWidget::Init()
 
     IsPush = false;
     bInteraction = false;
-
-    
-
 }
+
 
 URPGMainUserWidget::~URPGMainUserWidget()
 {
@@ -62,9 +68,10 @@ URPGMainUserWidget::~URPGMainUserWidget()
 
 
 
-void URPGMainUserWidget::SetViewSize()
+void URPGMainUserWidget::SetViewSize(FVector2D Size)
 {
-   ViewSize =  Cast<UCanvasPanelSlot>(RPGUI->Slot)->GetSize();
+    ViewSize = Size;
+  
 }
 
 URPGUserWidget* URPGMainUserWidget::GetRPGUI(ERPG_UI Type)
@@ -102,8 +109,9 @@ URPGUserWidget* URPGMainUserWidget::RPGUIRefresh(ERPG_UI Type)
 
 void URPGMainUserWidget::PlayerGoodsRefresh()
 {
-    int32 PlayerGold = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerGold();
-    int32 PlayerCoin = UPlayerInventorySubsystem::PlayerInventorySubsystem->GetPlayerCoin();
+    UPlayerInventorySubsystem* Inven = RPGGameInstance->GetPlayerInventorySubsystem();
+    int32 PlayerGold = Inven->GetPlayerGold();
+    int32 PlayerCoin = Inven->GetPlayerCoin();
 
     GoldTextBlock->SetText(FText::AsNumber(PlayerGold));
     CoinTextBlock->SetText(FText::AsNumber(PlayerCoin));
@@ -144,7 +152,7 @@ FVector2D URPGMainUserWidget::GetViewSize()
 
 void URPGMainUserWidget::UIMoveStart(ERPG_UI Type)
 {
-    AUIManager::UIManager->ShowUI(Type);
+    RPGGameInstance->GetUIManager()->ShowUI(Type);
     MoveTargetCanvasSlot = GetCanvasPanel(Type);
     
     MousePotion = UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld())- MoveTargetCanvasSlot->GetPosition();
@@ -161,6 +169,7 @@ void URPGMainUserWidget::UIMoveTick()
     UIPos.Y = FMathf::Clamp(UIPos.Y, 0, Temp.Y);
 
     MoveTargetCanvasSlot->SetPosition(UIPos);
+    //MoveTargetCanvasSlot->SetPosition(UWidgetLayoutLibrary::GetMousePositionOnViewport(MoveTargetCanvasSlot->GetWorld()));
 }
 
 void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)
@@ -171,5 +180,5 @@ void URPGMainUserWidget::UIMoveEnd(ERPG_UI Type)
 
 void URPGMainUserWidget::UIButtonFunc(ERPG_UI Type)
 {
-    AUIManager::UIManager->GetRPGUIToggle(Type);
+    RPGGameInstance->GetUIManager()->GetRPGUIToggle(Type);
 }
