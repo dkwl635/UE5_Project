@@ -24,6 +24,8 @@ void AChaosDungeonController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->DefaultAttack, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_Q, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_W, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_E, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Skill_R, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Space, ETriggerEvent::Started, this, &AChaosDungeonController::StartDungeon);
 	}
 }
@@ -41,6 +43,5 @@ void AChaosDungeonController::StartDungeon()
 	if (!GetDungeonSubsystem()->IsStarted())
 	{
 		GetDungeonSubsystem()->StartDungeon();
-		
 	}
 }

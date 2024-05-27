@@ -26,8 +26,8 @@ void UPlayerStatusBarUserWidget::SetHPBar()
 		ProgressBar->SetPercent(Percent);
 	}
 
-	MaxStatusTextBlock->SetText(FText::AsNumber(MaxHP));
-	CurrentStatusTextBlock->SetText(FText::AsNumber(CurrentHP));
+	MaxStatusTextBlock->SetText(FText::AsNumber(int(MaxHP)));
+	CurrentStatusTextBlock->SetText(FText::AsNumber(int(CurrentHP)));
 }
 
 void UPlayerStatusBarUserWidget::SetMPBar()
@@ -49,6 +49,6 @@ void UPlayerStatusBarUserWidget::SetMPBar()
 		ProgressBar->SetPercent(Percent);
 	}
 
-	MaxStatusTextBlock->SetText(FText::AsNumber(MaxMP));
-	CurrentStatusTextBlock->SetText(FText::AsNumber(CurrentMP));
+	MaxStatusTextBlock->SetText(FText::AsNumber(int(MaxMP)));
+	CurrentStatusTextBlock->SetText(FText::AsNumber(int(CurrentMP)));
 }
